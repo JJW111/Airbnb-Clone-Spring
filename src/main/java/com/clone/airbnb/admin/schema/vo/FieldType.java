@@ -1,0 +1,27 @@
+package com.clone.airbnb.admin.schema.vo;
+
+/**
+ * {@link Column} 의 폼타입 Enum 정의
+ */
+public enum FieldType {
+	NONE,
+	USERNAME,
+	PASSWORD,
+	INTEGER,
+	FLOAT,
+	TEXT,
+	TEXT_AREA,
+	CHECK_BOX,
+	SELECT_BOX,
+	MAP_SELECT_BOX,
+	DATE,
+	TIME,
+	DATETIME,
+	FILE_UPLOAD_FORM,
+	MULTIPLE_FILE_UPLOAD_FORM,
+	IMAGE_UPLOAD_FORM,
+	MULTIPLE_IMAGE_UPLOAD_FORM,
+	JOIN_MANY,
+	JOIN_ONE,
+	JOIN_ONE_TEXT;
+}

@@ -1,0 +1,28 @@
+.table.table-text-center th,
+.table.table-text-center td {
+	text-align: center;
+}
+
+.table td .form-group {
+	margin-bottom: 0;
+}
+
+
+
+a:link, 
+a:visited,
+a:hover,
+a:active { 
+	text-decoration: none; 
+}
+
+
+.error {
+	color: red;
+}
+
+
+.entity-list-image {
+	max-width: 80px;
+	max-height: 80px;
+}
