@@ -8,85 +8,36 @@
 </head>
 <body>
 
-<%@include file="inc/top.jsp" %>
+<%@include file="../inc/top.jsp" %>
 
-<%@include file="../inc/social_login.jsp" %>
+<div class="container lg:w-5/12 md:w-1/2 xl:w-1/4 mx-auto my-10 flex flex-col items-center border p-6 border-gray-400">
 
-<form:form action="/signup" method="post" modelAttribute="user" enctype="multipart/form-data">
+	<%@include file="inc/social_login.jsp" %>
 	
-	<div>
-		<label>Username:</label>
-		<form:input path="username" required="true"/>
-		<form:errors path="username"/>
-	</div>
-	
-	<div>
-		<label>Password:</label>
-		<form:password path="password" required="true"/>
-		<form:errors path="password"/>
-	</div>
-	
-	<div>
-		<label>Retype Password:</label>
-		<form:password path="retypePassword" required="true"/>
-		<form:errors path="retypePassword"/>
-	</div>
-	
-	<div>
-		<label>First Name:</label>
-		<form:input path="firstName" required="true"/>
-		<form:errors path="firstName"/>
-	</div>
-	
-	<div>
-		<label>Last Name:</label>
-		<form:input path="lastName" required="true"/>
-		<form:errors path="lastName"/>
-	</div>
-	
-	<div>
-		<label>Avatar:</label>
-		<input type="file" name="avatarFile"/>
-		<form:errors path="avatarFile"/>
-	</div>
-	
-	<div>
-		<label>Bio:</label>
-		<form:textarea path="bio"/>
-		<form:errors path="bio"/>
-	</div>
-	
-	<div>
-		<label>Birthdate:</label>
-		<form:input path="birthdate"/>
-		<form:errors path="birthdate"/>
-	</div>
-	
-	<div>
-		<label>Gender:</label>
-		<form:select path="gender" items="${genderValues}"/>
-		<form:errors path="gender"/>
-	</div>
-	
-	<div>
-		<label>Language:</label>
-		<form:select path="language" items="${languageValues}"/>
-		<form:errors path="language"/>
-	</div>
-	
-	<div>
-		<label>Currency:</label>
-		<form:select path="currency" items="${currencyValues}"/>
-		<form:errors path="currency"/>
-	</div>
-	
-	<div>
-		<button>회원가입</button>
-	</div>
-	
-</form:form>
+	<form:form action="/signup" method="post" modelAttribute="user" enctype="multipart/form-data">
+			
+			<form:input path="firstName" required="true" placeholder="First Name" />
+			<form:errors path="firstName" />
+			
+			<form:input path="lastName" required="true" placeholder="Last Name" />
+			<form:errors path="lastName" />
+			
+			<form:input path="username" required="true" placeholder="airbnb_clone@gmail.com" />
+			<form:errors path="username" />
+			
+			<form:password path="password" required="true" placeholder="Password" />
+			<form:errors path="password" />
+			
+			<form:password path="retypePassword" required="true" placeholder="Retype Password" />
+			<form:errors path="retypePassword" />
+			
+			<button class="btn bg-red-500 text-white">회원가입</button>
+		
+	</form:form>
 
-<%@include file="inc/bottom.jsp" %>
+</div>
+
+<%@include file="../inc/bottom.jsp" %>
 
 </body>
 </html>

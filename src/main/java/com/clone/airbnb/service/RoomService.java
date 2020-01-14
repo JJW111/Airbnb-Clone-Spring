@@ -10,4 +10,5 @@ import com.clone.airbnb.entity.Room;
 public interface RoomService {
 	Page<Room> rooms(Pageable pageable); 
 	List<Room> search(String city);
+	Room get(int id);
 }

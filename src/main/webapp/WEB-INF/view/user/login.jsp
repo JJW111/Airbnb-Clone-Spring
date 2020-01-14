@@ -6,27 +6,28 @@
 <title>Log In</title>
 </head>
 
-<%@include file="inc/top.jsp" %>
+<%@include file="../inc/top.jsp" %>
 
-<%@include file="../inc/social_login.jsp" %>
+<div class="container lg:w-5/12 md:w-1/2 xl:w-1/4 mx-auto my-10 flex flex-col items-center border p-6 border-gray-400">
 	
-<div id="login-form">
+	<%@include file="inc/social_login.jsp" %>
 	
-  	<form action="/auth/session" method="post">
-  		<div class="form-group">
-			<input type="text" name="username" value="${username}" class="form-control" placeholder="airbnb@airbnb_clone.com" />
-		</div>
-  		<div class="form-group">
-			<input type="password" name="password" class="form-control" placeholder="password" />
-		</div>
+  	<form action="/auth/session" method="post" class="w-full">
+		<input type="text" name="username" placeholder="Email" value="${username}" />
+		<input type="password" name="password" placeholder="Password" value="${username}" />
 		<c:if test="${error ne null}">
-			<span class="error mb-1" style="display: inline-block;"><small>아이디 혹은 패스워드가 일치하지 않습니다.</small></span>
+			<span class="error mb-3 block text-center text-red-600"><small>아이디 혹은 패스워드가 일치하지 않습니다.</small></span>
 		</c:if>
-   	 	<button type="submit" class="btn btn-primary btn-block">Login</button>
+   	 	<button class="btn bg-red-500 text-white">Login</button>
   	</form>
+  	
+  	<div class="mt-3">
+        <span class="mr-2">Dont't have an accouhnt?</span>
+        <a href="/signup" class="text-teal-500 font-medium">Sign up</a>
+    </div>
 
 </div>
 
-<%@include file="inc/bottom.jsp" %>
+<%@include file="../inc/bottom.jsp" %>
 
 </html>

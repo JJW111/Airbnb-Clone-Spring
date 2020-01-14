@@ -20,7 +20,7 @@
 				</a>
 			</c:if>
 			
-			<span class="mx-3 font-medium text-lg">${page.pageable.pageNumber} of ${page.totalPages}</span>
+			<span class="mx-3 font-medium text-lg">${page.pageable.pageNumber + 1} of ${page.totalPages}</span>
 			
 			<c:if test="${page.hasNext()}" >
 				<a href="?page=${page.pageable.pageNumber + 1}" class="text-teal-500">

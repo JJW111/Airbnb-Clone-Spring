@@ -190,11 +190,8 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
         private String bio;
         @DateTimeFormat(pattern = Common.DATE_FORMAT)
         private Date birthdate;
-        @NotNull
         private Gender gender = Gender.OTHER;
-        @NotNull 
         private Language language = Language.KOREAN;
-        @NotNull
         private Currency currency = Currency.KRW;
         @NotNull
         private Boolean superhost = false;

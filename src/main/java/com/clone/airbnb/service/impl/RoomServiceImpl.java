@@ -29,4 +29,11 @@ public class RoomServiceImpl implements RoomService {
 		return null;
 	}
 	
+	
+	
+	@Override
+	public Room get(int id) {
+		return roomRepository.findById(id).get();
+	}
+	
 }

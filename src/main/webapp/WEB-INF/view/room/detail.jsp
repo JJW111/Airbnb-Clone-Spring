@@ -3,15 +3,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<%@include file="inc/common.jsp" %>
-<title>Airbnb</title>
+<%@include file="../inc/common.jsp" %>
+<title>Room | ${room.id}</title>
 </head>
 
-<c:set var="searchvar" value="true" />
-<%@include file="inc/top.jsp" %>
+<%@include file="../inc/top.jsp" %>
 
-<%@include file="room/room_list.jsp" %>
-
-<%@include file="inc/bottom.jsp" %>
+<%@include file="../inc/bottom.jsp" %>
 
 </html>

@@ -6,7 +6,7 @@
     	<li class="nav_link"><a href="/auth/session_out">Logout</a></li>
 	</sec:authorize>
 	<sec:authorize access="isAnonymous()">
-	    <li class="nav_link"><a href="/login">Login</a></li>
+	    <li class="nav_link"><a href="/login">Log in</a></li>
 	    <li class="nav_link"><a href="/signup">Sign up</a></li>
 	</sec:authorize>
 	

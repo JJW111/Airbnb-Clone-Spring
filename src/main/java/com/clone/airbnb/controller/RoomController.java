@@ -33,6 +33,14 @@ public class RoomController {
 	
 	
 	
+	@GetMapping(path="/detail")
+	public String detail(Model model, @RequestParam("id") int id) {
+		model.addAttribute("room", roomService.get(id));
+		return "room/detail";
+	}
+	
+	
+	
 	@GetMapping(path="/search")
 	public String search(Model model, @RequestParam("city") String city) {
 		return "room/search";
