@@ -114,7 +114,7 @@ public class SecurityConfig {
 	          	.loginPage("/login")
 	          	.loginProcessingUrl("/auth/session") // 컨트롤러에 해당 url 매핑이 존재하지 않음. /auth/** 가 접근 불가라 인식하지 못하는 것 같음
 	          	.failureHandler(authAuthenticationFailureHandler)
-	          	.defaultSuccessUrl("/auth")
+	          	.defaultSuccessUrl("/")
 	          	.usernameParameter("username")
 	          	.passwordParameter("password")
 	          	

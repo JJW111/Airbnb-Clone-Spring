@@ -38,7 +38,7 @@ public class SignUpController {
 		if (!userBuilder.getRetypePassword().equals(userBuilder.getPassword())) {
 			result.rejectValue("retypePassword", "password.retype.notequal");
 		}
-		
+
 		if(result.hasErrors()){
 			model.addAttribute("genderValues", Gender.values());
 			model.addAttribute("languageValues", Language.values());
@@ -46,7 +46,6 @@ public class SignUpController {
 			return "user/signup";
 		}
 		
-		userBuilder.setEmailSecret("");
 		userService.signUp(userBuilder.build());
 		
 		return "redirect:/";

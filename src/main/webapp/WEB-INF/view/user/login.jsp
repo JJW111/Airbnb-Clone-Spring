@@ -13,12 +13,22 @@
 	<%@include file="inc/social_login.jsp" %>
 	
   	<form action="/auth/session" method="post" class="w-full">
-		<input type="text" name="username" placeholder="Email" value="${username}" />
-		<input type="password" name="password" placeholder="Password" value="${username}" />
-		<c:if test="${error ne null}">
-			<span class="error mb-3 block text-center text-red-600"><small>아이디 혹은 패스워드가 일치하지 않습니다.</small></span>
-		</c:if>
-   	 	<button class="btn bg-red-500 text-white">Login</button>
+  	
+  		<div class="input ${error ne null ? 'has_error' : ''}">
+			<input type="text" name="username" placeholder="Email" value="${username}" />
+		</div>
+		
+		<div class="input ${error ne null ? 'has_error' : ''}">
+			<input type="password" name="password" placeholder="Password" />
+		</div>
+		
+		<div class="input">
+			<c:if test="${error ne null}">
+				<span class="error"><small>아이디 혹은 패스워드가 일치하지 않습니다.</small></span>
+			</c:if>
+		</div>
+		
+   	 	<button class="btn bg-red-500 text-white">Log in</button>
   	</form>
   	
   	<div class="mt-3">
