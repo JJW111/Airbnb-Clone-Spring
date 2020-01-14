@@ -134,9 +134,9 @@ class RoomCreation {
 			}
 			
 			
-
+			
 			Room room = Room.builder()
-					.setName(faker.address().firstName())
+					.setName(faker.address().fullAddress())
 					.setDescription(WordUtils.limit(faker.lorem().paragraph(), 100))
 					.setAddress(faker.address().streetName())
 					.setCity(faker.address().city())

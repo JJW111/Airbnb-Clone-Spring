@@ -20,7 +20,7 @@ public class CountryUtils {
 			
 			for (String countryCode : locales) {
 				Locale obj = new Locale("", countryCode);
-				map.put(obj.getCountry(), obj.getDisplayCountry());
+				map.put(obj.getCountry(), obj.getDisplayCountry(new Locale("en")));
 			}
 			
 			countries = map;

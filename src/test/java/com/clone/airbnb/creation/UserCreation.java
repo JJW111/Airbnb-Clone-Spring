@@ -51,7 +51,7 @@ class UserCreation {
 							.setLanguage(DummyUtils.randomEnum(Language.class))
 							.setCurrency(DummyUtils.randomEnum(Currency.class))
 							.setLoginMethod(LoginMethod.EMAIL)
-							.setSuperhost(DummyUtils.randomBoolean(0.15))
+							.setSuperhost(DummyUtils.randomBoolean(0.5))
 							.build();
 					
 					repository.save(admin);
