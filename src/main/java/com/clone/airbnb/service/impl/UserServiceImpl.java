@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
 	
 	
 	@Override
-	public void signUp(User user) {
+	public User signUp(User user) {
 		// 메일 발송 처리를 한다.
 		userRepository.save(user);
 		
@@ -45,8 +45,11 @@ public class UserServiceImpl implements UserService {
 		try {
 			mailService.sendMail(user.getUsername(), subject, text);
 		} catch (Exception e) {
-			System.out.println("확인 메일 발송 중 에러 발생! Error: " + e);
+			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
+		
+		return user;
 	}
 	
 	

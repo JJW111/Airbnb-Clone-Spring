@@ -15,13 +15,17 @@ import com.clone.airbnb.entity.User;
 import com.clone.airbnb.entity.enu.Currency;
 import com.clone.airbnb.entity.enu.Gender;
 import com.clone.airbnb.entity.enu.Language;
+import com.clone.airbnb.service.LoginService;
 import com.clone.airbnb.service.UserService;
 
 @Controller
 public class SignUpController {
 
 	@Autowired
-	UserService userService;
+	private UserService userService;
+	
+	@Autowired
+	private LoginService loginService;
 	
 	@GetMapping(path="signup")
 	public String signup(Model model) {
@@ -46,7 +50,10 @@ public class SignUpController {
 			return "user/signup";
 		}
 		
-		userService.signUp(userBuilder.build());
+		User user = userService.signUp(userBuilder.build());
+		if (user != null) {
+			loginService.login(user);
+		}
 		
 		return "redirect:/";
 	}
