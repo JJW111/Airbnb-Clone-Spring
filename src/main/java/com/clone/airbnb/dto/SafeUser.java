@@ -1,8 +1,10 @@
 package com.clone.airbnb.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import com.clone.airbnb.admin.entity.FileProjectionFrame;
+import com.clone.airbnb.entity.Room;
 import com.clone.airbnb.entity.enu.Currency;
 import com.clone.airbnb.entity.enu.Gender;
 import com.clone.airbnb.entity.enu.Language;
@@ -27,4 +29,5 @@ public interface SafeUser {
 	Boolean		getEmailVerified();
 	String		getEmailSecret();
 	LoginMethod getLoginMethod();
+	List<Room>  getRooms();
 }

@@ -57,7 +57,7 @@ import lombok.ToString;
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(callSuper = false, of = { "id", "username" })
+@EqualsAndHashCode(callSuper = false, of = { "username" })
 public class User extends DateTimeModel implements AdminFormEntity<User> {
 	
     @Id
@@ -160,6 +160,10 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
     @Enumerated(EnumType.STRING)
     private LoginMethod loginMethod;
     
+    
+    
+    @OneToMany(mappedBy = "host", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Room> rooms;
     
     
     

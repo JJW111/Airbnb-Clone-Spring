@@ -2,7 +2,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="w-1/4 mb-10 px-2 overflow-hidden">
 	<a href="/detail?id=${room.id}">
-	    <div class="w-full h-64 bg-cover bg-center rounded-lg mb-3" style="background-image: url(${room.photos.get(0).path});"></div>
+		<c:if test="${not empty room.photos and not room.photos.isEmpty()}">
+	    	<div class="w-full h-64 bg-cover bg-center rounded-lg mb-3" style="background-image: url(${room.photos.get(0).path});"></div>
+	    </c:if>
+	    <c:if test="${empty room.photos or room.photos.isEmpty()}">
+	    	<div class="w-full h-64 bg-gray-400 rounded-lg mb-3"></div>
+	    </c:if>
+	    
 	    <div class="flex justify-between mb-2 truncate">
 	        <div class="w-4/5 overflow-hidden flex">
 	
