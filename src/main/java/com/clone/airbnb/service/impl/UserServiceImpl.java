@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.entity.User;
 import com.clone.airbnb.repository.UserRepository;
 import com.clone.airbnb.service.FileService;
@@ -69,4 +70,17 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 	
+	
+	
+	@Override
+	public SafeUser profile(String username) {
+		return userRepository.findByUsername(username, SafeUser.class);
+	}
+	
+	
+	
+	@Override
+	public SafeUser profile(int id) {
+		return userRepository.findById(id, SafeUser.class);
+	}
 }

@@ -112,16 +112,14 @@ public class SecurityConfig {
 		        .and()
 		        .formLogin()
 	          	.loginPage("/login")
-	          	.loginProcessingUrl("/auth/session") // 컨트롤러에 해당 url 매핑이 존재하지 않음. /auth/** 가 접근 불가라 인식하지 못하는 것 같음
+	          	.loginProcessingUrl("/auth/session")
 	          	.failureHandler(authAuthenticationFailureHandler)
-	          	.defaultSuccessUrl("/")
+	          	.defaultSuccessUrl("/session_success")
 	          	.usernameParameter("username")
 	          	.passwordParameter("password")
 	          	
 	          	.and()
 	          	.logout()
-	          	.logoutUrl("/auth/session_out")		// 컨트롤러에 해당 url 매핑이 존재하지 않음. /auth/** 가 접근 불가라 인식하지 못하는 것 같음
-	          	.logoutSuccessUrl("/")
 	          	.deleteCookies("JSESSIONID")
 	          	
 	          	.and()

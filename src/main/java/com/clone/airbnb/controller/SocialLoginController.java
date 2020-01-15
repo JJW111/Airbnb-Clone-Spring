@@ -13,6 +13,7 @@ import com.clone.airbnb.exception.GithubPrivateEmailException;
 import com.clone.airbnb.exception.KakaoEmailDoesNotExistException;
 import com.clone.airbnb.exception.KakaoException;
 import com.clone.airbnb.messages.Messages;
+import com.clone.airbnb.messages.Tags;
 import com.clone.airbnb.service.GithubLoginService;
 import com.clone.airbnb.service.KakaoLoginService;
 import com.clone.airbnb.service.LoginService;
@@ -47,7 +48,7 @@ public class SocialLoginController {
 				loginService.login(user);
 			}
 			redirectAttr.addFlashAttribute("messages", Messages.builder()
-					.add("Welcome back " + user.getFirstName())
+					.add("Welcome back " + user.getFirstName(), Tags.SUCCESS)
 					.build());
 			return "redirect:/";
 		} catch (GithubPrivateEmailException e) {
@@ -81,7 +82,7 @@ public class SocialLoginController {
 				loginService.login(user);
 			}
 			redirectAttr.addFlashAttribute("messages", Messages.builder()
-					.add("Welcome back " + user.getFirstName())
+					.add("Welcome back " + user.getFirstName(), Tags.SUCCESS)
 					.build());
 			return "redirect:/";
 		} catch (KakaoEmailDoesNotExistException e) {

@@ -88,7 +88,7 @@
 												<%-- 필드 타입이 CHECK_BOX 일 경우 체크박스 --%>
 												<c:when test="${fieldTypeName eq 'CHECK_BOX' }">
 													<div class="custom-control custom-checkbox">
-													    <form:checkbox path="${formName}" class="custom-control-input" />
+													    <form:checkbox path="${formName}" class="custom-control-input" id="${formName}"/>
 													    <label class="custom-control-label" for="${formName}"></label>
 													    <form:errors path="${formName}" class="error" />
 													</div>

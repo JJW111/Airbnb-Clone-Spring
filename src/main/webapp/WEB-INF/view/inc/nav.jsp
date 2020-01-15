@@ -3,7 +3,8 @@
 <ul class="flex items-center text-sm font-medium h-full">
 	
 	<sec:authorize access="isAuthenticated()">
-    	<li class="nav_link"><a href="/auth/session_out">Logout</a></li>
+		<li class="nav_link"><a href="/user/profile">Profile</a></li>
+    	<li class="nav_link"><a href="/session_out">Log out</a></li>
 	</sec:authorize>
 	<sec:authorize access="isAnonymous()">
 	    <li class="nav_link"><a href="/login">Log in</a></li>

@@ -7,7 +7,7 @@
     <div class="container flex flex-wrap mb-10">
         <c:forEach var="room" items="${rooms}">
         	<c:if test="${room.photos ne null and room.photos.size() ne 0}">
-        		<%@ include file="inc/room_card.jsp" %>
+        		<%@ include file="../mixins/room_card.jsp" %>
         	</c:if>
         </c:forEach>
     </div>
