@@ -83,4 +83,21 @@ public class UserServiceImpl implements UserService {
 	public SafeUser profile(int id) {
 		return userRepository.findById(id, SafeUser.class);
 	}
+	
+	
+	
+	@Override
+	public void update(User user) {
+		User origin = userRepository.findById(user.getId()).get();
+		user = user.toBuilder()
+			.setAvatar(origin.getAvatar())
+			.setEmailSecret(origin.getEmailSecret())
+			.setEmailVerified(origin.getEmailVerified())
+			.setLoginMethod(origin.getLoginMethod())
+			.setSuperhost(origin.getSuperhost())
+			.build();
+		origin.override(user);
+		userRepository.save(origin);
+	}
+	
 }

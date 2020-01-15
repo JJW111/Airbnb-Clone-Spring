@@ -34,7 +34,7 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
 			throw new BadCredentialsException("Username: " + name + ", password is incorect!");
 		}
 		
-		return new UsernamePasswordAuthenticationToken(name, password, details.getAuthorities());
+		return new UsernamePasswordAuthenticationToken(details, null, details.getAuthorities());
 	}
 
 	

@@ -12,7 +12,7 @@
 <%@include file="../inc/top.jsp" %>
 
 <div class="container lg:w-5/12 md:w-1/2 xl:w-1/4 mx-auto my-10 flex flex-col items-center border p-6 border-gray-400">
-
+	
 	<%@include file="inc/social_login.jsp" %>
 	
 	<form:form action="/signup" method="post" modelAttribute="user" enctype="multipart/form-data" class="w-full">

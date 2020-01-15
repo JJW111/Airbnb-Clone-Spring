@@ -3,6 +3,7 @@ package com.clone.airbnb.controller;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,10 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.clone.airbnb.entity.User;
-import com.clone.airbnb.entity.enu.Currency;
-import com.clone.airbnb.entity.enu.Gender;
-import com.clone.airbnb.entity.enu.Language;
 import com.clone.airbnb.messages.Messages;
+import com.clone.airbnb.security.AuthenticationSystem;
 import com.clone.airbnb.service.LoginService;
 import com.clone.airbnb.service.UserService;
 
@@ -29,26 +28,23 @@ public class SignUpController {
 	@Autowired
 	private LoginService loginService;
 	
+	@PreAuthorize("!isAuthenticated()")
 	@GetMapping(path="signup")
 	public String signup(Model model) {
+		if (AuthenticationSystem.isLogged()) return "redirect:/";
 		model.addAttribute("user", User.builder());
-		model.addAttribute("genderValues", Gender.values());
-		model.addAttribute("languageValues", Language.values());
-		model.addAttribute("currencyValues", Currency.values());
 		return "user/signup";
 	}
 	
 	
 	@PostMapping(path="signup")
-	public String processSignup(RedirectAttributes redirectAttr, @Valid @ModelAttribute("user") User.Builder userBuilder, BindingResult result, Model model) {
+	public String processSignup(Model model, RedirectAttributes redirectAttr, @Valid @ModelAttribute("user") User.Builder userBuilder, BindingResult result) {
+		if (AuthenticationSystem.isLogged()) return "redirect:/";
 		if (!userBuilder.getRetypePassword().equals(userBuilder.getPassword())) {
 			result.rejectValue("retypePassword", "password.retype.notequal");
 		}
 
 		if(result.hasErrors()){
-			model.addAttribute("genderValues", Gender.values());
-			model.addAttribute("languageValues", Language.values());
-			model.addAttribute("currencyValues", Currency.values());
 			return "user/signup";
 		}
 		

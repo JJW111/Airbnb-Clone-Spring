@@ -169,7 +169,7 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
     
     /******** Builder 클래스 선언 **********/
     @Getter
-    @ToString(exclude = { "password" })
+    @ToString(exclude = { "password", "retypePassword" })
     public static class Builder {
         private Integer id;
         @NotBlank
@@ -183,10 +183,10 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
         private String password;
         private String retypePassword;
         @NotBlank
-        @Size(max = 30)
+        @Size(max = 30, message = "Up to 30 characters")
         private String firstName;
         @NotBlank
-        @Size(max = 30)
+        @Size(max = 30, message = "Up to 30 characters")
         private String lastName;
         private MultipartFile avatarFile;
         private Avatar avatar;
@@ -417,8 +417,6 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
     	if (s.getCurrency()			!= null) this.setCurrency(s.getCurrency());
     	if (s.getSuperhost() 		!= null) this.setSuperhost(s.getSuperhost());
     	if (s.getRole()				!= null) this.setRole(s.getRole());
-    	if (s.getEmailVerified() 	!= null) this.setEmailVerified(s.getEmailVerified());
-    	if (s.getEmailSecret()		!= null) this.setEmailSecret(s.getEmailSecret());
     	if (s.getLoginMethod()		!= null) this.setLoginMethod(s.getLoginMethod());
     	if (s.getCreated()			!= null) this.setCreated(s.getCreated()); 
     	if (s.getUpdated()			!= null) this.setUpdated(s.getUpdated());

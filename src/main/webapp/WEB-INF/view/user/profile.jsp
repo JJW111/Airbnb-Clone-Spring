@@ -29,7 +29,7 @@
 		<sec:authorize access="isAuthenticated()"> 
 			<sec:authentication var="principal" property="principal" />
 			<c:if test="${principal.username eq user.username}">
-	    		<a href="#" class="btn-link">Edit Profile</a>
+	    		<a href="/auth/update-profile" class="btn-link">Edit Profile</a>
 	    	</c:if>
 	    </sec:authorize>
 		
@@ -37,11 +37,8 @@
 	<c:if test="${not empty user.rooms and not user.rooms.isEmpty()}">
 		<div class="container mx-auto pb-10 flex flex-col items-center">
 		    <h3>${user.firstName}'s Rooms</h3>
-		    <div class="container flex flex-wrap mb-10">
-		    	<c:forEach var="room" items="${user.rooms}">
-		        	<%@ include file="../mixins/room_card.jsp" %>
-		    	</c:forEach>
-		    </div>
+		    <c:set var="rooms" value="${user.rooms}" />
+		    <%@include file="../mixins/rooms.jsp" %>
 		</div>
 	</c:if>
 	

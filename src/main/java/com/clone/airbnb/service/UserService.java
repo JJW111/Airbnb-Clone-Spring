@@ -11,4 +11,5 @@ public interface UserService extends UserDetailsService {
 	boolean verify(String secret);
 	SafeUser profile(String username);
 	SafeUser profile(int id);
+	void update(User user);
 }

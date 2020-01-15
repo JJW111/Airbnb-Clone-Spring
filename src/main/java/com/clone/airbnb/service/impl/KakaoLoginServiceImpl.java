@@ -126,6 +126,7 @@ public class KakaoLoginServiceImpl implements KakaoLoginService {
 					.setFirstName(profile.getNickname())
 					.setLastName("#")
 					.setEmailSecret("")
+					.setEmailVerified(true)
 					.setLoginMethod(LoginMethod.KAKAO)
 					.build();
 				userRepository.save(user);

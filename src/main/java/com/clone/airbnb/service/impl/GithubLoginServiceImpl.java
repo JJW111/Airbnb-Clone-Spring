@@ -107,6 +107,7 @@ public class GithubLoginServiceImpl implements GithubLoginService {
 						.setFirstName(profile.getName())
 						.setLastName("#")
 						.setEmailSecret("")
+						.setEmailVerified(true)
 						.setLoginMethod(LoginMethod.GITHUB)
 						.build();
 					userRepository.save(user);

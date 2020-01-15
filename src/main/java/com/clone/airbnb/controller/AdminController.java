@@ -209,7 +209,7 @@ public class AdminController {
 		
 		if (!hasErrors) {
 			adminWebPage.update(entityName, entityObj, id);
-			return "redirect:/admin/entity?e=" + entityName + "&page=" + pageable.getOffset() + "&size=" + pageable.getPageSize();
+			return "redirect:/admin/entity?e=" + entityName + "&page=" + pageable.getPageNumber() + "&size=" + pageable.getPageSize();
 		} else {
 			BindingResult r = secondResult == null ? result : secondResult;
 			model.addAttribute("id", id);
