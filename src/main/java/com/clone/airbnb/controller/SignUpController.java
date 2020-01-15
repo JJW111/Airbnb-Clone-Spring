@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.clone.airbnb.entity.User;
 import com.clone.airbnb.entity.enu.Currency;
 import com.clone.airbnb.entity.enu.Gender;
 import com.clone.airbnb.entity.enu.Language;
+import com.clone.airbnb.messages.Messages;
 import com.clone.airbnb.service.LoginService;
 import com.clone.airbnb.service.UserService;
 
@@ -38,7 +40,7 @@ public class SignUpController {
 	
 	
 	@PostMapping(path="signup")
-	public String processSignup(@Valid @ModelAttribute("user") User.Builder userBuilder, BindingResult result, Model model) {
+	public String processSignup(RedirectAttributes redirectAttr, @Valid @ModelAttribute("user") User.Builder userBuilder, BindingResult result, Model model) {
 		if (!userBuilder.getRetypePassword().equals(userBuilder.getPassword())) {
 			result.rejectValue("retypePassword", "password.retype.notequal");
 		}
@@ -54,6 +56,10 @@ public class SignUpController {
 		if (user != null) {
 			loginService.login(user);
 		}
+		
+		redirectAttr.addFlashAttribute("messages", Messages.builder()
+				.add("Welcome " + user.getFirstName())
+				.build());
 		
 		return "redirect:/";
 	}

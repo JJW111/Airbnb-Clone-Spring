@@ -196,15 +196,15 @@ public class AdminController {
 		Object builderObj = ReflectionInvocator.invoke(entities.get(entityName).getEntityClass(), "builder");
 		
 		BindingResult result = adminWebPage.bind(entityName, builderObj, webRequest);
-		
-		boolean hasErrors = result.hasErrors();
+
+		boolean hasErrors = adminWebPage.hasErrorsForUpdate(entityName, result);
 		Object entityObj = null;
 		BindingResult secondResult = null;
-
+		
 		if (!hasErrors) {
 			entityObj = ReflectionInvocator.invoke(result.getTarget(), "build");
 			secondResult = adminWebPage.validate(entityName, entityObj, webRequest);
-			hasErrors = secondResult.hasErrors();
+			hasErrors = adminWebPage.hasErrorsForUpdate(entityName, secondResult);
 		}
 		
 		if (!hasErrors) {

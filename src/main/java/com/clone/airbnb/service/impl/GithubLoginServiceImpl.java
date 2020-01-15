@@ -58,7 +58,7 @@ public class GithubLoginServiceImpl implements GithubLoginService {
 					+ "&code=" + code
 					);
 		} catch (URISyntaxException e) {
-			throw new GithubException(e);
+			throw new GithubException("Can't get Authorization code");
 		}
 		
 		HttpHeaders headers = new HttpHeaders();
@@ -76,7 +76,7 @@ public class GithubLoginServiceImpl implements GithubLoginService {
 			try {
 				profileRequestUri = new URI("https://api.github.com/user");
 			} catch (URISyntaxException e) {
-				throw new GithubException(e);
+				throw new GithubException("Can't get your profile");
 			}
 			HttpHeaders profileRequestHeaders = new HttpHeaders();
 			profileRequestHeaders.set("Authorization", "token " + token.getAccess_token());
@@ -89,34 +89,30 @@ public class GithubLoginServiceImpl implements GithubLoginService {
 			
 			GithubProfile profile = profileResult.getBody();
 			
-			if (profile.getLogin() != null) {
-				if (profile.getEmail() == null) {
-					throw new GithubPrivateEmailException("Github 계정의 Email이 private 입니다. [username: " + profile.getLogin() + "]");
-				} else {
-					SafeUser safeUser =  userRepository.findByUsername(profile.getEmail(), SafeUser.class);
-					User user = null;
-					
-					if (safeUser != null) {
-						if (safeUser.getLoginMethod() != LoginMethod.GITHUB) {
-							throw new GithubException("User " + safeUser.getUsername() + " 가 Github 계정이 아닙니다.");
-						}
-						user = User.toUser(safeUser);
-					} else {
-						user = User.builder()
-							.setUsername(profile.getEmail())
-							.setPassword("none")
-							.setFirstName("#")
-							.setLastName(profile.getName())
-							.setEmailSecret("")
-							.setLoginMethod(LoginMethod.GITHUB)
-							.build();
-						userRepository.save(user);
-					}
-					
-					return user;
-				}
+			if (profile.getEmail() == null) {
+				throw new GithubPrivateEmailException("Github 계정의 Email이 private 입니다.");
 			} else {
-				throw new GithubException("username is null");
+				SafeUser safeUser =  userRepository.findByUsername(profile.getEmail(), SafeUser.class);
+				User user = null;
+				
+				if (safeUser != null) {
+					if (safeUser.getLoginMethod() != LoginMethod.GITHUB) {
+						throw new GithubException("Please login with: " + safeUser.getLoginMethod());
+					}
+					user = User.toUser(safeUser);
+				} else {
+					user = User.builder()
+						.setUsername(profile.getEmail())
+						.setPassword("none")
+						.setFirstName(profile.getName())
+						.setLastName("#")
+						.setEmailSecret("")
+						.setLoginMethod(LoginMethod.GITHUB)
+						.build();
+					userRepository.save(user);
+				}
+				
+				return user;
 			}
 		}
 	}

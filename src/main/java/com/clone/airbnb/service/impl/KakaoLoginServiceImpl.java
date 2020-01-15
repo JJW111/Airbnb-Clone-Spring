@@ -61,7 +61,7 @@ public class KakaoLoginServiceImpl implements KakaoLoginService {
 					+ "&code=" + code
 					);
 		} catch (URISyntaxException e) {
-			throw new KakaoException(e);
+			throw new KakaoException("Can't get Authorization code");
 		}
 		
 		HttpEntity<String> request = new HttpEntity<>(null);
@@ -78,7 +78,7 @@ public class KakaoLoginServiceImpl implements KakaoLoginService {
 		try {
 			profileUri = new URI("https://kapi.kakao.com/v2/user/me");
 		} catch (URISyntaxException e) {
-			throw new KakaoException(e);
+			throw new KakaoException("Can't get your profile");
 		}
 		
 		HttpHeaders profileRequestHeaders = new HttpHeaders();
@@ -91,7 +91,7 @@ public class KakaoLoginServiceImpl implements KakaoLoginService {
 		try {
 			profileResult = restTemplate.exchange(profileUri, HttpMethod.GET, profileRequest, String.class);
 		} catch (Exception e) {
-			throw new KakaoException(e);
+			throw new KakaoException("Can't get your profile");
 		}
 		
 		String profileBody = profileResult.getBody();
@@ -103,11 +103,11 @@ public class KakaoLoginServiceImpl implements KakaoLoginService {
 					.readerFor(KakaoProfile.class)
 					.readValue(profileBody);
 		} catch (JsonProcessingException e) {
-			throw new KakaoException(e);
+			throw new KakaoException("Can't get your profile");
 		}
 		
 		if (profile.getEmail() == null) {
-			throw new KakaoEmailDoesNotExistException("카카오 계정의 이메일이 존재하지 않습니다.");
+			throw new KakaoEmailDoesNotExistException("카카오 계정의 이메일이 존재하지 않습니다. 이메일을 등록하여 주십시오.");
 		}
 		
 		SafeUser safeUser = userRepository.findByUsername(profile.getEmail(), SafeUser.class);
@@ -116,15 +116,15 @@ public class KakaoLoginServiceImpl implements KakaoLoginService {
 		
 		if (safeUser != null) {
 			if (safeUser.getLoginMethod() != LoginMethod.KAKAO) {
-				throw new KakaoException("\"User " + safeUser.getUsername() + " 가 Kakao 계정이 아닙니다.");
+				throw new KakaoException("Please login with: " + safeUser.getLoginMethod());
 			}
 			user = User.toUser(safeUser);
 		} else {
 			user = User.builder()
 					.setUsername(profile.getEmail())
 					.setPassword("none")
-					.setFirstName("#")
-					.setLastName(profile.getNickname())
+					.setFirstName(profile.getNickname())
+					.setLastName("#")
 					.setEmailSecret("")
 					.setLoginMethod(LoginMethod.KAKAO)
 					.build();
