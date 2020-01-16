@@ -11,7 +11,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.messages.RedirectMessageSystem;
-import com.clone.airbnb.messages.Tags;
 import com.clone.airbnb.security.AuthenticationSystem;
 import com.clone.airbnb.service.UserService;
 
@@ -64,7 +63,7 @@ public class SignInController {
 
 		SafeUser user = userService.profile(username);
 		RedirectMessageSystem.builder(redirectAttr)
-			.add("환영합니다 " + user.getFirstName() + "님", Tags.SUCCESS)
+			.success("환영합니다 " + user.getFirstName() + "님")
 			.build();
 		return "redirect:/";
 	}
@@ -73,7 +72,7 @@ public class SignInController {
 	@GetMapping(path="/session_out")
 	public String logout(RedirectAttributes redirectAttr) {
 		RedirectMessageSystem.builder(redirectAttr)
-			.add("다음에 만나요", Tags.INFO)
+			.info("다음에 만나요")
 			.build();
 		SecurityContextHolder.clearContext();
 		return "redirect:/";

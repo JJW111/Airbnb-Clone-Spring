@@ -54,12 +54,12 @@ public class SocialLoginController {
 			return "redirect:/session_success";
 		} catch (GithubPrivateEmailException e) {
 			RedirectMessageSystem.builder(redirectAttr)
-				.add(e.getMessage())
+				.error(e.getMessage())
 				.build();
 			return "redirect:/login";
 		} catch (GithubException e) {
 			RedirectMessageSystem.builder(redirectAttr)
-				.add(e.getMessage())
+				.error(e.getMessage())
 				.build();
 			return "redirect:/login";
 		}
@@ -87,12 +87,12 @@ public class SocialLoginController {
 			return "redirect:/session_success";
 		} catch (KakaoEmailDoesNotExistException e) {
 			RedirectMessageSystem.builder(redirectAttr)
-				.add(e.getMessage())
+				.error(e.getMessage())
 				.build();
 			return "redirect:/login";
 		} catch (KakaoException e) {
 			RedirectMessageSystem.builder(redirectAttr)
-				.add(e.getMessage())
+				.error(e.getMessage())
 				.build();
 			return "redirect:/login";
 		}

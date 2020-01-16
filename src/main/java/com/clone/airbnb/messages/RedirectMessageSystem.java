@@ -11,15 +11,31 @@ public class RedirectMessageSystem {
 		private RedirectAttributes redirectAttr;
 		private Messages.Builder messages = Messages.builder();
 		
-		public Builder add(String text) {
-			messages.add(new Message(text));
+		public Builder error(String text) {
+			messages.add(new Message(text, Tags.ERROR));
 			return this;
 		}
 		
-		public Builder add(String text, Tags tags) {
-			messages.add(new Message(text, tags));
+		public Builder debug(String text) {
+			messages.add(new Message(text, Tags.DEBUG));
 			return this;
 		}
+		
+		public Builder info(String text) {
+			messages.add(new Message(text, Tags.INFO));
+			return this;
+		}
+		
+		public Builder warning(String text) {
+			messages.add(new Message(text, Tags.WARNING));
+			return this;
+		}
+		
+		public Builder success(String text) {
+			messages.add(new Message(text, Tags.SUCCESS));
+			return this;
+		}
+		
 		
 		public void build() {
 			new RedirectMessageSystem(this);

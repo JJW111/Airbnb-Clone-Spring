@@ -19,7 +19,6 @@ import com.clone.airbnb.dto.PasswordChange;
 import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.entity.User;
 import com.clone.airbnb.messages.RedirectMessageSystem;
-import com.clone.airbnb.messages.Tags;
 import com.clone.airbnb.security.AuthenticationSystem;
 import com.clone.airbnb.service.UserService;
 
@@ -47,7 +46,7 @@ public class AuthController {
 			return "user/update_profile";
 		} else {
 			RedirectMessageSystem.builder(redirectAttr)
-				.add("프로필 변경을 위해 로그인하여 주십시오")
+				.error("프로필 변경을 위해 로그인하여 주십시오")
 				.build();
 			return "redirect:/user/profile";
 		}
@@ -65,7 +64,7 @@ public class AuthController {
 		userService.update(userBuilder.build());
 		
 		RedirectMessageSystem.builder(redirectAttr)
-			.add("프로필을 업데이트 하였습니다", Tags.SUCCESS)
+			.success("프로필을 업데이트 하였습니다")
 			.build();
 		
 		return "redirect:/user/profile";
@@ -106,7 +105,7 @@ public class AuthController {
 		userService.changePassowrd(principal.getName(), passwordChange);
 		
 		RedirectMessageSystem.builder(redirectAttr)
-			.add("비밀번호 변경 완료", Tags.SUCCESS)
+			.success("비밀번호 변경 완료")
 			.build();
 		
 		return "redirect:/user/profile";

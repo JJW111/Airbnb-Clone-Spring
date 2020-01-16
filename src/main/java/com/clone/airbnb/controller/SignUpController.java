@@ -60,7 +60,7 @@ public class SignUpController {
 		}
 		
 		RedirectMessageSystem.builder(redirectAttr)
-			.add("Welcome " + user.getFirstName())
+			.success("환영합니다 " + user.getFirstName() + "님")
 			.build();
 		
 		return "redirect:/";

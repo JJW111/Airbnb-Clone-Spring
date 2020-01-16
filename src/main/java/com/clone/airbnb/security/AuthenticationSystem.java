@@ -63,7 +63,7 @@ public class AuthenticationSystem {
 	public static boolean loggedOutOnly(RedirectAttributes redirectAttr) {
 		if (AuthenticationSystem.isLogged()) {
 			RedirectMessageSystem.builder(redirectAttr)
-				.add("이미 로그인 하였습니다.")
+				.error("이미 로그인 하였습니다.")
 				.build();
 			return false;
 		}
@@ -75,7 +75,7 @@ public class AuthenticationSystem {
 	public boolean notLoggedSocial(RedirectAttributes redirectAttr) {
 		if (!isLoggedWithEmailUser()) {
 			RedirectMessageSystem.builder(redirectAttr)
-				.add("소셜 로그인으로 접속한 경우 비밀번호 변경이 불가합니다.")
+				.error("소셜 로그인으로 접속한 경우 비밀번호 변경이 불가합니다.")
 				.build();
 			return false;
 		}
