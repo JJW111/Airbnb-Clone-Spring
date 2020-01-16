@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.messages.Messages;
+import com.clone.airbnb.service.RoomService;
 import com.clone.airbnb.service.UserService;
 
 @Controller
@@ -20,7 +21,7 @@ public class UserController {
 	
 	@Autowired
 	private UserService userService;
-
+	
 	@GetMapping(path="/profile")
 	public String profile(Principal principal, RedirectAttributes redirectAttr, Model model, @RequestParam(required = false, name = "id") Integer id) {
 		SafeUser user = null;

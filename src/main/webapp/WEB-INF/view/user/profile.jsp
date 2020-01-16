@@ -34,10 +34,10 @@
 	    </sec:authorize>
 		
 	</div>
-	<c:if test="${not empty user.rooms and not user.rooms.isEmpty()}">
+    <c:set var="rooms" value="${user.rooms}" />
+	<c:if test="${not empty rooms and not rooms.isEmpty()}">
 		<div class="container mx-auto pb-10 flex flex-col items-center">
 		    <h3>${user.firstName}'s Rooms</h3>
-		    <c:set var="rooms" value="${user.rooms}" />
 		    <%@include file="../mixins/rooms.jsp" %>
 		</div>
 	</c:if>

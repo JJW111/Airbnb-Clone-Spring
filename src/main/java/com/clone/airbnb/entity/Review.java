@@ -1,5 +1,7 @@
 package com.clone.airbnb.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,6 +25,7 @@ import com.clone.airbnb.admin.form.annotation.JoinOneForm;
 import com.clone.airbnb.admin.form.annotation.JoinOneTextForm;
 import com.clone.airbnb.admin.form.annotation.TextAreaForm;
 import com.clone.airbnb.dto.SafeUser;
+import com.clone.airbnb.entity.sup.DateTimeModel;
 import com.clone.airbnb.repository.UserRepository;
 
 import lombok.AccessLevel;
@@ -38,7 +41,7 @@ import lombok.ToString;
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Review implements AdminFormEntity<Review> {
+public class Review extends DateTimeModel implements AdminFormEntity<Review> {
 	
 	@Id
     @GeneratedValue
@@ -142,6 +145,8 @@ public class Review implements AdminFormEntity<Review> {
 		private SafeUser user;
 		@NotNull(message = "룸이 존재하지 않습니다.")
 		private Room room;
+		private Date created;
+        private Date updated;
 		
 		
 		
@@ -214,6 +219,18 @@ public class Review implements AdminFormEntity<Review> {
 		}
 		
 		
+		public Builder setCreated(Date created) {
+			this.created = created;
+			return this;
+		}
+		
+		
+		
+		public Builder setUpdated(Date updated) {
+			this.updated = updated;
+			return this;
+		}
+		
 		
 		public Review build() {
 			return new Review(this);
@@ -240,6 +257,8 @@ public class Review implements AdminFormEntity<Review> {
 		this.setValue(builder.getValue());
 		this.setUser(User.toUser(builder.getUser()));
 		this.setRoom(builder.getRoom());
+		this.setCreated(builder.getCreated());
+		this.setUpdated(builder.getUpdated());
 	}
 	
 
@@ -256,6 +275,8 @@ public class Review implements AdminFormEntity<Review> {
 			.setCheckIn(this.getCheckIn())
 			.setValue(this.getValue())
 			.setRoom(this.getRoom())
+			.setCreated(this.getCreated())
+			.setUpdated(this.getUpdated())
 			.build();
 		review.setUser(this.getUser());
 		
@@ -275,6 +296,8 @@ public class Review implements AdminFormEntity<Review> {
 		if (t.getValue()			!= null) this.setValue(t.getValue());
 		if (t.getUser()				!= null) this.setUser(t.getUser());
 		if (t.getRoom()				!= null) this.setRoom(t.getRoom());
+		if (t.getCreated()			!= null) this.setCreated(t.getCreated()); 
+    	if (t.getUpdated()			!= null) this.setUpdated(t.getUpdated());
 	}
 	
 }

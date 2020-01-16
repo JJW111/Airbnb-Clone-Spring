@@ -8,6 +8,8 @@ import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.entity.Review;
@@ -38,6 +40,8 @@ class ReviewCreation {
 	Faker faker = new Faker(new Locale("en"));
 	
 	@Test
+	@Transactional
+	@Rollback(false)
 	void contextLoads() throws ParseException {
 		
 		List<SafeUser> users = new ArrayList<>();

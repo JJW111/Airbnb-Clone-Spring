@@ -155,7 +155,7 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 	
 	
 	@JoinOneForm(blank = false, field = "username", repository = UserRepository.class, defaultOption = "------ Select User ------")
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(referencedColumnName = "id", nullable = false)
 	private User host;
 	
@@ -170,7 +170,7 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 	
 	
 	
-	@OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "room", cascade = CascadeType.REMOVE)
 	private List<Review> reviews;
 	
 	
@@ -225,6 +225,18 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 		}
 		this.getPhotos().clear();
 		this.getPhotos().addAll(photos);
+	}
+	
+	
+	
+	
+	private void setReviews(List<Review> reviews) {
+		if (reviews == null) return;
+		if (this.getReviews() == null) {
+			this.reviews = new ArrayList<>();
+		}
+		this.getReviews().clear();
+		this.getReviews().addAll(reviews);
 	}
 	
 	

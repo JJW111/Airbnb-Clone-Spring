@@ -11,6 +11,8 @@ import java.util.Random;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.clone.airbnb.common.Common;
 import com.clone.airbnb.dto.SafeUser;
@@ -58,6 +60,8 @@ class RoomCreation {
 	Faker faker = new Faker(new Locale("en"));
 	
 	@Test
+	@Transactional
+	@Rollback(false)
 	void contextLoads() throws ParseException {
 		
 		Calendar c = Calendar.getInstance();
@@ -134,7 +138,6 @@ class RoomCreation {
 			}
 			
 			
-			
 			Room room = Room.builder()
 					.setName(faker.address().fullAddress())
 					.setDescription(WordUtils.limit(faker.lorem().paragraph(), 100))
@@ -143,9 +146,9 @@ class RoomCreation {
 					.setCountry(faker.address().countryCode())
 					.setPrice(faker.number().numberBetween(30, 1000))
 					.setGuests(faker.number().numberBetween(0, 20))
-					.setBeds(faker.number().numberBetween(0, 8))
-					.setBedrooms(faker.number().numberBetween(0, 5))
-					.setBaths(faker.number().numberBetween(0, 3))
+					.setBeds(faker.number().numberBetween(1, 8))
+					.setBedrooms(faker.number().numberBetween(1, 5))
+					.setBaths(faker.number().numberBetween(1, 3))
 					.setCheckIn(new Date())
 					.setCheckOut(faker.date().between(new Date(), checkOutEndDate))
 					.setInstantBook(faker.bool().bool())

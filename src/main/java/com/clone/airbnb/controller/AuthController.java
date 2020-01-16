@@ -42,6 +42,7 @@ public class AuthController {
 		
 		if (username != null) {
 			SafeUser user = userService.profile(username);
+			
 			model.addAttribute("user", user);
 			return "user/update_profile";
 		} else {

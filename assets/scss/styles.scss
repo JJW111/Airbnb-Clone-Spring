@@ -38,7 +38,7 @@ textarea {
 }
 
 select {
-  height: 70px;
+  height: 50px;
 }
 
 form {
@@ -51,9 +51,6 @@ form {
           @apply border-gray-600;
         }
       }
-    }
-    .error {
-      @apply text-red-700 font-medium text-sm;
     }
   }
 }
@@ -91,6 +88,21 @@ form {
   &.warning {
     @apply bg-yellow-400;
   }
+}
+
+.border-section {
+  @apply border-b border-gray-400 pb-8 mt-8;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 10px;
+  justify-items: center;
+}
+
+.cal-number {
+  @apply w-full text-center rounded p-1 cursor-pointer;
 }
 
 @tailwind utilities;

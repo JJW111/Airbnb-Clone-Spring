@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.clone.airbnb.admin.entity.AdminFormEntity;
+import com.clone.airbnb.admin.entity.FileProjectionFrame;
 import com.clone.airbnb.admin.form.annotation.CheckBoxForm;
 import com.clone.airbnb.admin.form.annotation.DateForm;
 import com.clone.airbnb.admin.form.annotation.EntityForm;
@@ -172,12 +173,13 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
     
     private void setRooms(List<Room> rooms) {
 		if (rooms == null) return;
-		if (this.getRooms() == null) {
+		if (this.rooms == null) {
 			this.rooms = new ArrayList<>();
 		}
-		this.getRooms().clear();
-		this.getRooms().addAll(rooms);
+		this.rooms.clear();
+		this.rooms.addAll(rooms);
 	}
+    
     
     
     
@@ -508,7 +510,6 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
 			.setUpdated(safeUser.getUpdated())
 			.build();
     }
-    
     
     
     

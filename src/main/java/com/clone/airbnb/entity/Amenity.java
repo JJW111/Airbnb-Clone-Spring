@@ -25,7 +25,7 @@ import lombok.ToString;
 @EntityForm
 @Entity
 @Table(name = "amenity")
-@ToString(exclude = "rooms")
+@ToString(exclude = "rooms", callSuper = true)
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
