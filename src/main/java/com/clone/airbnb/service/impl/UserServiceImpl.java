@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.clone.airbnb.dto.PasswordChange;
 import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.entity.User;
-import com.clone.airbnb.exception.UserDoesNotExistsException;
 import com.clone.airbnb.repository.UserRepository;
 import com.clone.airbnb.service.FileService;
 import com.clone.airbnb.service.MailService;
@@ -41,10 +40,6 @@ public class UserServiceImpl implements UserService {
 	public User signUp(User user) {
 		// 메일 발송 처리를 한다.
 		userRepository.save(user);
-		
-		if (user.getAvatar() != null) {
-			fileService.save(user.getAvatar());
-		}
 		
 		String subject = "Verify Airbnb Account";
 		String text = "To Verify Account click <a href='http://localhost:8081/user/verify/" + user.getEmailSecret() + "'>here</a>";
@@ -111,11 +106,7 @@ public class UserServiceImpl implements UserService {
 	public boolean matches(String username, PasswordChange passwordChange) {
 		String dbPassword = userRepository.password(username);
 
-		if (dbPassword == null) {
-			throw new UserDoesNotExistsException("유저가 존재하지 않습니다.");
-		}
-		
-		if (!passwordEncoder.matches(passwordChange.getOriginPassword(), dbPassword)) {
+		if (!passwordEncoder.matches(passwordChange.getOldPassword(), dbPassword)) {
 			return false;
 		}
 		
@@ -126,10 +117,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void changePassowrd(String username, PasswordChange passwordChange) {
 		User user = userRepository.findByUsername(username);
-		
-		if (user == null) {
-			throw new UserDoesNotExistsException("유저가 존재하지 않습니다.");
-		}
 		
 		User changed = user.toBuilder()
 			.setPassword(passwordChange.getPassword())

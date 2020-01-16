@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.clone.airbnb.dto.SafeUser;
-import com.clone.airbnb.messages.Messages;
+import com.clone.airbnb.messages.RedirectMessageSystem;
 import com.clone.airbnb.messages.Tags;
 import com.clone.airbnb.security.AuthenticationSystem;
 import com.clone.airbnb.service.UserService;
@@ -25,15 +25,21 @@ public class SignInController {
 	
 	
 	@GetMapping(path="/login")
-	public String login() {
-		if (AuthenticationSystem.isLogged()) return "redirect:/";
+	public String login(RedirectAttributes redirectAttr) {
+		if (!AuthenticationSystem.loggedOutOnly(redirectAttr)) {
+			return "redirect:/";
+		}
+		
 		return "user/login";
 	}
 	
 	
 	@GetMapping(path="/admin_login")
-	public String adminLogin() {
-		if (AuthenticationSystem.isLogged()) return "redirect:/";
+	public String adminLogin(RedirectAttributes redirectAttr) {
+		if (!AuthenticationSystem.loggedOutOnly(redirectAttr)) {
+			return "redirect:/";
+		}
+		
 		return "admin/login";
 	}
 	
@@ -57,18 +63,18 @@ public class SignInController {
 		String username = principal.getName();
 
 		SafeUser user = userService.profile(username);
-		redirectAttr.addFlashAttribute("messages", Messages.builder()
-				.add("Welcome back " + user.getFirstName(), Tags.SUCCESS)
-				.build());
+		RedirectMessageSystem.builder(redirectAttr)
+			.add("환영합니다 " + user.getFirstName() + "님", Tags.SUCCESS)
+			.build();
 		return "redirect:/";
 	}
 	
 	
 	@GetMapping(path="/session_out")
 	public String logout(RedirectAttributes redirectAttr) {
-		redirectAttr.addFlashAttribute("messages", Messages.builder()
-				.add("See you laster", Tags.INFO)
-				.build());
+		RedirectMessageSystem.builder(redirectAttr)
+			.add("다음에 만나요", Tags.INFO)
+			.build();
 		SecurityContextHolder.clearContext();
 		return "redirect:/";
 	}

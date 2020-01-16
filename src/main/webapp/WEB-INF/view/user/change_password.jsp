@@ -15,10 +15,10 @@
 	<div class="container lg:w-5/12 md:w-1/2 xl:w-1/4 mx-auto my-10 flex flex-col items-center border p-6 border-gray-400">
 		
 		<form:form method="post" modelAttribute="passwordChange" class="w-full">
-			<spring:bind path="originPassword">
+			<spring:bind path="oldPassword">
 				<div class="input ${status.error ? 'has_error' : ''}">
-					<form:password path="originPassword" required="true" placeholder="Origin Password" />
-					<form:errors path="originPassword" class="error" />
+					<form:password path="oldPassword" required="true" placeholder="Old Password" />
+					<form:errors path="oldPassword" class="error" />
 				</div>
 			</spring:bind>
 							

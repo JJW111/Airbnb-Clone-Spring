@@ -18,8 +18,7 @@ import com.clone.airbnb.admin.AdminWebPage;
 import com.clone.airbnb.dto.PasswordChange;
 import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.entity.User;
-import com.clone.airbnb.exception.UserDoesNotExistsException;
-import com.clone.airbnb.messages.Messages;
+import com.clone.airbnb.messages.RedirectMessageSystem;
 import com.clone.airbnb.messages.Tags;
 import com.clone.airbnb.security.AuthenticationSystem;
 import com.clone.airbnb.service.UserService;
@@ -47,9 +46,9 @@ public class AuthController {
 			model.addAttribute("user", user);
 			return "user/update_profile";
 		} else {
-			redirectAttr.addFlashAttribute("messages", Messages.builder()
-					.add("Please login to update profile")
-					.build());
+			RedirectMessageSystem.builder(redirectAttr)
+				.add("프로필 변경을 위해 로그인하여 주십시오")
+				.build();
 			return "redirect:/user/profile";
 		}
 	}
@@ -65,9 +64,9 @@ public class AuthController {
 		
 		userService.update(userBuilder.build());
 		
-		redirectAttr.addFlashAttribute("messages", Messages.builder()
-				.add("Complete update profile", Tags.SUCCESS)
-				.build());
+		RedirectMessageSystem.builder(redirectAttr)
+			.add("프로필을 업데이트 하였습니다", Tags.SUCCESS)
+			.build();
 		
 		return "redirect:/user/profile";
 	}
@@ -75,10 +74,7 @@ public class AuthController {
 	
 	@GetMapping(path = "/change-password")
 	public String changePassword(Model model, RedirectAttributes redirectAttr) {
-		if (!authSystem.isLoggedWithEmailUser()) {
-			redirectAttr.addFlashAttribute("messages", Messages.builder()
-					.add("소셜 로그인으로 접속한 경우 비밀번호 변경이 불가합니다.")
-					.build());
+		if (!authSystem.notLoggedSocial(redirectAttr)) {
 			return "redirect:/user/profile";
 		}
 		
@@ -90,38 +86,28 @@ public class AuthController {
 	@PostMapping(path = "/change-password")
 	public String updatePassword(Principal principal, @Valid @ModelAttribute("passwordChange") PasswordChange passwordChange, BindingResult result, 
 			Model model, RedirectAttributes redirectAttr) {
-		if (!authSystem.isLoggedWithEmailUser()) {
-			redirectAttr.addFlashAttribute("messages", Messages.builder()
-					.add("소셜 로그인으로 접속한 경우 비밀번호 변경이 불가합니다.")
-					.build());
+		if (!authSystem.notLoggedSocial(redirectAttr)) {
 			return "redirect:/user/profile";
 		}
 		
 		
-		try {
-			if (!userService.matches(principal.getName(), passwordChange)) {
-				result.rejectValue("originPassword", "password.origin.notmatches");
-			}
-			
-			if (!passwordChange.getRetypePassword().equals(passwordChange.getPassword())) {
-				result.rejectValue("retypePassword", "password.retype.notequal");
-			}
-			
-			if (result.hasErrors()) {
-				return "user/change_password";
-			}
-	
-			userService.changePassowrd(principal.getName(), passwordChange);
-		} catch (UserDoesNotExistsException e) {
-			redirectAttr.addFlashAttribute("messages", Messages.builder()
-					.add("Error occurs! Try again!")
-					.build());
-			return "redirect:/user/profile";
+		if (!userService.matches(principal.getName(), passwordChange)) {
+			result.rejectValue("oldPassword", "password.origin.notmatches");
 		}
 		
-		redirectAttr.addFlashAttribute("messages", Messages.builder()
-				.add("Complete change password", Tags.SUCCESS)
-				.build());
+		if (!passwordChange.getRetypePassword().equals(passwordChange.getPassword())) {
+			result.rejectValue("retypePassword", "password.retype.notequal");
+		}
+		
+		if (result.hasErrors()) {
+			return "user/change_password";
+		}
+
+		userService.changePassowrd(principal.getName(), passwordChange);
+		
+		RedirectMessageSystem.builder(redirectAttr)
+			.add("비밀번호 변경 완료", Tags.SUCCESS)
+			.build();
 		
 		return "redirect:/user/profile";
 	}

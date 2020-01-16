@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PasswordChange {
-	private String originPassword;
+	private String oldPassword;
 	@NotBlank(message = "")
 	@Size(min = 8, max = 30, message = "")
 	@Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "영문자로 시작하여 8자 이상이어야 합니다.")

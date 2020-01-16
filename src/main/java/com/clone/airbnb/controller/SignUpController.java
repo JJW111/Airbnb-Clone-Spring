@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.clone.airbnb.entity.User;
-import com.clone.airbnb.messages.Messages;
+import com.clone.airbnb.messages.RedirectMessageSystem;
 import com.clone.airbnb.security.AuthenticationSystem;
 import com.clone.airbnb.service.LoginService;
 import com.clone.airbnb.service.UserService;
@@ -30,8 +30,11 @@ public class SignUpController {
 	
 	@PreAuthorize("!isAuthenticated()")
 	@GetMapping(path="signup")
-	public String signup(Model model) {
-		if (AuthenticationSystem.isLogged()) return "redirect:/";
+	public String signup(Model model, RedirectAttributes redirectAttr) {
+		if (!AuthenticationSystem.loggedOutOnly(redirectAttr)) {
+			return "redirect:/";
+		}
+		
 		model.addAttribute("user", User.builder());
 		return "user/signup";
 	}
@@ -39,7 +42,10 @@ public class SignUpController {
 	
 	@PostMapping(path="signup")
 	public String processSignup(Model model, RedirectAttributes redirectAttr, @Valid @ModelAttribute("user") User.Builder userBuilder, BindingResult result) {
-		if (AuthenticationSystem.isLogged()) return "redirect:/";
+		if (!AuthenticationSystem.loggedOutOnly(redirectAttr)) {
+			return "redirect:/";
+		}
+		
 		if (!userBuilder.getRetypePassword().equals(userBuilder.getPassword())) {
 			result.rejectValue("retypePassword", "password.retype.notequal");
 		}
@@ -53,9 +59,9 @@ public class SignUpController {
 			loginService.login(user);
 		}
 		
-		redirectAttr.addFlashAttribute("messages", Messages.builder()
-				.add("Welcome " + user.getFirstName())
-				.build());
+		RedirectMessageSystem.builder(redirectAttr)
+			.add("Welcome " + user.getFirstName())
+			.build();
 		
 		return "redirect:/";
 	}

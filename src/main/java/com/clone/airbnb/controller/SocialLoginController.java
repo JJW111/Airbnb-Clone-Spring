@@ -12,8 +12,8 @@ import com.clone.airbnb.exception.GithubException;
 import com.clone.airbnb.exception.GithubPrivateEmailException;
 import com.clone.airbnb.exception.KakaoEmailDoesNotExistException;
 import com.clone.airbnb.exception.KakaoException;
-import com.clone.airbnb.messages.Messages;
-import com.clone.airbnb.messages.Tags;
+import com.clone.airbnb.messages.RedirectMessageSystem;
+import com.clone.airbnb.security.AuthenticationSystem;
 import com.clone.airbnb.service.GithubLoginService;
 import com.clone.airbnb.service.KakaoLoginService;
 import com.clone.airbnb.service.LoginService;
@@ -34,7 +34,11 @@ public class SocialLoginController {
 	
 	
 	@GetMapping(path="/github")
-	public String githubLogin() {
+	public String githubLogin(RedirectAttributes redirectAttr) {
+		if (!AuthenticationSystem.loggedOutOnly(redirectAttr)) {
+			return "redirect:/";
+		}
+		
 		return "redirect:" + ghService.identityUrl();
 	}
 	
@@ -47,21 +51,16 @@ public class SocialLoginController {
 			if (user != null) {
 				loginService.login(user);
 			}
-			redirectAttr.addFlashAttribute("messages", Messages.builder()
-					.add("Welcome back " + user.getFirstName(), Tags.SUCCESS)
-					.build());
-			return "redirect:/";
+			return "redirect:/session_success";
 		} catch (GithubPrivateEmailException e) {
-			e.printStackTrace();
-			redirectAttr.addFlashAttribute("messages", Messages.builder()
-					.add(e.getMessage())
-					.build());
+			RedirectMessageSystem.builder(redirectAttr)
+				.add(e.getMessage())
+				.build();
 			return "redirect:/login";
 		} catch (GithubException e) {
-			e.printStackTrace();
-			redirectAttr.addFlashAttribute("messages", Messages.builder()
-					.add(e.getMessage())
-					.build());
+			RedirectMessageSystem.builder(redirectAttr)
+				.add(e.getMessage())
+				.build();
 			return "redirect:/login";
 		}
 	}
@@ -69,7 +68,11 @@ public class SocialLoginController {
 	
 
 	@GetMapping(path="/kakao")
-	public String kakaoLogin() {
+	public String kakaoLogin(RedirectAttributes redirectAttr) {
+		if (!AuthenticationSystem.loggedOutOnly(redirectAttr)) {
+			return "redirect:/";
+		}
+		
 		return "redirect:" + kakaoService.identityUrl();
 	}
 	
@@ -81,21 +84,16 @@ public class SocialLoginController {
 			if (user != null) {
 				loginService.login(user);
 			}
-			redirectAttr.addFlashAttribute("messages", Messages.builder()
-					.add("Welcome back " + user.getFirstName(), Tags.SUCCESS)
-					.build());
-			return "redirect:/";
+			return "redirect:/session_success";
 		} catch (KakaoEmailDoesNotExistException e) {
-			e.printStackTrace();
-			redirectAttr.addFlashAttribute("messages", Messages.builder()
-					.add(e.getMessage())
-					.build());
+			RedirectMessageSystem.builder(redirectAttr)
+				.add(e.getMessage())
+				.build();
 			return "redirect:/login";
 		} catch (KakaoException e) {
-			e.printStackTrace();
-			redirectAttr.addFlashAttribute("messages", Messages.builder()
-					.add(e.getMessage())
-					.build());
+			RedirectMessageSystem.builder(redirectAttr)
+				.add(e.getMessage())
+				.build();
 			return "redirect:/login";
 		}
 	}
