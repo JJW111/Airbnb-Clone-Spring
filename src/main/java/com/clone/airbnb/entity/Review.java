@@ -19,9 +19,11 @@ import org.hibernate.validator.constraints.Length;
 import com.clone.airbnb.admin.entity.AdminFormEntity;
 import com.clone.airbnb.admin.form.annotation.EntityForm;
 import com.clone.airbnb.admin.form.annotation.IntegerForm;
+import com.clone.airbnb.admin.form.annotation.JoinOneForm;
 import com.clone.airbnb.admin.form.annotation.JoinOneTextForm;
 import com.clone.airbnb.admin.form.annotation.TextAreaForm;
 import com.clone.airbnb.dto.SafeUser;
+import com.clone.airbnb.repository.UserRepository;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -79,7 +81,7 @@ public class Review implements AdminFormEntity<Review> {
 	private Integer value;
 	
 	
-	@JoinOneTextForm(field = "username", placeholder = "이용자 USERNAME 입력", blank = false)
+	@JoinOneForm(blank = false, field = "username", repository = UserRepository.class, defaultOption = "------ Select User ------")
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(referencedColumnName = "id", nullable = false)
 	private User user;

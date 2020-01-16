@@ -9,7 +9,7 @@ import com.clone.airbnb.admin.schema.vo.FieldSet;
 import com.clone.airbnb.entity.Review;
 import com.clone.airbnb.formatter.NullFormatter;
 import com.clone.airbnb.formatter.RoomFormatter;
-import com.clone.airbnb.formatter.SafeUserByUsernameFormatter;
+import com.clone.airbnb.formatter.SafeUserFormatter;
 import com.clone.airbnb.utils.ValidatorUtils;
 
 
@@ -69,7 +69,7 @@ public class ReviewDef implements AdminEntityConfiguration {
 			throw new NullPointerException("WebRequestDataBinder 가 null 입니다.");
 		}
 		
-		binder.addCustomFormatter(new SafeUserByUsernameFormatter(), "user");
+		binder.addCustomFormatter(new SafeUserFormatter(), "user");
 		binder.addCustomFormatter(new RoomFormatter(), "room");
 		binder.addCustomFormatter(new NullFormatter());
 		binder.setValidator(ValidatorUtils.getValidator());

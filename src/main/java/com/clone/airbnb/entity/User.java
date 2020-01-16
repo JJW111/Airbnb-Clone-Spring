@@ -1,5 +1,6 @@
 package com.clone.airbnb.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -162,8 +163,21 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
     
     
     
-    @OneToMany(mappedBy = "host", fetch = FetchType.LAZY, orphanRemoval = true)
+    
+    @OneToMany(mappedBy = "host", fetch = FetchType.LAZY)
     private List<Room> rooms;
+    
+    
+    
+    
+    private void setRooms(List<Room> rooms) {
+		if (rooms == null) return;
+		if (this.getRooms() == null) {
+			this.rooms = new ArrayList<>();
+		}
+		this.getRooms().clear();
+		this.getRooms().addAll(rooms);
+	}
     
     
     
@@ -205,10 +219,9 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
         private String emailSecret = UUID.randomUUID().toString().replace("-", "");
         @NotNull
         private LoginMethod loginMethod = LoginMethod.EMAIL;
+        private List<Room> rooms;
         private Date created;
         private Date updated;
-
-        
         
         
         
@@ -331,6 +344,20 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
 		
 		
 		
+		public Builder setLoginMethod(LoginMethod loginMethod) {
+			this.loginMethod = loginMethod;
+			return this;
+		}
+		
+		
+		
+		public Builder setRooms(List<Room> rooms) {
+			this.rooms = rooms;
+			return this;
+		}
+		
+		
+		
 		public Builder setCreated(Date created) {
 			this.created = created;
 			return this;
@@ -340,13 +367,6 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
 		
 		public Builder setUpdated(Date updated) {
 			this.updated = updated;
-			return this;
-		}
-		
-		
-		
-		public Builder setLoginMethod(LoginMethod loginMethod) {
-			this.loginMethod = loginMethod;
 			return this;
 		}
 		
@@ -396,6 +416,7 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
 		this.setEmailVerified(builder.getEmailVerified());
 		this.setEmailSecret(builder.getEmailSecret());
 		this.setLoginMethod(builder.getLoginMethod());
+		this.setRooms(builder.getRooms());
 		this.setCreated(builder.getCreated());
 		this.setUpdated(builder.getUpdated());
     }
@@ -418,6 +439,7 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
     	if (s.getSuperhost() 		!= null) this.setSuperhost(s.getSuperhost());
     	if (s.getRole()				!= null) this.setRole(s.getRole());
     	if (s.getLoginMethod()		!= null) this.setLoginMethod(s.getLoginMethod());
+    	if (s.getRooms()			!= null) this.setRooms(s.getRooms());
     	if (s.getCreated()			!= null) this.setCreated(s.getCreated()); 
     	if (s.getUpdated()			!= null) this.setUpdated(s.getUpdated());
     	this.setAvatar(s.getAvatar()); /* 이미지 삭제를 위해  null 체크하지 않음 */
@@ -454,6 +476,7 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
     			.setEmailVerified(this.getEmailVerified())
     			.setEmailSecret(this.getEmailSecret())
     			.setLoginMethod(this.getLoginMethod())
+    			.setRooms(this.getRooms())
     			.setCreated(this.getCreated())
     			.setUpdated(this.getUpdated());
     }
@@ -480,6 +503,7 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
 			.setEmailVerified(safeUser.getEmailVerified())
 			.setEmailSecret(safeUser.getEmailSecret())
 			.setLoginMethod(safeUser.getLoginMethod())
+			.setRooms(safeUser.getRooms())
 			.setCreated(safeUser.getCreated())
 			.setUpdated(safeUser.getUpdated())
 			.build();

@@ -3,10 +3,13 @@ package com.clone.airbnb.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.clone.airbnb.dto.PasswordChange;
 import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.entity.User;
+import com.clone.airbnb.exception.UserDoesNotExistsException;
 import com.clone.airbnb.repository.UserRepository;
 import com.clone.airbnb.service.FileService;
 import com.clone.airbnb.service.MailService;
@@ -23,6 +26,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private FileService fileService;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -98,6 +104,38 @@ public class UserServiceImpl implements UserService {
 			.build();
 		origin.override(user);
 		userRepository.save(origin);
+	}
+	
+	
+	@Override
+	public boolean matches(String username, PasswordChange passwordChange) {
+		String dbPassword = userRepository.password(username);
+
+		if (dbPassword == null) {
+			throw new UserDoesNotExistsException("유저가 존재하지 않습니다.");
+		}
+		
+		if (!passwordEncoder.matches(passwordChange.getOriginPassword(), dbPassword)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	
+	@Override
+	public void changePassowrd(String username, PasswordChange passwordChange) {
+		User user = userRepository.findByUsername(username);
+		
+		if (user == null) {
+			throw new UserDoesNotExistsException("유저가 존재하지 않습니다.");
+		}
+		
+		User changed = user.toBuilder()
+			.setPassword(passwordChange.getPassword())
+			.build();
+		
+		userRepository.save(changed);
 	}
 	
 }

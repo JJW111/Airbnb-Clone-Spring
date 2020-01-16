@@ -1,29 +1,28 @@
 package com.clone.airbnb.formatter;
 
 import java.text.ParseException;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-
 import org.springframework.format.Formatter;
 
 import com.clone.airbnb.entity.Facility;
 import com.clone.airbnb.repository.FacilityRepository;
 import com.clone.airbnb.utils.BeanUtils;
 
-public class FacilityFormatter implements Formatter<Set<Facility>>{
+public class FacilityFormatter implements Formatter<List<Facility>>{
 
 	@Override
-	public String print(Set<Facility> object, Locale locale) {
+	public String print(List<Facility> object, Locale locale) {
 		return object.toString();
 	}
 
 	@Override
-	public Set<Facility> parse(String text, Locale locale) throws ParseException {
-		Set<Facility> facilities = null;
+	public List<Facility> parse(String text, Locale locale) throws ParseException {
+		List<Facility> facilities = null;
 		
 		if (!text.trim().isEmpty()) {
-			facilities = new HashSet<>();
+			facilities = new ArrayList<>();
 			
 			for (String s : text.split(",")) {
 				Integer id = Integer.valueOf(s);

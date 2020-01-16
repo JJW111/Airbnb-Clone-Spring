@@ -46,5 +46,8 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 	@Query( value = "select new com.clone.airbnb.dto.Authentication(u.username, u.password, u.role) from User u where u.username = :username" )
 	Authentication authenticate(@Param("username") String username);
 	
+	@Query( value = "select u.password from User u where u.username = :username" )
+	String password(@Param("username") String username);
+	
 }
 
