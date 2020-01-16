@@ -35,8 +35,8 @@ public class SocialLoginController {
 	
 	@GetMapping(path="/github")
 	public String githubLogin(RedirectAttributes redirectAttr) {
-		if (!AuthenticationSystem.loggedOutOnly(redirectAttr)) {
-			return "redirect:/";
+		if (!AuthenticationSystem.loggedOutOnly()) {
+			return "redirect:/logout_only";
 		}
 		
 		return "redirect:" + ghService.identityUrl();
@@ -69,8 +69,8 @@ public class SocialLoginController {
 
 	@GetMapping(path="/kakao")
 	public String kakaoLogin(RedirectAttributes redirectAttr) {
-		if (!AuthenticationSystem.loggedOutOnly(redirectAttr)) {
-			return "redirect:/";
+		if (!AuthenticationSystem.loggedOutOnly()) {
+			return "redirect:/logout_only";
 		}
 		
 		return "redirect:" + kakaoService.identityUrl();

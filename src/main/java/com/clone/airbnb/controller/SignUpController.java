@@ -30,9 +30,9 @@ public class SignUpController {
 	
 	@PreAuthorize("!isAuthenticated()")
 	@GetMapping(path="signup")
-	public String signup(Model model, RedirectAttributes redirectAttr) {
-		if (!AuthenticationSystem.loggedOutOnly(redirectAttr)) {
-			return "redirect:/";
+	public String signup(Model model) {
+		if (!AuthenticationSystem.loggedOutOnly()) {
+			return "redirect:/logout_only";
 		}
 		
 		model.addAttribute("user", User.builder());
@@ -42,8 +42,8 @@ public class SignUpController {
 	
 	@PostMapping(path="signup")
 	public String processSignup(Model model, RedirectAttributes redirectAttr, @Valid @ModelAttribute("user") User.Builder userBuilder, BindingResult result) {
-		if (!AuthenticationSystem.loggedOutOnly(redirectAttr)) {
-			return "redirect:/";
+		if (!AuthenticationSystem.loggedOutOnly()) {
+			return "redirect:/logout_only";
 		}
 		
 		if (!userBuilder.getRetypePassword().equals(userBuilder.getPassword())) {

@@ -73,8 +73,8 @@ public class AuthController {
 	
 	@GetMapping(path = "/change-password")
 	public String changePassword(Model model, RedirectAttributes redirectAttr) {
-		if (!authSystem.notLoggedSocial(redirectAttr)) {
-			return "redirect:/user/profile";
+		if (!authSystem.notLoggedSocial()) {
+			return "redirect:/change_password_email_only";
 		}
 		
 		model.addAttribute("passwordChange", new PasswordChange());
@@ -85,8 +85,8 @@ public class AuthController {
 	@PostMapping(path = "/change-password")
 	public String updatePassword(Principal principal, @Valid @ModelAttribute("passwordChange") PasswordChange passwordChange, BindingResult result, 
 			Model model, RedirectAttributes redirectAttr) {
-		if (!authSystem.notLoggedSocial(redirectAttr)) {
-			return "redirect:/user/profile";
+		if (!authSystem.notLoggedSocial()) {
+			return "redirect:/change_password_email_only";
 		}
 		
 		

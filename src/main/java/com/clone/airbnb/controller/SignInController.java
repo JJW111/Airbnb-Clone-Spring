@@ -25,8 +25,8 @@ public class SignInController {
 	
 	@GetMapping(path="/login")
 	public String login(RedirectAttributes redirectAttr) {
-		if (!AuthenticationSystem.loggedOutOnly(redirectAttr)) {
-			return "redirect:/";
+		if (!AuthenticationSystem.loggedOutOnly()) {
+			return "redirect:/logout_only";
 		}
 		
 		return "user/login";
@@ -35,8 +35,8 @@ public class SignInController {
 	
 	@GetMapping(path="/admin_login")
 	public String adminLogin(RedirectAttributes redirectAttr) {
-		if (!AuthenticationSystem.loggedOutOnly(redirectAttr)) {
-			return "redirect:/";
+		if (!AuthenticationSystem.loggedOutOnly()) {
+			return "redirect:/logout_only";
 		}
 		
 		return "admin/login";

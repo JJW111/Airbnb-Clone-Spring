@@ -281,7 +281,9 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
     	private List<Facility> facilities;
     	private List<Amenity> amenities;
     	private List<HouseRule> houseRules;
+    	@Size(min = 5, max = 10, message = "방 사진은 5개 이상 10개 이하여야 합니다.")
     	private List<RoomPhoto> photos;
+    	@Size(min = 5, max = 10, message = "방 사진은 5개 이상 10개 이하여야 합니다.")
     	private List<MultipartFile> photoFiles;
     	private Date created;
         private Date updated;
