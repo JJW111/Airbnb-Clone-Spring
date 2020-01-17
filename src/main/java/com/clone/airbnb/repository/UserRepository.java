@@ -37,12 +37,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 	<T> Page<T> findAllBy(Pageable pageable, Class<T> clazz);
 
 	
-	<T> Page<T> findByOrderByIdAsc(Pageable pageable, Class<T> clazz);
-	
-	
-	<T> Page<T> findByOrderByIdDesc(Pageable pageable, Class<T> clazz);
-	
-	
 	@Query( value = "select new com.clone.airbnb.dto.Authentication(u.username, u.password, u.role) from User u where u.username = :username" )
 	Authentication authenticate(@Param("username") String username);
 	

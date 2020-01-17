@@ -15,6 +15,7 @@ import com.clone.airbnb.entity.enu.LoginMethod;
 import com.clone.airbnb.entity.enu.Role;
 import com.clone.airbnb.repository.UserRepository;
 import com.clone.airbnb.utils.DummyUtils;
+import com.clone.airbnb.utils.WordUtils;
 import com.github.javafaker.Faker;
 
 
@@ -47,6 +48,7 @@ class UserCreation {
 							.setFirstName(faker.name().firstName())
 							.setLastName(faker.name().lastName())
 							.setBirthdate(faker.date().birthday())
+							.setBio(WordUtils.limit(faker.lorem().paragraph(), 50))
 							.setGender(DummyUtils.randomEnum(Gender.class))
 							.setLanguage(DummyUtils.randomEnum(Language.class))
 							.setCurrency(DummyUtils.randomEnum(Currency.class))

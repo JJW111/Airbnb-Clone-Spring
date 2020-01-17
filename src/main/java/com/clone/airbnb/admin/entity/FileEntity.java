@@ -9,7 +9,6 @@ import javax.persistence.Transient;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +19,6 @@ import lombok.ToString;
 @Setter(AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(exclude = { "file" })
-@EqualsAndHashCode(of = { "id" })
 public class FileEntity implements FileEntityFrame {
 	
 	@Id
@@ -55,6 +53,16 @@ public class FileEntity implements FileEntityFrame {
 			this.file = file;
 			this.originalFilename = file.getOriginalFilename();
 		}
+	}
+	
+	
+	
+	@Override
+	public boolean equals(Object obj) {
+		FileEntity f = (FileEntity) obj;
+		if (this.getId() == null || f.getId() == null) return false;
+		if (!this.getId().equals(f.getId())) return false;
+		return true;
 	}
 	
 }

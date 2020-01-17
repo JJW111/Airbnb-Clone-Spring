@@ -1,6 +1,5 @@
 package com.clone.airbnb.entity;
 
-
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -78,14 +77,19 @@ public class HouseRule extends AbstractItem implements AdminFormEntity<HouseRule
     	return new Builder();
     }
 	
+    
+    
+    public Builder toBuilder() {
+    	return builder()
+				.setId(this.getId())
+				.setName(this.getName());
+    }
+    
 	
 	
 	@Override
 	public HouseRule deepClone() {
-		return builder()
-				.setId(this.getId())
-				.setName(this.getName())
-				.build();
+		return this.toBuilder().build();
 	}
 
 	

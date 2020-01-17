@@ -2,9 +2,7 @@ package com.clone.airbnb.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.*;
@@ -41,6 +39,7 @@ import com.clone.airbnb.entity.enu.Role;
 import com.clone.airbnb.entity.file.Avatar;
 import com.clone.airbnb.entity.sup.DateTimeModel;
 import com.clone.airbnb.utils.BeanUtils;
+import com.clone.airbnb.utils.FileUtils;
 import com.clone.airbnb.utils.ValidUtils;
 import com.clone.airbnb.validator.annotation.UniqueUsername;
 
@@ -165,9 +164,8 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
     
     
     
-    @OneToMany(mappedBy = "host", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "host", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Room> rooms;
-    
     
     
     
@@ -384,14 +382,6 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
     
     
     
-    public static Builder builder() {
-    	return new Builder();
-    }
-    
-    
-    
-    
-    
     private User(Builder builder) {
     	this.setId(builder.getId());
 		this.setUsername(builder.getUsername());
@@ -426,35 +416,8 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
     
     
     
-    @Override
-    public void override(User s) {
-    	if (s.getId() 				!= null) this.setId(s.getId());
-    	if (s.getUsername()			!= null) this.setUsername(s.getUsername());
-    	if (s.getPassword()			!= null) this.setPassword(s.getPassword());
-    	if (s.getFirstName()		!= null) this.setFirstName(s.getFirstName());
-    	if (s.getLastName()			!= null) this.setLastName(s.getLastName());
-    	if (s.getBio() 				!= null) this.setBio(s.getBio());
-    	if (s.getBirthdate()		!= null) this.setBirthdate(s.getBirthdate());
-    	if (s.getGender() 			!= null) this.setGender(s.getGender());
-    	if (s.getLanguage()			!= null) this.setLanguage(s.getLanguage());
-    	if (s.getCurrency()			!= null) this.setCurrency(s.getCurrency());
-    	if (s.getSuperhost() 		!= null) this.setSuperhost(s.getSuperhost());
-    	if (s.getRole()				!= null) this.setRole(s.getRole());
-    	if (s.getLoginMethod()		!= null) this.setLoginMethod(s.getLoginMethod());
-    	if (s.getRooms()			!= null) this.setRooms(s.getRooms());
-    	if (s.getCreated()			!= null) this.setCreated(s.getCreated()); 
-    	if (s.getUpdated()			!= null) this.setUpdated(s.getUpdated());
-    	this.setAvatar(s.getAvatar()); /* 이미지 삭제를 위해  null 체크하지 않음 */
-    }
-    
-    
-    
-    
-    
-    
-    @Override
-    public User deepClone() {
-    	return this.toBuilder().build();
+    public static Builder builder() {
+    	return new Builder();
     }
     
     
@@ -481,7 +444,41 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
     			.setRooms(this.getRooms())
     			.setCreated(this.getCreated())
     			.setUpdated(this.getUpdated());
+    }    
+    
+    
+    
+    
+    @Override
+    public User deepClone() {
+    	return this.toBuilder().build();
     }
+    
+    
+    
+    
+    @Override
+    public void override(User s) {
+    	if (s.getId() 				!= null) this.setId(s.getId());
+    	if (s.getUsername()			!= null) this.setUsername(s.getUsername());
+    	if (s.getPassword()			!= null) this.setPassword(s.getPassword());
+    	if (s.getFirstName()		!= null) this.setFirstName(s.getFirstName());
+    	if (s.getLastName()			!= null) this.setLastName(s.getLastName());
+    	if (s.getBio() 				!= null) this.setBio(s.getBio());
+    	if (s.getBirthdate()		!= null) this.setBirthdate(s.getBirthdate());
+    	if (s.getGender() 			!= null) this.setGender(s.getGender());
+    	if (s.getLanguage()			!= null) this.setLanguage(s.getLanguage());
+    	if (s.getCurrency()			!= null) this.setCurrency(s.getCurrency());
+    	if (s.getSuperhost() 		!= null) this.setSuperhost(s.getSuperhost());
+    	if (s.getRole()				!= null) this.setRole(s.getRole());
+    	if (s.getLoginMethod()		!= null) this.setLoginMethod(s.getLoginMethod());
+    	if (s.getRooms()			!= null) this.setRooms(s.getRooms());
+    	if (s.getCreated()			!= null) this.setCreated(s.getCreated()); 
+    	if (s.getUpdated()			!= null) this.setUpdated(s.getUpdated());
+    	this.setAvatar(s.getAvatar()); /* 이미지 삭제를 위해  null 체크하지 않음 */
+    }
+    
+    
     
     
     
@@ -512,11 +509,11 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
     }
     
     
-    
-    public static Set<User> toUsers(Set<SafeUser> safeUsers) {
+
+    public static List<User> toUsers(List<SafeUser> safeUsers) {
     	if (safeUsers == null) return null;
     	
-    	Set<User> users = new HashSet<>();
+    	List<User> users = new ArrayList<>();
     	for (SafeUser u : safeUsers) {
     		users.add(toUser(u));
     	}
@@ -525,9 +522,152 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
     }
     
     
-    public static Set<User> toUsers(List<SafeUser> safeUsers) {
-    	if (safeUsers == null) return null;
-    	return toUsers(new HashSet<SafeUser>(safeUsers));
+    
+    public SafeUser toSafeUser() {
+    	User u = this;
+    	
+    	SafeUser safeUser = new SafeUser() {
+			
+			public String getUsername() {
+				return u.getUsername();
+			}
+			
+			public Date getUpdated() {
+				return u.getUpdated();
+			}
+			
+			public Boolean getSuperhost() {
+				return u.getSuperhost();
+			}
+			
+			public List<Room> getRooms() {
+				return u.getRooms();
+			}
+			
+			public Role getRole() {
+				return u.getRole();
+			}
+			
+			public LoginMethod getLoginMethod() {
+				return u.getLoginMethod();
+			}
+			
+			public String getLastName() {
+				return u.getLastName();
+			}
+			
+			public Language getLanguage() {
+				return u.getLanguage();
+			}
+			
+			public Integer getId() {
+				return u.getId();
+			}
+			
+			public Gender getGender() {
+				return u.getGender();
+			}
+			
+			public String getFirstName() {
+				return u.getFirstName();
+			}
+			
+			public Boolean getEmailVerified() {
+				return u.getEmailVerified();
+			}
+			
+			public String getEmailSecret() {
+				return u.getEmailSecret();
+			}
+			
+			public Currency getCurrency() {
+				return u.getCurrency();
+			}
+			
+			public Date getCreated() {
+				return u.getCreated();
+			}
+			
+			public Date getBirthdate() {
+				return u.getBirthdate();
+			}
+			
+			public String getBio() {
+				return u.getBio();
+			}
+			
+			public FileProjectionFrame getAvatar() {
+				return u.getAvatar();
+			}
+		};
+		
+		return safeUser;
+    }
+    
+    
+    
+    public static List<SafeUser> toSafeUsers(List<User> users) {
+    	if (users == null) return null;
+    	
+    	List<SafeUser> safeUsers = new ArrayList<>();
+    	for (User u : users) {
+    		safeUsers.add(u.toSafeUser());
+    	}
+    	
+    	return safeUsers;
+    }
+ 
+    
+    
+    @Override
+    public void beforeCreate() {
+    	/* Avatar */
+    	saveFiles(this);
+    }
+    
+    
+    
+    @Override
+    public void beforeDelete() {
+    	/* Avatar */
+    	deleteFiles(this);
+    	
+    	/* Rooms */
+    	if (ValidUtils.isValid(this.getRooms())) {
+    		this.getRooms().forEach(e -> {
+    			e.beforeDelete();
+    		});
+    	}
+    }
+    
+    
+    
+    @Override
+    public void beforeUpdate(Object old) {
+    	User oldUser = (User) old;
+
+    	if (saveFiles(this)) {
+    		deleteFiles(oldUser);
+    	}
+    }
+    
+    
+    
+    private boolean saveFiles(User newUser) {
+    	if (ValidUtils.isValid(newUser.getAvatar())) {
+    		if (ValidUtils.isValid(newUser.getAvatar().getFile())) {
+    			FileUtils.save(newUser.getAvatar().getFile(), newUser.getAvatar().getUploadPath());
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    
+    private void deleteFiles(User u) {
+    	if (ValidUtils.isValid(u.getAvatar())) {
+    		FileUtils.delete(u.getAvatar().getUploadPath());
+    	}
     }
     
 }

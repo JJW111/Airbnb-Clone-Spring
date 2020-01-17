@@ -76,15 +76,20 @@ public class Facility extends AbstractItem implements AdminFormEntity<Facility> 
     public static Builder builder() {
     	return new Builder();
     }
+    
+    
+    
+    public Builder toBuilder() {
+    	return builder()
+				.setId(this.getId())
+				.setName(this.getName());
+    }
 	
 	
 	
 	@Override
 	public Facility deepClone() {
-		return builder()
-				.setId(this.getId())
-				.setName(this.getName())
-				.build();
+		return this.toBuilder().build();
 	}
 
 	

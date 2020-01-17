@@ -11,7 +11,7 @@
 	<%-- Nav Map 선언 --%>
 	<c:set var="nav" value="<%=new java.util.LinkedHashMap<String, String>()%>" />
 	<c:set target="${nav}" property="${groupName}" value="${admin_group}?g=${groupName}"/>
-	<c:set target="${nav}" property="${entityName.alias}" value="${admin_entity}?e=${entityName.origin}&size=${size}"/>
+	<c:set target="${nav}" property="${entityName.alias}" value="${admin_entity}?e=${entityName.origin}"/>
 	<c:set target="${nav}" property="Delete" value=""/>
 	
 	<%@include file="inc/header.jsp" %>
@@ -19,13 +19,13 @@
 	<div class="container-fluid">
 		
 		<div class="mb-1 clearfix">
-			<a class="float-right" href="${admin_entity}?e=${entityName.origin}&page=${page}&size=${size}">Go Back</a>
+			<a class="float-right" href="${admin_entity}?e=${entityName.origin}&page=${page}">Go Back</a>
 		</div>
 		
 		Do you want to delete?
 		<a href="javascript:this.f.submit();">Yes, I want to delete.</a>
 		
-		<form action="${admin_entity}/delete?e=${entityName.origin}&page=${page}&size=${size}" name="f" method="post">
+		<form action="${admin_entity}/delete?e=${entityName.origin}&page=${page}" name="f" method="post">
 			<input type="hidden" name="id" value="${id}" />
 		</form>
 	</div> <!-- End Container -->

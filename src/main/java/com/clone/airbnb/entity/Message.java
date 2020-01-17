@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.validation.BindingResult;
 
 import com.clone.airbnb.admin.entity.AdminFormEntity;
 import com.clone.airbnb.admin.form.annotation.EntityForm;
@@ -55,7 +56,6 @@ public class Message implements AdminFormEntity<Message>{
 	@JoinOneForm(blank = false, field = "username", repository = UserRepository.class, defaultOption = "------ Select User ------")
 	@OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique =  false)
-	@NotNull(message = "해당 대화방에 참가한 유저를 선택하여 주십시오.")
 	private User user;
 	
 	
@@ -136,40 +136,42 @@ public class Message implements AdminFormEntity<Message>{
 	
 	
 	
+	private Message(Builder builder) {
+		this.setId(builder.getId());
+		this.setMessage(builder.getMessage());
+		this.setUser(User.toUser(builder.getUser()));
+		this.setConversation(builder.getConversation());
+	}
+	
+	
+	
 	public static Builder builder() {
 		return new Builder();
 	}
 	
 	
 	
-	private Message(Builder builder) {
-		this.setId(builder.getId());
-		this.setMessage(builder.getMessage());
-		if (builder.getUser() != null && builder.getConversation() != null) {
-			Conversation conversation = ((ConversationRepository) BeanUtils.getBean(ConversationRepository.class))
-					.findByIdAndParticipants_id(builder.getConversation().getId(), builder.getUser().getId());
-			
-			if (conversation != null) {
-				this.setUser(User.toUser(builder.getUser()));
-			}
+	public Builder toBuilder() {
+		SafeUser safeUser = null;
+		
+		if (this.getUser() != null) {
+			safeUser = this.getUser().toSafeUser();
 		}
-		this.setConversation(builder.getConversation());
-	}
-	
-
-
-	@Override
-	public Message deepClone() {
-		Message message = builder()
+		
+		return builder()
 				.setId(this.getId())
 				.setMessage(this.getMessage())
 				.setConversation(this.getConversation())
-				.build();
-		message.setUser(this.getUser());
-		
-		return message;
+				.setUser(safeUser);
 	}
-
+	
+	
+	
+	@Override
+	public Message deepClone() {
+		return this.toBuilder().build();
+	}
+	
 
 
 	@Override
@@ -178,6 +180,18 @@ public class Message implements AdminFormEntity<Message>{
 		if (t.getMessage()			!= null) this.setMessage(t.getMessage());
 		if (t.getUser()				!= null) this.setUser(t.getUser());
 		if (t.getConversation()		!= null) this.setConversation(t.getConversation());
+	}
+	
+	
+	
+	@Override
+	public void validate(BindingResult result) {
+		Conversation conversation = ((ConversationRepository) BeanUtils.getBean(ConversationRepository.class))
+				.findByIdAndParticipants_id(this.getConversation().getId(), this.getUser().getId());
+		
+		if (conversation == null) {
+			result.rejectValue("user", "유저가 대화방에 참가하지 않았습니다.");
+		}
 	}
 	
 }

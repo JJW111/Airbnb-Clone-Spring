@@ -3,6 +3,8 @@ package com.clone.airbnb.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,7 +21,6 @@ import com.clone.airbnb.admin.schema.vo.AdminEntity;
 import com.clone.airbnb.admin.schema.vo.Entities;
 import com.clone.airbnb.common.SquarePageBlock;
 import com.clone.airbnb.dto.SafeUser;
-import com.clone.airbnb.entity.User;
 import com.clone.airbnb.utils.ReflectionInvocator;
 
 @Controller
@@ -67,21 +68,21 @@ public class AdminController {
 	 * @return
 	 */
 	@GetMapping(path="/entity")
-	public ModelAndView entity(@RequestParam("e") String entityName, Pageable pageable, @RequestParam(name="orderBy", defaultValue = "id") String orderBy, @RequestParam(name="isAsc", defaultValue = "false") boolean isAsc) {
+	public ModelAndView entity(@RequestParam("e") String entityName, 
+			@PageableDefault(sort = "id", direction = Sort.Direction.DESC, value = 10) Pageable pageable) {
 		ModelAndView mv = new ModelAndView();
 		
 		Page<Object> page;
 		
 		if ("User".equals(entityName)) {
-			page = adminWebPage.findByOrderBy(entityName, orderBy, (isAsc ? "Asc" : "Desc"), pageable, SafeUser.class);
-			System.out.println(User.toUser((SafeUser) page.getContent().get(0)));
+			page = adminWebPage.findAllBy(entityName, pageable, SafeUser.class);
 		} else {
-			page = adminWebPage.findByOrderBy(entityName, orderBy, (isAsc ? "Asc" : "Desc"), pageable);
+			page = adminWebPage.findAll(entityName, pageable);
 		}
 		
 		
 		if (page.getTotalPages() > 0 && page.getNumber() + 1 > page.getTotalPages()) {
-			mv.setViewName("redirect:/admin/entity?e=" + entityName + "&page=" + (page.getTotalPages() - 1) + "&size=" + page.getSize());
+			mv.setViewName("redirect:/admin/entity?e=" + entityName + "&page=" + (page.getTotalPages() - 1));
 			return mv;
 		}
 		
@@ -132,27 +133,19 @@ public class AdminController {
 		
 		BindingResult result = adminWebPage.bind(entityName, builderObj, webRequest);
 		
-		boolean hasErrors = result.hasErrors();
-		Object entityObj = null;
-		BindingResult secondResult = null;
+		Object entityObj = ReflectionInvocator.invoke(result.getTarget(), "build");
+		ReflectionInvocator.invoke(entityObj, "validate", BindingResult.class, result);
 		
-		if (!hasErrors) {
-			entityObj = ReflectionInvocator.invoke(result.getTarget(), "build");
-			secondResult = adminWebPage.validate(entityName, entityObj, webRequest);
-			hasErrors = secondResult.hasErrors();
-		}
-		
-		if (!hasErrors) {
+		if (!result.hasErrors()) {
 			adminWebPage.save(entityName, entityObj);
-			return "redirect:/admin/entity?e=" + entityName + "&size=" + pageable.getPageSize();
+			return "redirect:/admin/entity?e=" + entityName;
 		} else {
-			BindingResult r = secondResult == null ? result : secondResult;
 			model.addAttribute("groupName", config.group());
 			model.addAttribute("entity", entities.get(entityName));
 			model.addAttribute("fieldSet", config.fieldSet());
 			model.addAttribute("reflectionInvocator", ReflectionInvocator.getInstance());
-			model.addAttribute(BindingResult.class.getName() + ".entityObj", r);
-			model.addAttribute("entityObj", r.getTarget());
+			model.addAttribute(BindingResult.class.getName() + ".entityObj", result);
+			model.addAttribute("entityObj", result.getTarget());
 			return "admin/add";
 		}
 		
@@ -167,13 +160,15 @@ public class AdminController {
 		AdminEntityConfiguration config =  adminWebPage.getAdminEntityProvider().getAdminDefinitionObject().getAdminEntity().get(entityName);
 		Entities entities = adminWebPage.getEntityProvider().getEntities();
 		
-		Object entityObj;
+		Object foundObj;
 		
 		if ("User".equals(entityName)) {
-			entityObj = adminWebPage.findById(entityName, id, SafeUser.class);
+			foundObj = adminWebPage.findById(entityName, id, SafeUser.class);
 		} else {
-			entityObj = adminWebPage.findById(entityName, id);
+			foundObj = adminWebPage.findById(entityName, id);
 		}
+		
+		Object entityObj = ReflectionInvocator.invoke(foundObj, "toBuilder");
 		
 		model.addAttribute("id", id);
 		model.addAttribute("groupName", config.group());
@@ -196,29 +191,21 @@ public class AdminController {
 		Object builderObj = ReflectionInvocator.invoke(entities.get(entityName).getEntityClass(), "builder");
 		
 		BindingResult result = adminWebPage.bind(entityName, builderObj, webRequest);
-
-		boolean hasErrors = adminWebPage.hasErrorsForUpdate(entityName, result);
-		Object entityObj = null;
-		BindingResult secondResult = null;
 		
-		if (!hasErrors) {
-			entityObj = ReflectionInvocator.invoke(result.getTarget(), "build");
-			secondResult = adminWebPage.validate(entityName, entityObj, webRequest);
-			hasErrors = adminWebPage.hasErrorsForUpdate(entityName, secondResult);
-		}
+		Object entityObj = ReflectionInvocator.invoke(result.getTarget(), "build");
+		ReflectionInvocator.invoke(entityObj, "validate", BindingResult.class, result);
 		
-		if (!hasErrors) {
+		if (!adminWebPage.hasErrorsForUpdate(entityName, result)) {
 			adminWebPage.update(entityName, entityObj, id);
-			return "redirect:/admin/entity?e=" + entityName + "&page=" + pageable.getPageNumber() + "&size=" + pageable.getPageSize();
+			return "redirect:/admin/entity?e=" + entityName + "&page=" + pageable.getPageNumber();
 		} else {
-			BindingResult r = secondResult == null ? result : secondResult;
 			model.addAttribute("id", id);
 			model.addAttribute("groupName", config.group());
 			model.addAttribute("entity", entities.get(entityName));
 			model.addAttribute("fieldSet", config.fieldSet());
 			model.addAttribute("reflectionInvocator", ReflectionInvocator.getInstance());
-			model.addAttribute(BindingResult.class.getName() + ".entityObj", r);
-			model.addAttribute("entityObj", r.getTarget());
+			model.addAttribute(BindingResult.class.getName() + ".entityObj", result);
+			model.addAttribute("entityObj", result.getTarget());
 			return "admin/update";
 		}
 		
@@ -234,7 +221,6 @@ public class AdminController {
 		Entities entities = adminWebPage.getEntityProvider().getEntities();
 		
 		model.addAttribute("page", pageable.getOffset());
-		model.addAttribute("size", pageable.getPageSize());
 		model.addAttribute("id", id);
 		model.addAttribute("groupName", config.group());
 		model.addAttribute("entityName", entities.get(entityName).getName());
@@ -248,7 +234,7 @@ public class AdminController {
 	@PostMapping(path="/entity/delete")
 	public String deleteProcess(Model model, @RequestParam("e") String entityName, @RequestParam("id") Integer id, Pageable pageable) {
 		adminWebPage.delete(entityName, id);
-		return "redirect:/admin/entity?e=" + entityName + "&page=" + pageable.getOffset() + "&size=" + pageable.getPageSize();
+		return "redirect:/admin/entity?e=" + entityName + "&page=" + pageable.getOffset();
 	}
 	
 }

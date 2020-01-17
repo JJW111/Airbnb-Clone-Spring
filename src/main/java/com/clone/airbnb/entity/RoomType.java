@@ -69,15 +69,20 @@ public class RoomType extends AbstractItem  implements AdminFormEntity<RoomType>
     public static Builder builder() {
     	return new Builder();
     }
+    
+    
+    
+    public Builder toBuilder() {
+    	return builder()
+				.setId(this.getId())
+				.setName(this.getName());
+    }
 	
 	
 	
 	@Override
 	public RoomType deepClone() {
-		return builder()
-				.setId(this.getId())
-				.setName(this.getName())
-				.build();
+		return this.toBuilder().build();
 	}
 
 	

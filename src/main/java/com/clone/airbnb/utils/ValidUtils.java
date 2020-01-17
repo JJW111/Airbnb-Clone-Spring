@@ -23,7 +23,7 @@ public class ValidUtils {
 	}
 	
 	public static boolean isValid(FileEntity f) {
-		return f.getOriginalFilename() != null && f.getPath() != null && f.getUploadPath() != null;
+		return f != null && f.getOriginalFilename() != null && f.getPath() != null && f.getUploadPath() != null;
 	}
 	
 }

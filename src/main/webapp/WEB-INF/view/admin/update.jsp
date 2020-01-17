@@ -14,7 +14,7 @@
 	<%-- Nav Map 선언 --%>
 	<c:set var="nav" value="<%=new java.util.LinkedHashMap<String, String>()%>" />
 	<c:set target="${nav}" property="${groupName}" value="${admin_group}?g=${groupName}"/>
-	<c:set target="${nav}" property="${entity.name.alias}" value="${admin_entity}?e=${entity.name.origin}&size=${param.size}"/>
+	<c:set target="${nav}" property="${entity.name.alias}" value="${admin_entity}?e=${entity.name.origin}"/>
 	<c:set target="${nav}" property="Update" value=""/>
 	
 	<%@include file="inc/header.jsp" %>
@@ -22,7 +22,7 @@
 	<div class="container-fluid">
 		
 		<div class="mb-1 clearfix">
-			<a class="float-right" href="${admin_entity}?e=${entity.name.origin}&page=${param.page}&size=${param.size}">Go Back</a>
+			<a class="float-right" href="${admin_entity}?e=${entity.name.origin}&page=${param.page}">Go Back</a>
 		</div>
 		
 		<div class="mb-5 clearfix">
@@ -34,7 +34,7 @@
 				<c:set var="enctype" value="application/x-www-form-urlencoded" />
 			</c:if>
 			
-			<form:form action="${admin_entity}/update?e=${entity.name.origin}&page=${param.page}&size=${param.size}&id=${id}" modelAttribute="entityObj" enctype="${enctype}" method="POST">
+			<form:form action="${admin_entity}/update?e=${entity.name.origin}&page=${param.page}&id=${id}" modelAttribute="entityObj" enctype="${enctype}" method="POST">
 
 				<c:forEach var="setName" items="${fieldSet.keySet()}" >
 					<c:set var="fieldList" value="${fieldSet.get(setName)}" />
@@ -267,7 +267,7 @@
 														    <div class="input-group-append">
 															      <span class="input-group-text" onclick="setFileToNull('${formName}', '${formInfo.labelText}'); removeFileHidden('${fileId}');"><i class="fas fa-times"></i></span>
 															</div>
-															<form:errors path="${key}" class="error" />
+															<form:errors path="${formName}" class="error" />
 													    </div>
 													    <c:remove var="fileId" />
 													</c:when>			
@@ -290,28 +290,30 @@
 																</div>
 															</div>
 													    </div>
-														<c:if test="${value ne null and !value.isEmpty()}">
+														<c:if test="${not empty value and !value.isEmpty()}">
 															<c:forEach var="item" varStatus="status" items="${value}">
-																<c:set var="fileId" value="${key}-hidden-${item.id}" />
-																<form:hidden path="${key}[${status.index}].id" 				file-id="${fileId}" />
-																<form:hidden path="${key}[${status.index}].originalFilename" 	file-id="${fileId}" />
-																<form:hidden path="${key}[${status.index}].path" 				file-id="${fileId}" />
-																<form:hidden path="${key}[${status.index}].uploadPath" 		file-id="${fileId}" />
-																
-																<div class="input-group mb-2 file-upload">
-																	<div class="custom-file">
-																      <input type="file" class="custom-file-input" accept="${formInfo.accept}" onChange="customFileInputOnChange(this)" ${requiredHtml} >
-																      <label class="custom-file-label">${item.originalFilename}</label>
-																    </div>
-																    <div class="input-group-append">
-																		<span class="input-group-text" onclick="deleteFileInput(this); removeFileHidden('${fileId}')"><i class="fas fa-times"></i></span>
+																<c:if test="${not empty item.id}">
+																	<c:set var="fileId" value="${key}-hidden-${item.id}" />
+																	<form:hidden path="${key}[${status.index}].id" 					file-id="${fileId}" />
+																	<form:hidden path="${key}[${status.index}].originalFilename" 	file-id="${fileId}" />
+																	<form:hidden path="${key}[${status.index}].path" 				file-id="${fileId}" />
+																	<form:hidden path="${key}[${status.index}].uploadPath" 			file-id="${fileId}" />
+																	
+																	<div class="input-group mb-2 file-upload">
+																		<div class="custom-file">
+																	      <input type="file" class="custom-file-input" accept="${formInfo.accept}" onChange="customFileInputOnChange(this)" ${requiredHtml} >
+																	      <label class="custom-file-label">${item.originalFilename}</label>
+																	    </div>
+																	    <div class="input-group-append">
+																			<span class="input-group-text" onclick="deleteFileInput(this); removeFileHidden('${fileId}')"><i class="fas fa-times"></i></span>
+																		</div>
 																	</div>
-																</div>
-																<c:remove var="fileId" />
+																	<c:remove var="fileId" />
+																</c:if>
 															</c:forEach>
 														</c:if>
 													    <button type="button" class="btn btn-primary btn-block" multiple-file-upload-add>Add</button>
-													    <form:errors path="${key}" class="error" />
+													    <form:errors path="${formName}" class="error" />
 													</c:when>			
 													
 													

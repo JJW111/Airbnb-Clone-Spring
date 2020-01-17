@@ -27,6 +27,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.clone.airbnb.admin.entity.AdminFormEntity;
@@ -50,6 +51,7 @@ import com.clone.airbnb.repository.HouseRuleRepository;
 import com.clone.airbnb.repository.RoomTypeRepository;
 import com.clone.airbnb.repository.UserRepository;
 import com.clone.airbnb.utils.CountryUtils;
+import com.clone.airbnb.utils.FileUtils;
 import com.clone.airbnb.utils.ValidUtils;
 import com.clone.airbnb.utils.WordUtils;
 
@@ -155,7 +157,7 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 	
 	
 	@JoinOneForm(blank = false, field = "username", repository = UserRepository.class, defaultOption = "------ Select User ------")
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(referencedColumnName = "id", nullable = false)
 	private User host;
 	
@@ -218,13 +220,19 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 	
 	
 	
+	@OneToMany(mappedBy = "room", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Reservation> reservations;
+	
+	
+	
+	
 	private void setPhotos(List<RoomPhoto> photos) {
 		if (photos == null) return;
-		if (this.getPhotos() == null) {
+		if (this.photos == null) {
 			this.photos = new ArrayList<>();
 		}
-		this.getPhotos().clear();
-		this.getPhotos().addAll(photos);
+		this.photos.clear();
+		this.photos.addAll(photos);
 	}
 	
 	
@@ -232,11 +240,23 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 	
 	private void setReviews(List<Review> reviews) {
 		if (reviews == null) return;
-		if (this.getReviews() == null) {
+		if (this.reviews == null) {
 			this.reviews = new ArrayList<>();
 		}
-		this.getReviews().clear();
-		this.getReviews().addAll(reviews);
+		this.reviews.clear();
+		this.reviews.addAll(reviews);
+	}
+	
+	
+	
+	
+	private void setReservations(List<Reservation> reservations) {
+		if (reservations == null) return;
+		if (this.reservations == null) {
+			this.reservations = new ArrayList<>();
+		}
+		this.reservations.clear();
+		this.reservations.addAll(reservations);
 	}
 	
 	
@@ -293,10 +313,9 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
     	private List<Facility> facilities;
     	private List<Amenity> amenities;
     	private List<HouseRule> houseRules;
-    	@Size(min = 5, max = 10, message = "방 사진은 5개 이상 10개 이하여야 합니다.")
     	private List<RoomPhoto> photos;
-    	@Size(min = 5, max = 10, message = "방 사진은 5개 이상 10개 이하여야 합니다.")
     	private List<MultipartFile> photoFiles;
+    	private List<Reservation> reservations;
     	private Date created;
         private Date updated;
         
@@ -456,6 +475,13 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
     	
     	
     	
+    	public Builder setReservations(List<Reservation> reservations) {
+			this.reservations = reservations;
+			return this;
+		}
+    	
+    	
+    	
     	public Builder setCreated(Date created) {
 			this.created = created;
 			return this;
@@ -474,12 +500,6 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
     		return new Room(this);
     	}
     	
-    }
-    
-    
-    
-    public static Builder builder() {
-    	return new Builder();
     }
     
     
@@ -524,16 +544,28 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 	    	}
     	}
     	this.setPhotos(photoList);
+    	this.setReservations(builder.getReservations());
     	this.setCreated(builder.getCreated());
 		this.setUpdated(builder.getUpdated());
     }
     
     
     
-	@Override
-	public Room deepClone() {
-		Room deepCloned = builder()
-				.setId(this.getId())
+    public static Builder builder() {
+    	return new Builder();
+    }
+    
+    
+    
+    public Builder toBuilder() {
+    	SafeUser safeUser = null;
+		
+		if (this.getHost() != null) {
+			safeUser = this.getHost().toSafeUser();
+		}
+		
+    	return builder()
+    			.setId(this.getId())
 				.setName(this.getName())
 				.setDescription(this.getDescription())
 				.setAddress(this.getAddress())
@@ -549,14 +581,21 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 				.setInstantBook(this.getInstantBook())
 				.setRoomType(this.getRoomType())
 				.setReviews(this.getReviews())
+				.setAmenities(this.getAmenities())
 				.setFacilities(this.getFacilities())
 				.setHouseRules(this.getHouseRules())
+				.setHost(safeUser)
 				.setPhotos(this.getPhotos())
+				.setReservations(this.getReservations())
 				.setCreated(this.getCreated())
-				.setUpdated(this.getUpdated())
-				.build();
-		deepCloned.setHost(this.getHost());
-		return deepCloned;
+				.setUpdated(this.getUpdated());
+    }
+    
+    
+    
+	@Override
+	public Room deepClone() {
+		return this.toBuilder().build();
 	}
 	
 	
@@ -585,6 +624,7 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
     	if (t.getAmenities()		!= null) this.setAmenities(t.getAmenities());
     	if (t.getHouseRules()		!= null) this.setHouseRules(t.getHouseRules());
     	if (t.getPhotos() 			!= null) this.setPhotos(t.getPhotos());
+    	if (t.getReservations()		!= null) this.setReservations(t.getReservations());
     	if (t.getCreated()			!= null) this.setCreated(t.getCreated());
     	if (t.getUpdated()			!= null) this.setUpdated(t.getUpdated());
     	this.setCreated(super.getCreated());
@@ -611,6 +651,67 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 		}
 		
 		return totalRating;
+	}
+	
+	
+	@Override
+	public void beforeCreate() {
+		saveFiles(this);
+	}
+	
+	
+	@Override
+	public void beforeDelete() {
+		deleteFiles(this);
+	}
+	
+	
+	@Override
+	public void beforeUpdate(Object old) {
+		Room oldRoom = (Room) old;
+		
+		saveFiles(this);
+		
+		if (ValidUtils.isValid(oldRoom.getPhotos())) {
+			oldRoom.getPhotos().removeAll(this.getPhotos());
+			deleteFiles(oldRoom);
+		}
+	}
+	
+	
+	
+	@Override
+	public void validate(BindingResult result) {
+		if (ValidUtils.isValid(this.getPhotos())) {
+			if (this.getPhotos().size() < 5 || this.getPhotos().size() > 10) {
+				result.rejectValue("photoFiles", "validation.room.photos.size.mismatch");
+			}
+		}
+	}
+	
+	
+	
+	private void saveFiles(Room r) {
+		if (ValidUtils.isValid(r.getPhotos())) {
+			this.getPhotos().forEach(e -> {
+				if (ValidUtils.isValid(e)) {
+					if (ValidUtils.isValid(e.getFile())) {
+						FileUtils.save(e.getFile(), e.getUploadPath());
+					}
+				}
+			});
+		}
+	}
+	
+	
+	private void deleteFiles(Room r) {
+		if (ValidUtils.isValid(r.getPhotos())) {
+			r.getPhotos().forEach(e -> {
+				if (ValidUtils.isValid(e.getUploadPath())) {
+					FileUtils.delete(e.getUploadPath());
+				}
+			});
+		}
 	}
 	
 }

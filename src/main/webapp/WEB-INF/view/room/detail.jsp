@@ -87,8 +87,11 @@
 	                        <div class="mb-3 flex">
 	                            <div>
 	                            	<c:set var="h_and_w" value="w-10 h-10" />
-	                            	<c:set var="avatar_text" value="text-xl" />
-	                            	<%@include file="../mixins/user_avatar.jsp" %>
+	                            	<c:set var="text" value="text-xl" />
+	                            	<c:set var="user" value="${review.user}" />
+	                            	<a href="/user/profile?id=${user.id}">
+	                            		<%@include file="../mixins/user_avatar.jsp" %>
+	                            	</a>
 	                            </div>
 	                            <div class="flex flex-col ml-5">
 	                                <span class="font-medium">${review.user.firstName}</span>

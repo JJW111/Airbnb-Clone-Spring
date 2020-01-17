@@ -240,12 +240,6 @@ public class Review extends DateTimeModel implements AdminFormEntity<Review> {
 	
 	
 	
-	public static Builder builder() {
-		return new Builder();
-	}
-	
-	
-	
 	private Review(Builder builder) {
 		this.setId(builder.getId());
 		this.setReview(builder.getReview());
@@ -261,27 +255,47 @@ public class Review extends DateTimeModel implements AdminFormEntity<Review> {
 		this.setUpdated(builder.getUpdated());
 	}
 	
-
-
+	
+	
+	
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	
+	
+	
+	public Builder toBuilder() {
+		SafeUser safeUser = null;
+		
+		if (this.getUser() != null) {
+			safeUser = this.getUser().toSafeUser();
+		}
+		
+		return builder()
+				.setId(this.getId())
+				.setReview(this.getReview())
+				.setAccuracy(this.getAccuracy())
+				.setCommunication(this.getCommunication())
+				.setCleaniness(this.getCleaniness())
+				.setLocation(this.getLocation())
+				.setCheckIn(this.getCheckIn())
+				.setValue(this.getValue())
+				.setRoom(this.getRoom())
+				.setUser(safeUser)
+				.setCreated(this.getCreated())
+				.setUpdated(this.getUpdated());
+	}
+	
+	
+	
+	
 	@Override
 	public Review deepClone() {
-		Review review = builder()
-			.setId(this.getId())
-			.setReview(this.getReview())
-			.setAccuracy(this.getAccuracy())
-			.setCommunication(this.getCommunication())
-			.setCleaniness(this.getCleaniness())
-			.setLocation(this.getLocation())
-			.setCheckIn(this.getCheckIn())
-			.setValue(this.getValue())
-			.setRoom(this.getRoom())
-			.setCreated(this.getCreated())
-			.setUpdated(this.getUpdated())
-			.build();
-		review.setUser(this.getUser());
-		
-		return review;
+		return this.toBuilder().build();
 	}
+	
+
 
 
 	@Override

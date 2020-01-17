@@ -77,15 +77,20 @@ public class Amenity extends AbstractItem  implements AdminFormEntity<Amenity> {
     public static Builder builder() {
     	return new Builder();
     }
+    
+    
+    
+    public Builder toBuilder() {
+    	return builder()
+				.setId(this.getId())
+				.setName(this.getName());
+    }
 	
 	
 	
 	@Override
 	public Amenity deepClone() {
-		return builder()
-				.setId(this.getId())
-				.setName(this.getName())
-				.build();
+		return this.toBuilder().build();
 	}
 
 	

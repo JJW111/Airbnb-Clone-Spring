@@ -30,7 +30,7 @@
 							<c:forEach var="i" begin="0" end="${groupEndIndex}">
 								<c:set var="entityName" value="${group.get(i)}" />
 								<tr>
-									<td><a href="${admin_entity}?e=${entityName.origin}&size=10" class="text-dark">${entityName.alias}</a></td>
+									<td><a href="${admin_entity}?e=${entityName.origin}" class="text-dark">${entityName.alias}</a></td>
 								</tr>
 							</c:forEach>
 						</tbody>

@@ -14,7 +14,7 @@
 	<%-- Nav Map 선언 --%>
 	<c:set var="nav" value="<%=new java.util.LinkedHashMap<String, String>()%>" />
 	<c:set target="${nav}" property="${groupName}" value="${admin_group}?g=${groupName}"/>
-	<c:set target="${nav}" property="${entity.name.alias}" value="${admin_entity}?e=${entity.name.origin}&size=${param.size}"/>
+	<c:set target="${nav}" property="${entity.name.alias}" value="${admin_entity}?e=${entity.name.origin}"/>
 	<c:set target="${nav}" property="Add" value=""/>
 		
 	<%@include file="inc/header.jsp" %>
@@ -22,7 +22,7 @@
 	<div class="container-fluid">
 		
 		<div class="mb-1 clearfix">
-			<a class="float-right" href="${admin_entity}?e=${entity.name.origin}&page=${param.page}&size=${param.size}">Go Back</a>
+			<a class="float-right" href="${admin_entity}?e=${entity.name.origin}&page=${param.page}">Go Back</a>
 		</div>
 		
 		<div class="mb-5 clearfix">
@@ -35,7 +35,7 @@
 			</c:if>
 			
 			
-			<form:form action="${admin_entity}/add?e=${entity.name.origin}&page=${param.page}&size=${param.size}" modelAttribute="entityObj" enctype="${enctype}" method="POST">
+			<form:form action="${admin_entity}/add?e=${entity.name.origin}&page=${param.page}" modelAttribute="entityObj" enctype="${enctype}" method="POST">
 
 				<c:forEach var="setName" items="${fieldSet.keySet()}" >
 					<c:set var="fieldList" value="${fieldSet.get(setName)}" />

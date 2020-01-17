@@ -152,12 +152,6 @@ public class Reservation implements AdminFormEntity<Reservation> {
 	
 	
 	
-	public static Builder builder() {
-		return new Builder();
-	}
-	
-	
-	
 	private Reservation(Builder builder) {
 		this.setId(builder.getId());
 		this.setStatus(builder.getStatus());
@@ -166,22 +160,39 @@ public class Reservation implements AdminFormEntity<Reservation> {
 		this.setGuest(User.toUser(builder.getGuest()));
 		this.setRoom(builder.getRoom());
 	}
+	
+	
+	
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	
+	
+	public Builder toBuilder() {
+		SafeUser safeUser = null;
+		
+		if (this.getGuest() != null) {
+			safeUser = this.getGuest().toSafeUser();
+		}
+		
+		return builder()
+				.setId(this.getId())
+				.setStatus(this.getStatus())
+				.setCheckIn(this.getCheckIn())
+				.setCheckOut(this.getCheckOut())
+				.setRoom(this.getRoom())
+				.setGuest(safeUser);
+	}
 
 	
 
 	@Override
 	public Reservation deepClone() {
-		Reservation reservation = builder()
-			.setId(this.getId())
-			.setStatus(this.getStatus())
-			.setCheckIn(this.getCheckIn())
-			.setCheckOut(this.getCheckOut())
-			.setRoom(this.getRoom())
-			.build();
-		reservation.setGuest(this.getGuest());
-		
-		return reservation;
+		return this.toBuilder().build();
 	}
+	
+	
 
 
 	@Override

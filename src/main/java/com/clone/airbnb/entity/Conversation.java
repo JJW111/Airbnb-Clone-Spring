@@ -2,7 +2,6 @@ package com.clone.airbnb.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,6 +17,7 @@ import com.clone.airbnb.admin.form.annotation.EntityForm;
 import com.clone.airbnb.admin.form.annotation.JoinManyForm;
 import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.repository.UserRepository;
+import com.clone.airbnb.utils.ValidUtils;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -40,18 +40,18 @@ public class Conversation implements AdminFormEntity<Conversation>{
 	
 	
 	@JoinManyForm(field = "username", defaultOption = "----- Select Users -----", repository = UserRepository.class)
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 			  name = "conversation_user",
 			  joinColumns = @JoinColumn(name = "conversation_id"),
 			  inverseJoinColumns = @JoinColumn(name = "user_id"))
-	private Set<User> participants;
+	private List<User> participants;
 	
 	
 	
 	
 	@OneToMany(mappedBy = "conversation", orphanRemoval = true)
-	private Set<Message> messages;
+	private List<Message> messages;
 
 	
 	
@@ -110,8 +110,8 @@ public class Conversation implements AdminFormEntity<Conversation>{
 	@Getter
 	public static class Builder {
 	    private Integer id;
-		private Set<SafeUser> participants;
-	    private Set<Message> messages;
+		private List<SafeUser> participants;
+	    private List<Message> messages;
 	    
 	    
 	    
@@ -122,7 +122,7 @@ public class Conversation implements AdminFormEntity<Conversation>{
 	    
 	    
 	    
-	    public Builder setParticipants(Set<SafeUser> participants) {
+	    public Builder setParticipants(List<SafeUser> participants) {
 	    	this.participants = participants;
 	    	return this;
 	    }
@@ -130,7 +130,7 @@ public class Conversation implements AdminFormEntity<Conversation>{
 	    
 	    
 	    
-	    public Builder setMessages(Set<Message> messages) {
+	    public Builder setMessages(List<Message> messages) {
 	    	this.messages = messages;
 	    	return this;
 	    }
@@ -153,11 +153,6 @@ public class Conversation implements AdminFormEntity<Conversation>{
 	
 	
 	
-	public static Builder builder() {
-		return new Builder();
-	}
-	
-	
 	
 	private Conversation(Builder builder) {
 		this.setId(builder.getId());
@@ -167,17 +162,38 @@ public class Conversation implements AdminFormEntity<Conversation>{
 	
 	
 	
-
-
-	@Override
-	public Conversation deepClone() {
-		Conversation conversation = builder()
+	
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	
+	
+	public Builder toBuilder() {
+		final List<SafeUser> safeUsers = new ArrayList<>();
+		
+		if (ValidUtils.isValid(this.getParticipants())) {
+			this.getParticipants().forEach(e -> {
+				if (e != null) {
+					safeUsers.add(e.toSafeUser());
+				}
+			});
+		}
+		
+		return builder()
 				.setId(this.getId())
 				.setMessages(this.getMessages())
-				.build();
-		conversation.setParticipants(this.getParticipants());
-		return conversation;
+				.setParticipants(safeUsers);
 	}
+	
+	
+	
+	
+	@Override
+	public Conversation deepClone() {
+		return this.toBuilder().build();
+	}
+	
 
 
 

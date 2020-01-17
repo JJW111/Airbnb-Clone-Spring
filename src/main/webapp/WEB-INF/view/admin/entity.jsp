@@ -26,7 +26,7 @@
 				<div class="mb-1 clearfix">
 					<small>${pageNumber} / ${page.totalPages} 페이지</small>
 					<small class="font-weight-light">&nbsp;(총 ${page.totalElements}행 검색됨)</small>
-					<button class="btn btn-success float-right" onClick="location.href='${admin_entity}/add?e=${entity.name.origin}&page=${pageOffset}&size=${page.size}'">Add</button>
+					<button class="btn btn-success float-right" onClick="location.href='${admin_entity}/add?e=${entity.name.origin}&page=${pageOffset}'">Add</button>
 				</div>
 			
 				<table class="table table-text-center">
@@ -171,13 +171,13 @@
 				<script>
 
 				function entityEdit(id) {
-					location.href="${admin_entity}/update?e=${entity.name.origin}&page=${pageOffset}&size=${page.size}&id=" + id;
+					location.href="${admin_entity}/update?e=${entity.name.origin}&page=${pageOffset}&id=" + id;
 				}
 
 
 				
 				function entityDelete(id) {
-					location.href="${admin_entity}/delete?e=${entity.name.origin}&page=${pageOffset}&size=${page.size}&id=" + id;
+					location.href="${admin_entity}/delete?e=${entity.name.origin}&page=${pageOffset}&id=" + id;
 				}
 				
 				</script>
@@ -193,11 +193,11 @@
 			<ul class="pagination justify-content-center">
 						
 				<c:if test="${!page.first}" >
-					<li class="page-item"><a class="page-link" href="${admin_entity}?e=${entity.name.origin}&size=${page.size}&page=0">&lt;&lt;</a></li>
+					<li class="page-item"><a class="page-link" href="${admin_entity}?e=${entity.name.origin}&page=0">&lt;&lt;</a></li>
 				</c:if>
 				
 				<c:if test="${page.hasPrevious()}" >
-					<li class="page-item"><a class="page-link" href="${admin_entity}?e=${entity.name.origin}&size=${page.size}&page=${pageOffset - 1}">&lt;</a></li>
+					<li class="page-item"><a class="page-link" href="${admin_entity}?e=${entity.name.origin}&page=${pageOffset - 1}">&lt;</a></li>
 				</c:if>
 				
 				<c:forEach var="i" begin="${pageBlock.first}" end="${pageBlock.last}">
@@ -205,16 +205,16 @@
 						<li class="page-item active"><a class="page-link" href="javascript:void(0);">${i}</a></li>
 					</c:if>
 					<c:if test="${i ne pageNumber }">
-						<li class="page-item"><a class="page-link" href="${admin_entity}?e=${entity.name.origin}&size=${page.size}&page=${i-1}">${i}</a></li>
+						<li class="page-item"><a class="page-link" href="${admin_entity}?e=${entity.name.origin}&page=${i-1}">${i}</a></li>
 					</c:if>
 				</c:forEach>
 				
 				<c:if test="${page.hasNext()}" >
-					<li class="page-item"><a class="page-link" href="${admin_entity}?e=${entity.name.origin}&size=${page.size}&page=${pageOffset + 1}">&gt;</a></li>
+					<li class="page-item"><a class="page-link" href="${admin_entity}?e=${entity.name.origin}&page=${pageOffset + 1}">&gt;</a></li>
 				</c:if>
 				
 				<c:if test="${!page.last}" >
-					<li class="page-item"><a class="page-link" href="${admin_entity}?e=${entity.name.origin}&size=${page.size}&page=${page.totalPages - 1}">&gt;&gt;</a></li>
+					<li class="page-item"><a class="page-link" href="${admin_entity}?e=${entity.name.origin}&page=${page.totalPages - 1}">&gt;&gt;</a></li>
 				</c:if>
 				
 			</ul>

@@ -12,7 +12,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.messages.Messages;
-import com.clone.airbnb.service.RoomService;
 import com.clone.airbnb.service.UserService;
 
 @Controller

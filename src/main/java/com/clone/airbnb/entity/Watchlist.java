@@ -1,6 +1,7 @@
 package com.clone.airbnb.entity;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +17,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
+
 import com.clone.airbnb.admin.entity.AdminFormEntity;
 import com.clone.airbnb.admin.form.annotation.EntityForm;
 import com.clone.airbnb.admin.form.annotation.JoinManyForm;
@@ -23,6 +25,7 @@ import com.clone.airbnb.admin.form.annotation.TextForm;
 import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.repository.RoomRepository;
 import com.clone.airbnb.repository.UserRepository;
+import com.clone.airbnb.utils.ValidUtils;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -54,22 +57,47 @@ public class Watchlist implements AdminFormEntity<Watchlist>{
 	
 	
 	@JoinManyForm(field = "username", defaultOption = "----- Select Users -----", repository = UserRepository.class, blank = false)
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 			  name = "watchlist_user",
 			  joinColumns = @JoinColumn(name = "watchlist_id"), 
 			  inverseJoinColumns = @JoinColumn(name = "user_id"))
-	private Set<User> users;
+	private List<User> users;
 	
 	
 	
 	@JoinManyForm(field = "id", defaultOption = "----- Select Rooms -----", repository = RoomRepository.class, blank = false)
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 			  name = "watchlist_room",
 			  joinColumns = @JoinColumn(name = "watchlist_id"), 
 			  inverseJoinColumns = @JoinColumn(name = "room_id"))
-	private Set<Room> rooms;
+	private List<Room> rooms;
+	
+	
+	
+	
+	
+	private void setUsers(List<User> users) {
+		if (users == null) return;
+		if (this.users == null) {
+			this.users = new ArrayList<>();
+		}
+		this.users.clear();
+		this.users.addAll(users);
+	}
+	
+	
+	
+	
+	private void setRooms(List<Room> rooms) {
+		if (rooms == null) return;
+		if (this.rooms == null) {
+			this.rooms = new ArrayList<>();
+		}
+		this.rooms.clear();
+		this.rooms.addAll(rooms);
+	}
 
 	
 	
@@ -97,10 +125,10 @@ public class Watchlist implements AdminFormEntity<Watchlist>{
 		private String name;
 	    @NotNull
 	    @Size(max = 5)
-		private Set<SafeUser> users;
+		private List<SafeUser> users;
 	    @NotNull
 	    @Size(max = 30)
-		private Set<Room> rooms;
+		private List<Room> rooms;
 	    
 	    
 	    
@@ -118,14 +146,14 @@ public class Watchlist implements AdminFormEntity<Watchlist>{
 	    
 	    
 	    
-	    public Builder setUsers(Set<SafeUser> users) {
+	    public Builder setUsers(List<SafeUser> users) {
 	    	this.users = users;
 	    	return this;
 	    }
 	    
 	    
 	    
-	    public Builder setRooms(Set<Room> rooms) {
+	    public Builder setRooms(List<Room> rooms) {
 	    	this.rooms = rooms;
 	    	return this;
 	    }
@@ -140,11 +168,6 @@ public class Watchlist implements AdminFormEntity<Watchlist>{
 	
 	
 	
-	public static Builder builder() {
-		return new Builder();
-	}
-	
-	
 	
 	private Watchlist(Builder builder) {
 		this.setId(builder.getId());
@@ -155,17 +178,38 @@ public class Watchlist implements AdminFormEntity<Watchlist>{
 	
 	
 	
-
-
-	@Override
-	public Watchlist deepClone() {
-		Watchlist list = builder()
+	
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	
+	
+	public Builder toBuilder() {
+		final List<SafeUser> safeUsers = new ArrayList<>();
+		
+		if (ValidUtils.isValid(this.getUsers())) {
+			this.getUsers().forEach(e -> {
+				if (e != null) {
+					safeUsers.add(e.toSafeUser());
+				}
+			});
+		}
+		
+		return builder()
 				.setId(this.getId())
 				.setName(this.getName())
 				.setRooms(this.getRooms())
-				.build();
-		list.setUsers(this.getUsers());
-		return list;
+				.setUsers(safeUsers);
+	}
+	
+	
+	
+	
+	
+	@Override
+	public Watchlist deepClone() {
+		return this.toBuilder().build();
 	}
 
 
