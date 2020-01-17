@@ -15,7 +15,6 @@ import com.clone.airbnb.admin.schema.vo.Column;
 import com.clone.airbnb.admin.schema.vo.Entity;
 import com.clone.airbnb.admin.schema.vo.FieldType;
 import com.clone.airbnb.utils.ReflectionInvocator;
-import com.clone.airbnb.utils.WordUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

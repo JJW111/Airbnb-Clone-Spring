@@ -35,4 +35,18 @@ public class RedirectMessagesController {
 		return "redirect:/user/profile";
 	}
 	
+	
+	@GetMapping(path="/wrong_access")
+	public String wrongAccess(RedirectAttributes redirectAttr, @RequestParam(required = false, name = "next") String next) {
+		RedirectMessageSystem.builder(redirectAttr)
+		.error("잘못된 접근입니다.")
+		.build();
+	
+		if (next == null) {
+			return "redirect:/";
+		} else {
+			return "redirect:" + next;
+		}
+	}
+	
 }

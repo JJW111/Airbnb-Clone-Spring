@@ -190,7 +190,7 @@ public class Message implements AdminFormEntity<Message>{
 				.findByIdAndParticipants_id(this.getConversation().getId(), this.getUser().getId());
 		
 		if (conversation == null) {
-			result.rejectValue("user", "유저가 대화방에 참가하지 않았습니다.");
+			result.rejectValue("user", "validation.message.participants.not_participate");
 		}
 	}
 	

@@ -5,10 +5,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.clone.airbnb.common.SquarePageBlock;
 import com.clone.airbnb.entity.Room;
@@ -34,8 +37,14 @@ public class RoomController {
 	
 	
 	@GetMapping(path="/detail")
-	public String detail(Model model, @RequestParam("id") int id) {
-		model.addAttribute("room", roomService.get(id));
+	public String detail(Model model, @RequestParam("id") Integer id) {
+		Room room = roomService.get(id);
+		
+		if (room == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+		}
+		
+		model.addAttribute("room", room);
 		return "room/detail";
 	}
 	

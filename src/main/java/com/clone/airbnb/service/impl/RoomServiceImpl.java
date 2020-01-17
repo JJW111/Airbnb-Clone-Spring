@@ -1,6 +1,7 @@
 package com.clone.airbnb.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,7 +35,13 @@ public class RoomServiceImpl implements RoomService {
 	
 	@Override
 	public Room get(int id) {
-		return roomRepository.findById(id).get();
+		Optional<Room> opt = roomRepository.findById(id);
+		
+		if (opt.isPresent()) {
+			return opt.get();
+		} else {
+			return null;
+		}
 	}
 	
 }
