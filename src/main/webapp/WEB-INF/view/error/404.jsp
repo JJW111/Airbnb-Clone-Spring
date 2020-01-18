@@ -10,7 +10,7 @@
 
 <div class="min-h-75vh">
 
-	<h3>존재하지 않는 페이지입니다. <a href="/">Go home</a></h3>
+	<h3>존재하지 않는 페이지입니다. <a href="/">홈으로</a></h3>
 
 </div>
 

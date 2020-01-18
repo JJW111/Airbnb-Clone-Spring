@@ -10,7 +10,7 @@
 <c:set var="searchvar" value="true" />
 <%@include file="inc/top.jsp" %>
 
-<%@include file="room/room_list.jsp" %>
+<%@include file="rooms/room_list.jsp" %>
 
 <%@include file="inc/bottom.jsp" %>
 

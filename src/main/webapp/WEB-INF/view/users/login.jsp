@@ -14,19 +14,19 @@
 	
   	<form action="/auth/session" method="post" class="w-full">
   	
-  		<div class="input ${error ne null ? 'has_error' : ''}">
+  		<div class="input ${not empty error ? 'has_error' : ''}">
 			<input type="text" name="username" placeholder="Email" value="${username}" />
 		</div>
 		
-		<div class="input ${error ne null ? 'has_error' : ''}">
+		<div class="input ${not empty error ? 'has_error' : ''}">
 			<input type="password" name="password" placeholder="Password" />
 		</div>
 		
-		<div class="input">
-			<c:if test="${error ne null}">
+		<c:if test="${not empty error}">		
+			<div class="input has_error">
 				<span class="error"><small>아이디 혹은 패스워드가 일치하지 않습니다.</small></span>
-			</c:if>
-		</div>
+			</div>
+		</c:if>
 		
    	 	<button class="btn bg-red-500 text-white">Log in</button>
   	</form>

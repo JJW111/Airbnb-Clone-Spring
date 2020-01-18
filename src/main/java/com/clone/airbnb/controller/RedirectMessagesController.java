@@ -32,7 +32,7 @@ public class RedirectMessagesController {
 			.error("소셜 로그인으로 접속한 경우 비밀번호 변경이 불가합니다.")
 			.build();
 		
-		return "redirect:/user/profile";
+		return "redirect:/users/profile";
 	}
 	
 	

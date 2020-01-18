@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.clone.airbnb.entity.User;
+import com.clone.airbnb.exception.AlreadyVerifiedUserException;
+import com.clone.airbnb.exception.UserDoesNotExistsException;
 import com.clone.airbnb.messages.RedirectMessageSystem;
 import com.clone.airbnb.security.AuthenticationSystem;
 import com.clone.airbnb.service.LoginService;
@@ -28,16 +31,18 @@ public class SignUpController {
 	@Autowired
 	private LoginService loginService;
 	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	
+	
 	@PreAuthorize("!isAuthenticated()")
 	@GetMapping(path="signup")
 	public String signup(Model model) {
-		if (!AuthenticationSystem.loggedOutOnly()) {
-			return "redirect:/logout_only";
-		}
-		
 		model.addAttribute("user", User.builder());
-		return "user/signup";
+		return "users/signup";
 	}
+	
 	
 	
 	@PostMapping(path="signup")
@@ -51,28 +56,36 @@ public class SignUpController {
 		}
 
 		if(result.hasErrors()){
-			return "user/signup";
+			return "users/signup";
 		}
 		
+		userBuilder.setPassword(passwordEncoder.encode(userBuilder.getPassword()));
 		User user = userService.signUp(userBuilder.build());
+		
 		if (user != null) {
 			loginService.login(user);
 		}
 		
 		RedirectMessageSystem.builder(redirectAttr)
-			.success("환영합니다 " + user.getFirstName() + "님")
+			.info(user.getUsername() + " 으로 인증메일을 발송하였습니다.")
 			.build();
 		
 		return "redirect:/";
 	}
 	
 	
-	@GetMapping(path="user/verify/{secret}")
-	public String verify(@PathVariable("secret") String secret) {
-		if (userService.verify(secret)) {
+	@GetMapping(path="/verify/{secret}")
+	public String verify(RedirectAttributes redirectAttr, @PathVariable("secret") String secret) {
+		try {
+			userService.verify(secret);
+			RedirectMessageSystem.builder(redirectAttr)
+				.success("이메일 인증을 완료하였습니다.")
+				.build();
 			return "redirect:/";
-		} else {
-			return "user/fail_verification";
+		} catch (UserDoesNotExistsException e) {
+			return "users/fail_verification";
+		} catch (AlreadyVerifiedUserException e) {
+			return "redirect:/";
 		}
 	}
 	

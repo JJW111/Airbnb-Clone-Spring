@@ -14,7 +14,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.clone.airbnb.admin.entity.AdminFormEntity;
@@ -38,7 +37,6 @@ import com.clone.airbnb.entity.enu.LoginMethod;
 import com.clone.airbnb.entity.enu.Role;
 import com.clone.airbnb.entity.file.Avatar;
 import com.clone.airbnb.entity.sup.DateTimeModel;
-import com.clone.airbnb.utils.BeanUtils;
 import com.clone.airbnb.utils.FileUtils;
 import com.clone.airbnb.utils.ValidUtils;
 import com.clone.airbnb.validator.annotation.UniqueUsername;
@@ -385,10 +383,7 @@ public class User extends DateTimeModel implements AdminFormEntity<User> {
     private User(Builder builder) {
     	this.setId(builder.getId());
 		this.setUsername(builder.getUsername());
-		if (ValidUtils.isValid(builder.getPassword())) {
-			this.setPassword(
-					((PasswordEncoder) BeanUtils.getBean(PasswordEncoder.class)).encode(builder.getPassword()));
-		}
+		this.setPassword(builder.getPassword());
 		this.setFirstName(builder.getFirstName());
 		this.setLastName(builder.getLastName());
 		this.setBio(builder.getBio());

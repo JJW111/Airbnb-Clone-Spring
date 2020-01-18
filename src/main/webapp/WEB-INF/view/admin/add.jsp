@@ -6,7 +6,7 @@
 <html>
 <head>
 <%@include file="inc/common.jsp" %>
-<script src="/admin/js/edit.js?v=${ms}"></script>
+<%@include file="inc/edit_common.jsp" %>
 <title>Add ${entity.name.origin}</title>
 </head>
 <body>

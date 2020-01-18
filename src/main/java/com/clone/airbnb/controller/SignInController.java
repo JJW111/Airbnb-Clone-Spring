@@ -29,7 +29,7 @@ public class SignInController {
 			return "redirect:/logout_only";
 		}
 		
-		return "user/login";
+		return "users/login";
 	}
 	
 	
@@ -53,7 +53,7 @@ public class SignInController {
 	
 	@PostMapping(path="/session_fail")
 	public String sessionFail() {
-		return "user/login";
+		return "users/login";
 	}
 	
 	

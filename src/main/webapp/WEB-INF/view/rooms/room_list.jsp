@@ -4,7 +4,7 @@
 
     <div class="container rounded-xl mx-auto bg-gray-800 h-50vh mt-32 mb-24 bg-cover bg-center" style="background-image:url(https://images.unsplash.com/photo-1536315238512-4c8cebdaaf93?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop)"></div>
 
-    <%@include file="../mixins/rooms.jsp" %>
+    <%@include file="../mixins/room/rooms.jsp" %>
     <c:if test="${page.totalPages > 1}" >
 		<div class="flex items-center justify-center">
 				

@@ -51,6 +51,9 @@ form {
           @apply border-gray-600;
         }
       }
+      .error {
+      	@apply text-red-600 text-sm;
+      }
     }
   }
 }

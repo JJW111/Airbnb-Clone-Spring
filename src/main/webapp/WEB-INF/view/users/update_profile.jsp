@@ -14,7 +14,7 @@
 
 	<div class="container lg:w-5/12 md:w-1/2 xl:w-1/4 mx-auto my-10 flex flex-col items-center border p-6 border-gray-400">
 		
-		<form:form method="post" modelAttribute="user" enctype="multipart/form-data" class="w-full">
+		<form:form method="post" modelAttribute="user" class="w-full">
 			<form:hidden path="id" />
 								
 			<spring:bind path="firstName">
@@ -75,6 +75,10 @@
 		        <a href="/auth/change-password" class="text-teal-500 font-medium">Change Password</a>
 		    </div>
 	    </c:if>
+	    
+	    <div class="mt-3">
+        	<a href="/auth/avatar?id=${room.id}" class="text-teal-500 font-medium">Edit Avatar</a>
+   		</div>
 	
 	</div>
 	

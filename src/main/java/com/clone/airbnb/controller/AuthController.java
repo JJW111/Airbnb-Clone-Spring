@@ -44,12 +44,12 @@ public class AuthController {
 			SafeUser user = userService.profile(username);
 			
 			model.addAttribute("user", user);
-			return "user/update_profile";
+			return "users/update_profile";
 		} else {
 			RedirectMessageSystem.builder(redirectAttr)
 				.error("프로필 변경을 위해 로그인하여 주십시오")
 				.build();
-			return "redirect:/user/profile";
+			return "redirect:/users/profile";
 		}
 	}
 	
@@ -59,7 +59,7 @@ public class AuthController {
 		boolean hasErrors = adminWebPage.hasErrorsForUpdate("User", result);
 		
 		if (hasErrors) {
-			return "user/update_profile";
+			return "users/update_profile";
 		}
 		
 		userService.update(userBuilder.build());
@@ -68,7 +68,7 @@ public class AuthController {
 			.success("프로필을 업데이트 하였습니다")
 			.build();
 		
-		return "redirect:/user/profile";
+		return "redirect:/users/profile";
 	}
 	
 	
@@ -79,7 +79,7 @@ public class AuthController {
 		}
 		
 		model.addAttribute("passwordChange", new PasswordChange());
-		return "user/change_password";
+		return "users/change_password";
 	}
 	
 	
@@ -90,7 +90,6 @@ public class AuthController {
 			return "redirect:/change_password_email_only";
 		}
 		
-		
 		if (!userService.matches(principal.getName(), passwordChange)) {
 			result.rejectValue("oldPassword", "password.origin.notmatches");
 		}
@@ -100,7 +99,7 @@ public class AuthController {
 		}
 		
 		if (result.hasErrors()) {
-			return "user/change_password";
+			return "users/change_password";
 		}
 
 		userService.changePassowrd(principal.getName(), passwordChange);
@@ -109,8 +108,14 @@ public class AuthController {
 			.success("비밀번호 변경 완료")
 			.build();
 		
-		return "redirect:/user/profile";
+		return "redirect:/users/profile";
 	}
 	
+	
+	@GetMapping(path = "/avatar")
+	public String avatar(Principal principal, Model model) {
+		model.addAttribute("user", userService.profile(principal.getName()));
+		return "users/change_password";
+	}
 	
 }

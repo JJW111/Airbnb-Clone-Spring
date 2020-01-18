@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.clone.airbnb.dto.PasswordChange;
 import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.entity.User;
+import com.clone.airbnb.exception.AlreadyVerifiedUserException;
+import com.clone.airbnb.exception.UserDoesNotExistsException;
 import com.clone.airbnb.repository.UserRepository;
 import com.clone.airbnb.service.FileService;
 import com.clone.airbnb.service.MailService;
@@ -42,7 +44,7 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(user);
 		
 		String subject = "Verify Airbnb Account";
-		String text = "To Verify Account click <a href='http://localhost:8081/user/verify/" + user.getEmailSecret() + "'>here</a>";
+		String text = "To Verify Account click <a href='http://localhost:8081/verify/" + user.getEmailSecret() + "'>here</a>";
 		
 		try {
 			mailService.sendMail(user.getUsername(), subject, text);
@@ -57,17 +59,20 @@ public class UserServiceImpl implements UserService {
 	
 	
 	@Override
-	public boolean verify(String secret) {
+	public void verify(String secret) {
 		User user = userRepository.findByEmailSecret(secret);
 		
 		if (user == null) {
-			return false;
+			throw new UserDoesNotExistsException("존재하지 않는 사용자입니다.");
 		} else {
+			if (user.getEmailVerified()) {
+				throw new AlreadyVerifiedUserException("이미 인증된 유저입니다.");
+			}
 			User verifiedUser = user.toBuilder()
 								.setEmailVerified(true)
+								.setEmailSecret("")
 								.build();
 			userRepository.save(verifiedUser);
-			return true;
 		}
 	}
 	
@@ -119,7 +124,7 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findByUsername(username);
 		
 		User changed = user.toBuilder()
-			.setPassword(passwordChange.getPassword())
+			.setPassword(passwordEncoder.encode(passwordChange.getPassword()))
 			.build();
 		
 		userRepository.save(changed);

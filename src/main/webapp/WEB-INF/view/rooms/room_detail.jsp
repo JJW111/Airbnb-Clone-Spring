@@ -29,7 +29,7 @@
             </div>
             <c:set var="user" value="${room.host}" />
             <a href="/user/profile?id=${user.id}" class="flex flex-col items-center">
-                <%@include file="../mixins/user_avatar.jsp" %>
+                <%@include file="../mixins/auth/user_avatar.jsp" %>
                 <span class="mt-2 text-gray-500">${user.firstName}</span>
             </a>
         </div>
@@ -90,7 +90,7 @@
 	                            	<c:set var="text" value="text-xl" />
 	                            	<c:set var="user" value="${review.user}" />
 	                            	<a href="/user/profile?id=${user.id}">
-	                            		<%@include file="../mixins/user_avatar.jsp" %>
+	                            		<%@include file="../mixins/auth/user_avatar.jsp" %>
 	                            	</a>
 	                            </div>
 	                            <div class="flex flex-col ml-5">
@@ -106,7 +106,14 @@
 	        </div>
         </c:if>
     </div>
-    <div class="w-1/3"></div>
+    <div class="w-1/3">
+    	<sec:authorize access="isAuthenticated()"> 
+	    	<sec:authentication var="principal" property="principal" />
+	    	<c:if test="${principal.username eq room.host.username}">
+	            <a href="/rooms/edit?id=${room.id}" class="btn-link block">Edit Room</a>
+	        </c:if>
+        </sec:authorize>
+    </div>
 </div>
 
 <%@include file="../inc/bottom.jsp" %>

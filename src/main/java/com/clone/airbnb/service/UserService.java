@@ -9,7 +9,7 @@ import com.clone.airbnb.entity.User;
 
 public interface UserService extends UserDetailsService {
 	User signUp(User user);
-	boolean verify(String secret);
+	void verify(String secret);
 	SafeUser profile(String username);
 	SafeUser profile(int id);
 	void update(User user);

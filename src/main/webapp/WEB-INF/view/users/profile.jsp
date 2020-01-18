@@ -15,7 +15,7 @@
     
 	<div class="container lg:w-5/12 md:w-1/2 xl:w-1/4 mx-auto my-10 flex flex-col items-center border p-6 border-gray-400">
 		
-		<%@include file="../mixins/user_avatar.jsp" %>
+		<%@include file="../mixins/auth/user_avatar.jsp" %>
 		
 		<div class="flex items-center">
 	        <span class="text-3xl mt-1">${user.firstName}</span>
@@ -38,7 +38,7 @@
 	<c:if test="${not empty rooms and not rooms.isEmpty()}">
 		<div class="container mx-auto pb-10 flex flex-col items-center">
 		    <h3>${user.firstName}'s Rooms</h3>
-		    <%@include file="../mixins/rooms.jsp" %>
+		    <%@include file="../mixins/room/rooms.jsp" %>
 		</div>
 	</c:if>
 	

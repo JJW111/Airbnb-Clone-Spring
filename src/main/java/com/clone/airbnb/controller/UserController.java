@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.clone.airbnb.dto.SafeUser;
-import com.clone.airbnb.messages.Messages;
 import com.clone.airbnb.service.UserService;
 
 @Controller
-@RequestMapping(path="/user")
+@RequestMapping(path="/users")
 public class UserController {
 	
 	@Autowired
 	private UserService userService;
+	
 	
 	@GetMapping(path="/profile")
 	public String profile(Principal principal, RedirectAttributes redirectAttr, Model model, @RequestParam(required = false, name = "id") Integer id) {
@@ -35,13 +35,10 @@ public class UserController {
 		}
 		
 		if (user == null) {
-			redirectAttr.addFlashAttribute("messages", Messages.builder()
-					.add("잘못된 접근입니다.")
-					.build());
-			return "redirect:/";
+			return "redirect:/wrong_access";
 		} else {
 			model.addAttribute("user", user);
-			return "user/profile";
+			return "users/profile";
 		}
 	}
 	

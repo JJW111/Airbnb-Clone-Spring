@@ -3,15 +3,15 @@
 <html>
 <head>
 <%@include file="../inc/common.jsp" %>
-<title>에러발생!</title>
+<title>존재하지 않는 유저입니다.</title>
 </head>
 
 <%@include file="../inc/top.jsp" %>
 
 <div class="min-h-75vh">
-	
-	<h3>서버에서 처리 도중 에러가 발생하였습니다. <a href="/">홈으로</a></h3>
-	
+
+	<h3>존재하지 않는 유저입니다. <a href="/">홈으로</a></h3>
+
 </div>
 
 <%@include file="../inc/bottom.jsp" %>

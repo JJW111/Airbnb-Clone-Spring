@@ -7,6 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+
+<!-- Custom -->
+<script src="/js/edit.js?v=${ms}"></script>
+
 <link rel="stylesheet" href="/css/styles.css?v=${ms}" />
 
  

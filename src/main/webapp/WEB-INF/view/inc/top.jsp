@@ -10,7 +10,7 @@
 		  <img class="w-8" src="/image/logo.png" />
 		</a>
 		<c:if test="${not empty searchvar}">
-			<form method="get" action="/search" class="w-9/12">
+			<form method="get" action="/rooms/search" class="w-9/12">
 			  <input
 			    class="search-box border px-5 py-3 text-sm font-medium placeholder-gray-600 rounded-sm w-64 shadow-md hover:shadow-lg w-full"
 			    name="city"
