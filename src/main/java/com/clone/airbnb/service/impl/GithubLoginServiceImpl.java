@@ -2,6 +2,7 @@ package com.clone.airbnb.service.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.entity.User;
 import com.clone.airbnb.entity.enu.LoginMethod;
 import com.clone.airbnb.exception.GithubException;
@@ -92,28 +92,31 @@ public class GithubLoginServiceImpl implements GithubLoginService {
 			if (profile.getEmail() == null) {
 				throw new GithubPrivateEmailException("Github 계정의 Email이 private 입니다.");
 			} else {
-				SafeUser safeUser =  userRepository.findByUsername(profile.getEmail(), SafeUser.class);
+				Optional<User> opt = userRepository.findByUsername(profile.getEmail());
+				
 				User user = null;
 				
-				if (safeUser != null) {
-					if (safeUser.getLoginMethod() != LoginMethod.GITHUB) {
-						throw new GithubException("Please login with: " + safeUser.getLoginMethod());
+				if (opt.isPresent()) {
+					user = opt.get();
+					if (user.getLoginMethod() != LoginMethod.GITHUB) {
+						throw new GithubException("Please login with: " + user.getLoginMethod());
 					}
-					user = User.toUser(safeUser);
+					user.setPassword(null);
 				} else {
-					user = User.builder()
-						.setUsername(profile.getEmail())
-						.setPassword("none")
-						.setFirstName(profile.getName())
-						.setLastName("#")
-						.setEmailSecret("")
-						.setEmailVerified(true)
-						.setLoginMethod(LoginMethod.GITHUB)
-						.build();
+					user = new User();
+					user.setUsername(profile.getEmail());
+					user.setPassword("none");
+					user.setFirstName(profile.getName());
+					user.setLastName("#");
+					user.setEmailSecret("");
+					user.setEmailVerified(true);
+					user.setLoginMethod(LoginMethod.GITHUB);
+
 					userRepository.save(user);
 				}
 				
 				return user;
+				
 			}
 		}
 	}

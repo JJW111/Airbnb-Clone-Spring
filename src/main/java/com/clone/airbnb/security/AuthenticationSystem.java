@@ -1,14 +1,15 @@
 package com.clone.airbnb.security;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import com.clone.airbnb.dto.Authentication;
-import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.entity.enu.LoginMethod;
 import com.clone.airbnb.repository.UserRepository;
 
+@PreAuthorize("isAuthenticated()")
 @Component
 public class AuthenticationSystem {
 
@@ -17,21 +18,11 @@ public class AuthenticationSystem {
 	
 	
 	
-	public SafeUser getLoggedUser() {
-		if (!isLogged()) return null;
+	public LoginMethod getLoginMethodOfLoggedUser(String username) {
+		Optional<LoginMethod> opt = userRepository.loginMethodOfLoggedUser(username); 
 		
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Authentication auth = (Authentication) principal;
-		
-		return userRepository.findByUsername(auth.getUsername(), SafeUser.class);
-	}
-	
-	
-	
-	public LoginMethod getLoginMethodOfLoggedUser() {
-		SafeUser user = getLoggedUser();
-		if (user != null) {
-			return user.getLoginMethod();
+		if (opt.isPresent()) {
+			return opt.get();
 		} else {
 			return null;
 		}
@@ -39,36 +30,20 @@ public class AuthenticationSystem {
 	
 	
 	
-	public boolean isLoggedWithEmailUser() {
-		LoginMethod method = getLoginMethodOfLoggedUser();
+	public boolean isLoggedWithEmailUser(String username) {
+		LoginMethod method = getLoginMethodOfLoggedUser(username);
 		
 		if (method == null) {
 			return false;
 		} else {
-			System.out.println(method + ":" + method.equals(LoginMethod.EMAIL));
 			return method.equals(LoginMethod.EMAIL);
 		}
 	}
 	
 	
 	
-	public static boolean isLogged() {
-        final org.springframework.security.core.Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return null != authentication && !("anonymousUser").equals(authentication.getName());
-    }
-	
-	
-	public static boolean loggedOutOnly() {
-		if (AuthenticationSystem.isLogged()) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-	
-	
-	public boolean notLoggedSocial() {
-		if (!isLoggedWithEmailUser()) {
+	public boolean notLoggedSocial(String username) {
+		if (!isLoggedWithEmailUser(username)) {
 			return false;
 		} else {
 			return true;

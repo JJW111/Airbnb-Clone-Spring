@@ -12,10 +12,25 @@
 <%@include file="../inc/top.jsp" %>
 
 <div class="-mt-5 container max-w-full h-75vh flex mb-20">
-    <div class="h-full w-1/2 bg-cover bg-center" style="background-image:url(${room.photos.get(0).path})"></div>
+	<c:set var="photosSize" value="${room.photos.size()}" />
+	<c:if test="${photosSize > 0}">
+		<div class="h-full w-1/2 bg-cover bg-center" style="background-image:url(${room.photos.get(0).path})"></div>
+	</c:if>
+	<c:if test="${photosSize == 0}">
+		<div class="h-full w-1/2 bg-gray-400 items-center flex">
+			<span class="flex-1 text-center text-3xl font-bold text-white">No Image</span>
+		</div>
+	</c:if>
     <div class="h-full w-1/2 flex flex-wrap">
-    	<c:forEach var="photo" items="${room.photos}" begin="1" end="4">
-            <div class="w-1/2 h-auto bg-cover bg-center border-gray-500 border" style="background-image:url(${photo.path})"></div>
+    	<c:forEach var="i" begin="1" end="4">
+    		<c:if test="${photosSize > i}">
+            	<div class="w-1/2 h-auto bg-cover bg-center border-gray-500 border" style="background-image:url(${room.photos.get(i).path})"></div>
+    		</c:if>
+    		<c:if test="${photosSize <= i}">
+            	<div class="w-1/2 h-auto bg-gray-400 border-gray-500 border items-center flex">
+            		<span class="flex-1 text-center text-3xl font-bold text-white">No Image</span>		
+            	</div>
+    		</c:if>
     	</c:forEach>
     </div>
 </div>
@@ -28,7 +43,7 @@
                 <span class="text-gray-700 font-light">${room.city}</span>
             </div>
             <c:set var="user" value="${room.host}" />
-            <a href="/user/profile?id=${user.id}" class="flex flex-col items-center">
+            <a href="/users/profile?id=${user.id}" class="flex flex-col items-center">
                 <%@include file="../mixins/auth/user_avatar.jsp" %>
                 <span class="mt-2 text-gray-500">${user.firstName}</span>
             </a>
@@ -89,7 +104,7 @@
 	                            	<c:set var="h_and_w" value="w-10 h-10" />
 	                            	<c:set var="text" value="text-xl" />
 	                            	<c:set var="user" value="${review.user}" />
-	                            	<a href="/user/profile?id=${user.id}">
+	                            	<a href="/users/profile?id=${user.id}">
 	                            		<%@include file="../mixins/auth/user_avatar.jsp" %>
 	                            	</a>
 	                            </div>

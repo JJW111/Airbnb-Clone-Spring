@@ -6,8 +6,8 @@ import lombok.Getter;
 public class TextInfo extends DefaultInfo {
 	private final int maxlength;
 	
-	public TextInfo(String formName, boolean blank, int maxlength) {
-		super(formName, blank);
+	public TextInfo(boolean blank, int maxlength) {
+		super(blank);
 		this.maxlength = maxlength;
 	}
 }

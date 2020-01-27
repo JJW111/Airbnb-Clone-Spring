@@ -1,7 +1,5 @@
 package com.clone.airbnb.entity;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,32 +14,24 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Length;
-
 import com.clone.airbnb.admin.entity.AdminFormEntity;
 import com.clone.airbnb.admin.form.annotation.EntityForm;
 import com.clone.airbnb.admin.form.annotation.IntegerForm;
 import com.clone.airbnb.admin.form.annotation.JoinOneForm;
 import com.clone.airbnb.admin.form.annotation.JoinOneTextForm;
 import com.clone.airbnb.admin.form.annotation.TextAreaForm;
-import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.entity.sup.DateTimeModel;
-import com.clone.airbnb.repository.UserRepository;
+import com.clone.airbnb.entity.sup.RatingAverageReview;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @EntityForm
 @Entity
 @Table(name = "review")
-@ToString(exclude = { "user", "room" })
 @Getter
-@Setter(AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Review extends DateTimeModel implements AdminFormEntity<Review> {
+@Setter
+public class Review extends DateTimeModel implements AdminFormEntity<Review>, RatingAverageReview {
 	
 	@Id
     @GeneratedValue
@@ -50,254 +40,97 @@ public class Review extends DateTimeModel implements AdminFormEntity<Review> {
 	
 	@TextAreaForm(blank = false, maxlength = 100, placeholder = "리뷰 작성, 최대 100자까지")
 	@Column(nullable = false)
-	@Length(max = 100)
+	@NotBlank
+	@Size(max = 100)
 	private String review;
 	
 	
 	@IntegerForm(blank = false, min = 0, max = 5, placeholder = "0 ~ 5 점까지")
 	@Column(nullable = false)
+	@NotNull
+	@Min(value = 0)
+	@Max(value = 5)
 	private Integer accuracy;
 	
 	
 	@IntegerForm(blank = false, min = 0, max = 5, placeholder = "0 ~ 5 점까지")
 	@Column(nullable = false)
+	@NotNull
+	@Min(value = 0)
+	@Max(value = 5)
 	private Integer communication;
 	
 	
 	@IntegerForm(blank = false, min = 0, max = 5, placeholder = "0 ~ 5 점까지")
 	@Column(nullable = false)
+	@NotNull
+	@Min(value = 0)
+	@Max(value = 5)
 	private Integer cleaniness;
 	
 	
 	@IntegerForm(blank = false, min = 0, max = 5, placeholder = "0 ~ 5 점까지")
 	@Column(nullable = false)
+	@NotNull
+	@Min(value = 0)
+	@Max(value = 5)
 	private Integer location;
 	
 	
 	@IntegerForm(blank = false, min = 0, max = 5, placeholder = "0 ~ 5 점까지")
 	@Column(nullable = false)
+	@NotNull
+	@Min(value = 0)
+	@Max(value = 5)
 	private Integer checkIn;
 	
 	
 	@IntegerForm(blank = false, min = 0, max = 5, placeholder = "0 ~ 5 점까지")
 	@Column(nullable = false)
+	@NotNull
+	@Min(value = 0)
+	@Max(value = 5)
 	private Integer value;
 	
 	
-	@JoinOneForm(blank = false, field = "username", repository = UserRepository.class, defaultOption = "------ Select User ------")
+	@JoinOneForm(blank = false, itemLabel = "username", itemValue="id", method="users", defaultOption = "------ Select User ------")
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(referencedColumnName = "id", nullable = false)
+	@NotNull(message = "유저가 존재하지 않습니다.")
 	private User user;
 	
 	
 	@JoinOneTextForm(field = "id", placeholder = "Room ID 입력", blank = false)
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(referencedColumnName = "id", nullable = false)
+	@NotNull(message = "룸이 존재하지 않습니다.")
 	private Room room;
 	
 	
 	
-	public Double ratingAverage() {
+	public double ratingAverage() {
+		return ratingAverage(this.getAccuracy(), this.getCommunication(), this.getCleaniness()
+				, this.getLocation(), this.getCheckIn(), this.getValue());
+	}
+	
+	
+	
+	
+	public static double ratingAverage(Integer accuracy, Integer communication, Integer cleaniness
+			, Integer location, Integer checkIn, Integer value) {
 		double avg = 
-				(this.accuracy 
-				+ this.communication 
-				+ this.cleaniness
-				+ this.location
-				+ this.checkIn
-				+ this.value) / 6.0;
+				(accuracy 
+				+ communication 
+				+ cleaniness
+				+ location
+				+ checkIn
+				+ value) / 6.0;
 		return (Math.round(avg * 100) / 100.0);
 	}
 	
 	
 	
-	@ToString(exclude = { "user", "room" })
-	@Getter
-	public static class Builder {
-		private Integer id;
-		@NotBlank
-		@Size(max = 100)
-		private String review;
-		@NotNull
-		@Min(value = 0)
-		@Max(value = 5)
-		private Integer accuracy;
-		@NotNull
-		@Min(value = 0)
-		@Max(value = 5)
-		private Integer communication;
-		@NotNull
-		@Min(value = 0)
-		@Max(value = 5)
-		private Integer cleaniness;
-		@NotNull
-		@Min(value = 0)
-		@Max(value = 5)
-		private Integer location;
-		@NotNull
-		@Min(value = 0)
-		@Max(value = 5)
-		private Integer checkIn;
-		@NotNull
-		@Min(value = 0)
-		@Max(value = 5)
-		private Integer value;
-		@NotNull(message = "유저가 존재하지 않습니다.")
-		private SafeUser user;
-		@NotNull(message = "룸이 존재하지 않습니다.")
-		private Room room;
-		private Date created;
-        private Date updated;
-		
-		
-		
-		public Builder setId(Integer id) {
-			this.id = id;
-			return this;
-		}
-		
-		
-		
-		public Builder setReview(String review) {
-			this.review = review;
-			return this;
-		}
-		
-		
-		
-		public Builder setAccuracy(Integer accuracy) {
-			this.accuracy = accuracy;
-			return this;
-		}
-		
-		
-		
-		public Builder setCommunication(Integer communication) {
-			this.communication = communication;
-			return this;
-		}
-		
-		
-		
-		public Builder setCleaniness(Integer cleaniness) {
-			this.cleaniness = cleaniness;
-			return this;
-		}
-		
-		
-		
-		public Builder setLocation(Integer location) {
-			this.location = location;
-			return this;
-		}
-		
-		
-		
-		public Builder setCheckIn(Integer checkIn) {
-			this.checkIn = checkIn;
-			return this;
-		}
-		
-		
-		
-		public Builder setValue(Integer value) {
-			this.value = value;
-			return this;
-		}
-		
-		
-		
-		public Builder setUser(SafeUser user) {
-			this.user = user;
-			return this;
-		}
-		
-		
-		
-		public Builder setRoom(Room room) {
-			this.room = room;
-			return this;
-		}
-		
-		
-		public Builder setCreated(Date created) {
-			this.created = created;
-			return this;
-		}
-		
-		
-		
-		public Builder setUpdated(Date updated) {
-			this.updated = updated;
-			return this;
-		}
-		
-		
-		public Review build() {
-			return new Review(this);
-		}
-		
-	}
 	
-	
-	
-	private Review(Builder builder) {
-		this.setId(builder.getId());
-		this.setReview(builder.getReview());
-		this.setAccuracy(builder.getAccuracy());
-		this.setCommunication(builder.getCommunication());
-		this.setCleaniness(builder.getCleaniness());
-		this.setLocation(builder.getLocation());
-		this.setCheckIn(builder.getCheckIn());
-		this.setValue(builder.getValue());
-		this.setUser(User.toUser(builder.getUser()));
-		this.setRoom(builder.getRoom());
-		this.setCreated(builder.getCreated());
-		this.setUpdated(builder.getUpdated());
-	}
-	
-	
-	
-	
-	public static Builder builder() {
-		return new Builder();
-	}
-	
-	
-	
-	
-	public Builder toBuilder() {
-		SafeUser safeUser = null;
-		
-		if (this.getUser() != null) {
-			safeUser = this.getUser().toSafeUser();
-		}
-		
-		return builder()
-				.setId(this.getId())
-				.setReview(this.getReview())
-				.setAccuracy(this.getAccuracy())
-				.setCommunication(this.getCommunication())
-				.setCleaniness(this.getCleaniness())
-				.setLocation(this.getLocation())
-				.setCheckIn(this.getCheckIn())
-				.setValue(this.getValue())
-				.setRoom(this.getRoom())
-				.setUser(safeUser)
-				.setCreated(this.getCreated())
-				.setUpdated(this.getUpdated());
-	}
-	
-	
-	
-	
-	@Override
-	public Review deepClone() {
-		return this.toBuilder().build();
-	}
-	
-
-
-
 	@Override
 	public void override(Review t) {
 		if (t.getId() 				!= null) this.setId(t.getId());
@@ -312,6 +145,18 @@ public class Review extends DateTimeModel implements AdminFormEntity<Review> {
 		if (t.getRoom()				!= null) this.setRoom(t.getRoom());
 		if (t.getCreated()			!= null) this.setCreated(t.getCreated()); 
     	if (t.getUpdated()			!= null) this.setUpdated(t.getUpdated());
+	}
+	
+	
+	
+	@Override
+	public String toString() {
+		return "Review[id=" + id + ",review=" + review 
+				+ ",accuracy=" + accuracy + ",communication=" + communication 
+				+ ",cleaniness=" + cleaniness + ",location=" + location 
+				+ ",checkIn=" + checkIn + ",value=" + value
+				+ ",user=" + (user != null ? user.getUsername() : null)
+				+ ",room=" + (room != null ? room.getId() : null) + "]";
 	}
 	
 }

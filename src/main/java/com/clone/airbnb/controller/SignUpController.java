@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.clone.airbnb.dto.SignupDto;
 import com.clone.airbnb.entity.User;
 import com.clone.airbnb.exception.AlreadyVerifiedUserException;
 import com.clone.airbnb.exception.UserDoesNotExistsException;
 import com.clone.airbnb.messages.RedirectMessageSystem;
-import com.clone.airbnb.security.AuthenticationSystem;
 import com.clone.airbnb.service.LoginService;
 import com.clone.airbnb.service.UserService;
 
@@ -39,19 +39,16 @@ public class SignUpController {
 	@PreAuthorize("!isAuthenticated()")
 	@GetMapping(path="signup")
 	public String signup(Model model) {
-		model.addAttribute("user", User.builder());
+		model.addAttribute("user", new SignupDto());
 		return "users/signup";
 	}
 	
 	
 	
+	@PreAuthorize("!isAuthenticated()")
 	@PostMapping(path="signup")
-	public String processSignup(Model model, RedirectAttributes redirectAttr, @Valid @ModelAttribute("user") User.Builder userBuilder, BindingResult result) {
-		if (!AuthenticationSystem.loggedOutOnly()) {
-			return "redirect:/logout_only";
-		}
-		
-		if (!userBuilder.getRetypePassword().equals(userBuilder.getPassword())) {
+	public String processSignup(Model model, RedirectAttributes redirectAttr, @Valid @ModelAttribute("user") SignupDto dto, BindingResult result) {
+		if (!dto.getRetypePassword().equals(dto.getPassword())) {
 			result.rejectValue("retypePassword", "password.retype.notequal");
 		}
 
@@ -59,12 +56,10 @@ public class SignUpController {
 			return "users/signup";
 		}
 		
-		userBuilder.setPassword(passwordEncoder.encode(userBuilder.getPassword()));
-		User user = userService.signUp(userBuilder.build());
+		User user = dto.toOriginal(passwordEncoder);
+		userService.signUp(user);
 		
-		if (user != null) {
-			loginService.login(user);
-		}
+		loginService.login(user);
 		
 		RedirectMessageSystem.builder(redirectAttr)
 			.info(user.getUsername() + " 으로 인증메일을 발송하였습니다.")

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,14 +14,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.clone.airbnb.admin.AdminWebPage;
 import com.clone.airbnb.admin.schema.AdminEntityConfiguration;
 import com.clone.airbnb.admin.schema.vo.AdminEntity;
 import com.clone.airbnb.admin.schema.vo.Entities;
 import com.clone.airbnb.common.SquarePageBlock;
-import com.clone.airbnb.dto.SafeUser;
+import com.clone.airbnb.dto.admin.DtoFactory;
+import com.clone.airbnb.dto.admin.Edit;
+import com.clone.airbnb.entity.projection.admin.ProjectionFactory;
+import com.clone.airbnb.entity.values.SelectValues;
+import com.clone.airbnb.service.ConversationService;
 import com.clone.airbnb.utils.ReflectionInvocator;
 
 @Controller
@@ -29,6 +33,16 @@ public class AdminController {
 	
 	@Autowired
 	private AdminWebPage adminWebPage;
+
+	@Autowired
+	private SelectValues selectValues;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private ConversationService conversationService;
+	
 	
 	/** 리스트 화면에서 출력할 블럭당 페이지 수 */
 	private static final int PAGE_BLOCK = 10;
@@ -47,13 +61,9 @@ public class AdminController {
 	
 	
 	@GetMapping(path="/group")
-	public ModelAndView group(@RequestParam("g") String groupName) {
-		ModelAndView mv = new ModelAndView();
-		
-		mv.addObject("group", adminWebPage.getAdminEntityProvider().getAdminDefinitionObject().getGroups().get(groupName));
-		mv.setViewName("admin/group");
-		
-		return mv;
+	public String group(Model model, @RequestParam("g") String groupName) {
+		model.addAttribute("group", adminWebPage.getAdminEntityProvider().getAdminDefinitionObject().getGroups().get(groupName));
+		return "admin/group";
 	}
 	
 	
@@ -68,35 +78,27 @@ public class AdminController {
 	 * @return
 	 */
 	@GetMapping(path="/entity")
-	public ModelAndView entity(@RequestParam("e") String entityName, 
+	public String entity(Model model, @RequestParam("e") String entityName, 
 			@PageableDefault(sort = "id", direction = Sort.Direction.DESC, value = 10) Pageable pageable) {
-		ModelAndView mv = new ModelAndView();
-		
 		Page<Object> page;
 		
-		if ("User".equals(entityName)) {
-			page = adminWebPage.findAllBy(entityName, pageable, SafeUser.class);
-		} else {
-			page = adminWebPage.findAll(entityName, pageable);
-		}
-		
+		page = adminWebPage.findAllBy(entityName, pageable, ProjectionFactory.get(entityName));
 		
 		if (page.getTotalPages() > 0 && page.getNumber() + 1 > page.getTotalPages()) {
-			mv.setViewName("redirect:/admin/entity?e=" + entityName + "&page=" + (page.getTotalPages() - 1));
-			return mv;
+			return "redirect:/admin/entity?e=" + entityName + "&page=" + (page.getTotalPages() - 1);
 		}
 		
 		AdminEntity adminEntity =  adminWebPage.getAdminEntityProvider().getAdminDefinitionObject().getAdminEntity();
 		Entities entities = adminWebPage.getEntityProvider().getEntities();
 		
-		mv.addObject("groupName", adminEntity.get(entityName).group());
-		mv.addObject("entity", entities.get(entityName));
-		mv.addObject("fieldList", adminEntity.get(entityName).fieldList());
-		mv.addObject("page", page);
-		mv.addObject("pageBlock", new SquarePageBlock(page, PAGE_BLOCK));
-		mv.addObject("reflectionInvocator", ReflectionInvocator.getInstance());
-		mv.setViewName("admin/entity");
-		return mv;
+		model.addAttribute("groupName", adminEntity.get(entityName).group());
+		model.addAttribute("entity", entities.get(entityName));
+		model.addAttribute("fieldList", adminEntity.get(entityName).fieldList());
+		model.addAttribute("page", page);
+		model.addAttribute("pageBlock", new SquarePageBlock(page, PAGE_BLOCK));
+		model.addAttribute("selectValues", selectValues);
+		model.addAttribute("reflectionInvocator", ReflectionInvocator.getInstance());
+		return "admin/entity";
 	}
 	
 	
@@ -104,20 +106,17 @@ public class AdminController {
 	
 	
 	@GetMapping(path="/entity/add")
-	public ModelAndView addEntity(@RequestParam("e") String entityName) {
-		ModelAndView mv = new ModelAndView();
-		
+	public String addEntity(Model model, @RequestParam("e") String entityName) {
 		AdminEntity adminEntity =  adminWebPage.getAdminEntityProvider().getAdminDefinitionObject().getAdminEntity();
 		Entities entities = adminWebPage.getEntityProvider().getEntities();
+		model.addAttribute("groupName", adminEntity.get(entityName).group());
+		model.addAttribute("entity", entities.get(entityName));
+		model.addAttribute("fieldSet", adminEntity.get(entityName).fieldSet());
+		model.addAttribute("entityObj", DtoFactory.get(entityName, Edit.ADD));
+		model.addAttribute("reflectionInvocator", ReflectionInvocator.getInstance());
+		model.addAttribute("selectValues", selectValues);
 		
-		mv.addObject("groupName", adminEntity.get(entityName).group());
-		mv.addObject("entity", entities.get(entityName));
-		mv.addObject("fieldSet", adminEntity.get(entityName).fieldSet());
-		mv.addObject("entityObj", ReflectionInvocator.invoke(entities.get(entityName).getEntityClass(), "builder"));
-		
-		mv.setViewName("admin/add");
-		
-		return mv;
+		return "admin/add";
 	}
 	
 	
@@ -129,12 +128,27 @@ public class AdminController {
 		AdminEntityConfiguration config =  adminWebPage.getAdminEntityProvider().getAdminDefinitionObject().getAdminEntity().get(entityName);
 		Entities entities = adminWebPage.getEntityProvider().getEntities();
 		
-		Object builderObj = ReflectionInvocator.invoke(entities.get(entityName).getEntityClass(), "builder");
+		Object dtoObj = DtoFactory.get(entityName, Edit.ADD);
 		
-		BindingResult result = adminWebPage.bind(entityName, builderObj, webRequest);
+		BindingResult result = adminWebPage.bind(entityName, dtoObj, webRequest);
 		
-		Object entityObj = ReflectionInvocator.invoke(result.getTarget(), "build");
-		ReflectionInvocator.invoke(entityObj, "validate", BindingResult.class, result);
+		Object entityObj = null;
+		
+		if ("User".equals(entityName)) {
+			entityObj = ReflectionInvocator.invoke(dtoObj, "toOriginal", PasswordEncoder.class, passwordEncoder);
+		} else {
+			entityObj = ReflectionInvocator.invoke(dtoObj, "toOriginal");
+		}
+		
+		if (!result.hasErrors()) {
+			if ("Message".equals(entityName)) {
+				ReflectionInvocator.invoke(entityObj, "validate", 
+						new Class[] { BindingResult.class, ConversationService.class}
+				, result, conversationService);
+			} else {
+				ReflectionInvocator.invoke(entityObj, "validate", BindingResult.class, result);
+			}
+		}
 		
 		if (!result.hasErrors()) {
 			adminWebPage.save(entityName, entityObj);
@@ -143,9 +157,10 @@ public class AdminController {
 			model.addAttribute("groupName", config.group());
 			model.addAttribute("entity", entities.get(entityName));
 			model.addAttribute("fieldSet", config.fieldSet());
-			model.addAttribute("reflectionInvocator", ReflectionInvocator.getInstance());
 			model.addAttribute(BindingResult.class.getName() + ".entityObj", result);
 			model.addAttribute("entityObj", result.getTarget());
+			model.addAttribute("selectValues", selectValues);
+			model.addAttribute("reflectionInvocator", ReflectionInvocator.getInstance());
 			return "admin/add";
 		}
 		
@@ -160,21 +175,14 @@ public class AdminController {
 		AdminEntityConfiguration config =  adminWebPage.getAdminEntityProvider().getAdminDefinitionObject().getAdminEntity().get(entityName);
 		Entities entities = adminWebPage.getEntityProvider().getEntities();
 		
-		Object foundObj;
-		
-		if ("User".equals(entityName)) {
-			foundObj = adminWebPage.findById(entityName, id, SafeUser.class);
-		} else {
-			foundObj = adminWebPage.findById(entityName, id);
-		}
-		
-		Object entityObj = ReflectionInvocator.invoke(foundObj, "toBuilder");
+		Object entityObj = adminWebPage.findById(entityName, id, ProjectionFactory.get(entityName));
 		
 		model.addAttribute("id", id);
 		model.addAttribute("groupName", config.group());
 		model.addAttribute("entity", entities.get(entityName));
 		model.addAttribute("fieldSet", config.fieldSet());
 		model.addAttribute("entityObj", entityObj);
+		model.addAttribute("selectValues", selectValues);
 		model.addAttribute("reflectionInvocator", ReflectionInvocator.getInstance());
 		return "admin/update";
 	}
@@ -188,14 +196,23 @@ public class AdminController {
 		AdminEntityConfiguration config =  adminWebPage.getAdminEntityProvider().getAdminDefinitionObject().getAdminEntity().get(entityName);
 		Entities entities = adminWebPage.getEntityProvider().getEntities();
 		
-		Object builderObj = ReflectionInvocator.invoke(entities.get(entityName).getEntityClass(), "builder");
+		Object dtoObj = DtoFactory.get(entityName, Edit.UPDATE);
 		
-		BindingResult result = adminWebPage.bind(entityName, builderObj, webRequest);
+		BindingResult result = adminWebPage.bind(entityName, dtoObj, webRequest);
 		
-		Object entityObj = ReflectionInvocator.invoke(result.getTarget(), "build");
-		ReflectionInvocator.invoke(entityObj, "validate", BindingResult.class, result);
+		Object entityObj = ReflectionInvocator.invoke(dtoObj, "toOriginal");
 		
-		if (!adminWebPage.hasErrorsForUpdate(entityName, result)) {
+		if (!result.hasErrors()) {
+			if ("Message".equals(entityName)) {
+				ReflectionInvocator.invoke(entityObj, "validate", 
+						new Class[] { BindingResult.class, ConversationService.class }
+				, result, conversationService);
+			} else {
+				ReflectionInvocator.invoke(entityObj, "validate", BindingResult.class, result);
+			}
+		}
+
+		if (!result.hasErrors()) {
 			adminWebPage.update(entityName, entityObj, id);
 			return "redirect:/admin/entity?e=" + entityName + "&page=" + pageable.getPageNumber();
 		} else {
@@ -203,9 +220,10 @@ public class AdminController {
 			model.addAttribute("groupName", config.group());
 			model.addAttribute("entity", entities.get(entityName));
 			model.addAttribute("fieldSet", config.fieldSet());
-			model.addAttribute("reflectionInvocator", ReflectionInvocator.getInstance());
 			model.addAttribute(BindingResult.class.getName() + ".entityObj", result);
 			model.addAttribute("entityObj", result.getTarget());
+			model.addAttribute("selectValues", selectValues);
+			model.addAttribute("reflectionInvocator", ReflectionInvocator.getInstance());
 			return "admin/update";
 		}
 		

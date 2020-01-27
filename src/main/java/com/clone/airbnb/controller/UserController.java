@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.clone.airbnb.dto.SafeUser;
+import com.clone.airbnb.entity.projection.Profile;
+import com.clone.airbnb.entity.values.SelectValues;
+import com.clone.airbnb.service.RoomService;
 import com.clone.airbnb.service.UserService;
 
 @Controller
@@ -20,24 +22,31 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private RoomService roomService;
+	
+	@Autowired
+	private SelectValues selectValues;
 	
 	@GetMapping(path="/profile")
 	public String profile(Principal principal, RedirectAttributes redirectAttr, Model model, @RequestParam(required = false, name = "id") Integer id) {
-		SafeUser user = null;
+		Profile profile = null;
 		
 		if (id == null) {
 			if (principal != null) {
 				String username = principal.getName();
-				user = userService.profile(username);
+				profile = userService.profile(username);
 			}
 		} else {
-			user = userService.profile(id);
+			profile = userService.profile(id);
 		}
 		
-		if (user == null) {
+		if (profile == null) {
 			return "redirect:/wrong_access";
 		} else {
-			model.addAttribute("user", user);
+			model.addAttribute("selectValues", selectValues);
+			model.addAttribute("user", profile);
+			model.addAttribute("rooms", roomService.rooms(profile.getUsername()));
 			return "users/profile";
 		}
 	}

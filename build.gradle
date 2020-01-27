@@ -43,6 +43,13 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
 	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
 	
+	// https://mvnrepository.com/artifact/org.springframework.data/spring-data-rest-webmvc
+	compile group: 'org.springframework.data', name: 'spring-data-rest-webmvc', version: '3.2.3.RELEASE'
+	
+	// https://mvnrepository.com/artifact/org.springframework.data/spring-data-rest-core
+	compile group: 'org.springframework.data', name: 'spring-data-rest-core', version: '3.2.3.RELEASE'
+	
+	
 }
 
 test {

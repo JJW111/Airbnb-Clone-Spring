@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface UsernameForm {
-	String formName() default "";
 	int maxlength() default 255;
 	String placeholder() default "";
 }

@@ -6,7 +6,11 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.clone.airbnb.common.Common;
+import com.clone.airbnb.utils.FileUtils;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,7 +20,7 @@ import lombok.ToString;
 
 @MappedSuperclass
 @Getter
-@Setter(AccessLevel.PUBLIC)
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(exclude = { "file" })
 public class FileEntity implements FileEntityFrame {
@@ -26,7 +30,7 @@ public class FileEntity implements FileEntityFrame {
     private Integer id;
 	
 	
-		
+	
 	@Column(nullable = false)
 	private String originalFilename;
 	
@@ -47,11 +51,12 @@ public class FileEntity implements FileEntityFrame {
 	
 	
 	
-	
-	public void setFile(MultipartFile file) {
+	protected void setFile(MultipartFile file, String sub) {
 		if (file != null) {
 			this.file = file;
 			this.originalFilename = file.getOriginalFilename();
+			this.path = Common.getImagePath(sub, FileUtils.randomFileName(FilenameUtils.getExtension(originalFilename)));
+			this.uploadPath = Common.getUploadPath(this.path);
 		}
 	}
 	

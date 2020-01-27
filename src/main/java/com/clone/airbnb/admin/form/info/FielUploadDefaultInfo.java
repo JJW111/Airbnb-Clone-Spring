@@ -6,11 +6,13 @@ import lombok.Getter;
 
 @Getter
 public class FielUploadDefaultInfo extends DefaultInfo {
+	private final String fileFormName;
 	private final String labelText;
 	private final String accept;
 	
-	public FielUploadDefaultInfo(String formName, boolean blank, String labelText, Accept accept) {
-		super(formName, blank);
+	public FielUploadDefaultInfo(String fileFormName, boolean blank, String labelText, Accept accept) {
+		super(blank);
+		this.fileFormName = fileFormName;
 		this.labelText = labelText;
 		this.accept = accept.value();
 	}

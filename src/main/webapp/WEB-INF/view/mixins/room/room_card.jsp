@@ -17,7 +17,7 @@
 	            </c:if>
 	            
 				<span class="text-md -ml-1">&nbsp;</span>
-	            <span class="text-sm text-gray-600 block truncate">${room.city},${room.countries().get(room.country)}</span>
+	            <span class="text-sm text-gray-600 block truncate">${room.city}, ${selectValues.countries().get(room.country)}</span>
 	        </div>
 	        <span class="text-sm flex items-center">
 	            <i class="fas fa-star text-red-500 text-xs mr-1"></i> ${room.totalRating()}

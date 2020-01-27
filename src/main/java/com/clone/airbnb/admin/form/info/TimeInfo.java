@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class TimeInfo extends DefaultInfo {
-	public TimeInfo(String formName, boolean blank) {
-		super(formName, blank);
+	public TimeInfo(boolean blank) {
+		super(blank);
 	}
 }

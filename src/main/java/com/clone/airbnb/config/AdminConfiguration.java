@@ -2,6 +2,7 @@ package com.clone.airbnb.config;
 
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -19,6 +20,7 @@ import com.clone.airbnb.common.ClassLoader;
 
 
 @Configuration
+@ComponentScan("com.clone.airbnb.admin.def")
 public class AdminConfiguration {
 
 	@Bean
@@ -34,7 +36,7 @@ public class AdminConfiguration {
 	
 	@Bean
 	public ClassLoader<AdminEntityConfiguration> adminConfigClassLoader() {
-		String basePackage = "com.clone.airbnb.def";
+		String basePackage = "com.clone.airbnb.admin.def";
 		return new ClassLoader<AdminEntityConfiguration>(basePackage, AdminEntityDefinition.class);
 	}
 

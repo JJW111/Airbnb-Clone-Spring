@@ -20,25 +20,20 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.clone.airbnb.admin.entity.AdminFormEntity;
 import com.clone.airbnb.admin.form.annotation.DatetimeForm;
 import com.clone.airbnb.admin.form.annotation.EntityForm;
+import com.clone.airbnb.admin.form.annotation.JoinOneForm;
 import com.clone.airbnb.admin.form.annotation.JoinOneTextForm;
 import com.clone.airbnb.admin.form.annotation.SelectBoxForm;
 import com.clone.airbnb.common.Common;
-import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.entity.enu.ReservationStatus;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @EntityForm
 @Entity
 @Table(name = "reservation")
-@ToString(exclude = { "guest", "room" })
 @Getter
-@Setter(AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
 public class Reservation implements AdminFormEntity<Reservation> {
 	
 	@Id
@@ -50,13 +45,16 @@ public class Reservation implements AdminFormEntity<Reservation> {
 	@SelectBoxForm(blank = false, defaultOption="예약 상태 선택")
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-	private ReservationStatus status;
+	@NotNull
+	private ReservationStatus status = ReservationStatus.PENDING;
 	
 	
 	
 	@DatetimeForm(blank = false)
 	@Column(nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(pattern = Common.DATETIME_FORMAT)
+	@NotNull
 	private Date checkIn;
 	
 	
@@ -64,13 +62,16 @@ public class Reservation implements AdminFormEntity<Reservation> {
 	@DatetimeForm(blank = false)
 	@Column(nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(pattern = Common.DATETIME_FORMAT)
+	@NotNull
 	private Date checkOut;
 	
 	
 	
-	@JoinOneTextForm(field = "username", placeholder = "게스트 USERNAME 입력", blank = false)
+	@JoinOneForm(blank = false, itemLabel = "username", itemValue="id", method="users", defaultOption = "------ Select User ------")
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(referencedColumnName = "id", nullable = false)
+	@NotNull(message = "게스트가 존재하지 않습니다.")
 	private User guest;
 	
 	
@@ -78,123 +79,11 @@ public class Reservation implements AdminFormEntity<Reservation> {
 	@JoinOneTextForm(field = "id", placeholder = "Room ID 입력", blank = false)
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(referencedColumnName = "id", nullable = false)
+	@NotNull(message = "룸이 존재하지 않습니다.")
 	private Room room;
 	
 	
 	
-
-	@ToString(exclude = { "guest", "room" })
-	@Getter
-	public static class Builder {
-		private Integer id;
-		@NotNull
-		private ReservationStatus status;
-		@DateTimeFormat(pattern = Common.DATETIME_FORMAT)
-    	@NotNull
-		private Date checkIn;
-		@DateTimeFormat(pattern = Common.DATETIME_FORMAT)
-    	@NotNull
-		private Date checkOut;
-		@NotNull(message = "게스트가 존재하지 않습니다.")
-		private SafeUser guest;
-		@NotNull(message = "룸이 존재하지 않습니다.")
-		private Room room;
-		
-		
-		
-		public Builder setId(Integer id) {
-			this.id = id;
-			return this;
-		}
-		
-		
-		
-		public Builder setStatus(ReservationStatus status) {
-			this.status = status;
-			return this;
-		}
-		
-		
-		
-		public Builder setCheckIn(Date checkIn) {
-			this.checkIn = checkIn;
-			return this;
-		}
-		
-		
-		
-		public Builder setCheckOut(Date checkOut) {
-			this.checkOut = checkOut;
-			return this;
-		}
-		
-		
-		
-		public Builder setGuest(SafeUser guest) {
-			this.guest = guest;
-			return this;
-		}
-		
-		
-		
-		public Builder setRoom(Room room) {
-			this.room = room;
-			return this;
-		}
-		
-		
-		
-		public Reservation build() {
-			return new Reservation(this);
-		}
-		
-	}
-	
-	
-	
-	private Reservation(Builder builder) {
-		this.setId(builder.getId());
-		this.setStatus(builder.getStatus());
-		this.setCheckIn(builder.getCheckIn());
-		this.setCheckOut(builder.getCheckOut());
-		this.setGuest(User.toUser(builder.getGuest()));
-		this.setRoom(builder.getRoom());
-	}
-	
-	
-	
-	public static Builder builder() {
-		return new Builder();
-	}
-	
-	
-	
-	public Builder toBuilder() {
-		SafeUser safeUser = null;
-		
-		if (this.getGuest() != null) {
-			safeUser = this.getGuest().toSafeUser();
-		}
-		
-		return builder()
-				.setId(this.getId())
-				.setStatus(this.getStatus())
-				.setCheckIn(this.getCheckIn())
-				.setCheckOut(this.getCheckOut())
-				.setRoom(this.getRoom())
-				.setGuest(safeUser);
-	}
-
-	
-
-	@Override
-	public Reservation deepClone() {
-		return this.toBuilder().build();
-	}
-	
-	
-
-
 	@Override
 	public void override(Reservation t) {
 		if (t.getId() 				!= null) this.setId(t.getId());
@@ -203,6 +92,15 @@ public class Reservation implements AdminFormEntity<Reservation> {
 		if (t.getCheckOut()			!= null) this.setCheckOut(t.getCheckOut());
 		if (t.getGuest()			!= null) this.setGuest(t.getGuest());
 		if (t.getRoom()				!= null) this.setRoom(t.getRoom());
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "Reservation[id=" + id + ",status=" + status 
+				+ ",checkIn=" + checkIn + ",checkOut=" + checkOut 
+				+ ",guest=" + (guest != null ? guest.getUsername() : null) + "]"
+				+ ",room=" + (room != null ? room.getId() : null) + "]";
 	}
 	
 }

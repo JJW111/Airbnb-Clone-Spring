@@ -1,7 +1,11 @@
 package com.clone.airbnb.entity.sup;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import com.clone.airbnb.admin.form.annotation.TextForm;
 
@@ -13,11 +17,17 @@ import lombok.ToString;
 
 @MappedSuperclass
 @Getter
-@Setter(AccessLevel.PROTECTED)
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public abstract class AbstractItem {
+	@Id
+    @GeneratedValue
+    private Integer id;
+	
 	@TextForm(blank = false)
 	@Column(name="name", nullable = false)
+	@NotBlank
+	@Size(max = 150)
 	private String name;
 }

@@ -80,17 +80,29 @@
 																<c:set var="first" value="${value.get(0)}" />
 																<img src="${first.path}" alt="${first.originalFilename}" title="${first.originalFilename}" class="entity-list-image"/>
 															</c:if>
-														</c:when>														
+														</c:when>										
 														
 														<%-- 컬럼타입이 SELECT_BOX 일 경우 Enum value 출력 --%>
 														<c:when test="${fieldTypeName eq 'SELECT_BOX'}">
 															${value.value}
 														</c:when>
 														
+														<%-- 컬럼타입이 MAP_SELECT_BOX 일 경우 --%>
+														<c:when test="${fieldTypeName eq 'MAP_SELECT_BOX'}">
+															<c:set var="map" value="${reflectionInvocator.invoke(selectValues, formInfo.method)}" />
+															${map.get(value)}
+															<c:remove var="map" />
+														</c:when>														
 														
-														<%-- 컬럼타입이 JOIN_ONE, JOIN_ONE_TEXT 일 경우 field value 출력 --%>
-														<c:when test="${fieldTypeName eq 'JOIN_ONE' or fieldTypeName eq 'JOIN_ONE_TEXT'}">
+														<%-- 컬럼타입이 JOIN_ONE_TEXT 일 경우 field value 출력 --%>
+														<c:when test="${fieldTypeName eq 'JOIN_ONE_TEXT'}">
 															${reflectionInvocator.get(value, formInfo.field)}
+														</c:when>
+														
+														
+														<%-- 컬럼타입이 JOIN_ONE_TEXT 일 경우 field value 출력 --%>
+														<c:when test="${fieldTypeName eq 'JOIN_ONE'}">
+															${reflectionInvocator.get(value, formInfo.itemLabel)}
 														</c:when>
 														
 														

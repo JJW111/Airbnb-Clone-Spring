@@ -61,6 +61,10 @@ public class SecurityConfig {
 	        	.antMatcher("/admin/**")
 	        	.authorizeRequests().anyRequest().hasRole("ADMIN")
 	        	
+	        	.and()
+	        	.exceptionHandling()
+	        	.accessDeniedPage("/error/404.jsp")
+	        
 		        .and()
 		        .formLogin()
 	          	.loginPage("/admin_login")

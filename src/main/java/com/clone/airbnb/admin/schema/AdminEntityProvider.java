@@ -8,6 +8,7 @@ import com.clone.airbnb.admin.schema.vo.AdminDefinitionObject;
 import com.clone.airbnb.admin.schema.vo.AdminEntity;
 import com.clone.airbnb.admin.schema.vo.Groups;
 import com.clone.airbnb.admin.schema.vo.Name;
+import com.clone.airbnb.utils.BeanUtils;
 import com.clone.airbnb.admin.exception.AdminEntityFailToInstantiateException;
 
 
@@ -58,7 +59,7 @@ public class AdminEntityProvider {
 			for (int i = 0; i < this.classes.size(); i++) {
 				Class<AdminEntityConfiguration> cl = this.classes.get(i); 
 				
-				AdminEntityConfiguration configuration = (AdminEntityConfiguration) cl.newInstance();
+				AdminEntityConfiguration configuration = (AdminEntityConfiguration) BeanUtils.getBean(cl);;
 				
 				AdminEntityDefinition definition = cl.getAnnotation(AdminEntityDefinition.class);
 				

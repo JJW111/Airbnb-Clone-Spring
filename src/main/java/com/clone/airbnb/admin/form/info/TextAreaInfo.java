@@ -6,8 +6,8 @@ import lombok.Getter;
 public class TextAreaInfo extends PlaceholderTextInfo {
 	private final int rows;
 
-	public TextAreaInfo(String formName, boolean blank, int maxlength, String placeholder, int rows) {
-		super(formName, blank, maxlength, placeholder);
+	public TextAreaInfo(boolean blank, int maxlength, String placeholder, int rows) {
+		super(blank, maxlength, placeholder);
 		this.rows = rows;
 	}
 }

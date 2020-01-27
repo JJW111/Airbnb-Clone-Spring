@@ -2,15 +2,21 @@ package com.clone.airbnb.formatter;
 
 import java.text.ParseException;
 import java.util.Locale;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.Formatter;
+import org.springframework.stereotype.Component;
 
 import com.clone.airbnb.entity.Room;
 import com.clone.airbnb.repository.RoomRepository;
-import com.clone.airbnb.utils.BeanUtils;
 
+@Component
 public class RoomFormatter implements Formatter<Room>{
 
+	@Autowired
+	private RoomRepository roomRepository;
+	
 	@Override
 	public String print(Room object, Locale locale) {
 		return object.toString();
@@ -18,7 +24,15 @@ public class RoomFormatter implements Formatter<Room>{
 
 	@Override
 	public Room parse(String text, Locale locale) throws ParseException {
-		return ((RoomRepository) BeanUtils.getBean(RoomRepository.class)).findById(Integer.parseInt(text)).get();
+		if (text == null) return null;
+		
+		Optional<Room> opt = roomRepository.findById(Integer.parseInt(text));
+		
+		if (opt.isPresent()) {
+			return opt.get();
+		} else {
+			return null;
+		}
 	}
 	
 }

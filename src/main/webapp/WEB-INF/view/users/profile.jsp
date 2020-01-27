@@ -34,7 +34,6 @@
 	    </sec:authorize>
 		
 	</div>
-    <c:set var="rooms" value="${user.rooms}" />
 	<c:if test="${not empty rooms and not rooms.isEmpty()}">
 		<div class="container mx-auto pb-10 flex flex-col items-center">
 		    <h3>${user.firstName}'s Rooms</h3>

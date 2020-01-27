@@ -6,8 +6,8 @@ import lombok.Getter;
 public class PlaceholderTextInfo extends TextInfo {
 	private final String placeholder;
 	
-	public PlaceholderTextInfo(String formName, boolean blank, int maxlength, String placeholder) {
-		super(formName, blank, maxlength);
+	public PlaceholderTextInfo(boolean blank, int maxlength, String placeholder) {
+		super(blank, maxlength);
 		this.placeholder = placeholder;
 	}
 }

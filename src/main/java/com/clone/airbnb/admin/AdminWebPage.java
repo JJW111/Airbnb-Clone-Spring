@@ -1,5 +1,7 @@
 package com.clone.airbnb.admin;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -11,9 +13,6 @@ import com.clone.airbnb.admin.schema.AdminEntityProvider;
 import com.clone.airbnb.admin.schema.EntityProvider;
 import com.clone.airbnb.admin.schema.RepositoryMapperProvider;
 import com.clone.airbnb.admin.schema.vo.AdminEntity;
-import com.clone.airbnb.admin.schema.vo.Column;
-import com.clone.airbnb.admin.schema.vo.Entity;
-import com.clone.airbnb.admin.schema.vo.FieldType;
 import com.clone.airbnb.utils.ReflectionInvocator;
 
 import lombok.Getter;
@@ -45,14 +44,27 @@ public class AdminWebPage {
 	
 	
 	public Object findById(String entityName, Integer id) {
-		return repositoryMapperProvider.getRepositoryMapper().get(entityName).findById(id).get();
+		Optional<Object> opt = repositoryMapperProvider.getRepositoryMapper().get(entityName).findById(id);
+		
+		if (opt.isPresent()) {
+			return opt.get();
+		} else {
+			return null;
+		}
 	}
 	
 	
 	
 	
 	public Object findById(String entityName, Integer id, Class<?> clazz) {
-		return this.find(entityName, "findById", new Class<?>[] { Integer.class, Class.class }, id, clazz);
+		@SuppressWarnings("unchecked")
+		Optional<Object> opt = (Optional<Object>) this.find(entityName, "findById", new Class<?>[] { Integer.class, Class.class }, id, clazz);
+		
+		if (opt.isPresent()) {
+			return opt.get();
+		} else {
+			return null;
+		}
 	}
 	
 	
@@ -114,31 +126,6 @@ public class AdminWebPage {
 		ReflectionInvocator.invoke(old, "override", Object.class, newObj);
 		
 		pagingAndSortingRepository.save(old);
-	}
-	
-	
-	
-	
-	
-	public boolean hasErrorsForUpdate(String entityName, BindingResult result) {
-		boolean hasErrors = false;
-		if (result.hasErrors()) {
-			Entity entity = entityProvider.getEntities().get(entityName);
-			if (entity.isUserEntity()) {
-				for (Column c : entity.getColumns().values()) {
-					if (result.hasFieldErrors(c.getName())) {
-						FieldType t = c.getFormType().getFieldType();
-						if (!(t == FieldType.USERNAME || t == FieldType.PASSWORD)) {
-							hasErrors = true;
-							break;
-						}
-					}
-				}
-			} else {
-				hasErrors = true;
-			}
-		}
-		return hasErrors;
 	}
 	
 }

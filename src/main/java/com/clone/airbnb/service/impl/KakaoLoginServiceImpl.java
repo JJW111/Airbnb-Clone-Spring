@@ -3,6 +3,7 @@ package com.clone.airbnb.service.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.clone.airbnb.dto.SafeUser;
 import com.clone.airbnb.entity.User;
 import com.clone.airbnb.entity.enu.LoginMethod;
 import com.clone.airbnb.exception.KakaoEmailDoesNotExistException;
@@ -110,26 +110,27 @@ public class KakaoLoginServiceImpl implements KakaoLoginService {
 			throw new KakaoEmailDoesNotExistException("카카오 계정의 이메일이 존재하지 않습니다. 이메일을 등록하여 주십시오.");
 		}
 		
-		SafeUser safeUser = userRepository.findByUsername(profile.getEmail(), SafeUser.class);
+		Optional<User> opt = userRepository.findByUsername(profile.getEmail());
 		
 		User user = null;
 		
-		if (safeUser != null) {
-			if (safeUser.getLoginMethod() != LoginMethod.KAKAO) {
-				throw new KakaoException("Please login with: " + safeUser.getLoginMethod());
+		if (opt.isPresent()) {
+			user = opt.get();
+			if (user.getLoginMethod() != LoginMethod.KAKAO) {
+				throw new KakaoException("Please login with: " + user.getLoginMethod());
 			}
-			user = User.toUser(safeUser);
+			user.setPassword(null);
 		} else {
-			user = User.builder()
-					.setUsername(profile.getEmail())
-					.setPassword("none")
-					.setFirstName(profile.getNickname())
-					.setLastName("#")
-					.setEmailSecret("")
-					.setEmailVerified(true)
-					.setLoginMethod(LoginMethod.KAKAO)
-					.build();
-				userRepository.save(user);
+			user = new User();
+			user.setUsername(profile.getEmail());
+			user.setPassword("none");
+			user.setFirstName(profile.getNickname());
+			user.setLastName("#");
+			user.setEmailSecret("");
+			user.setEmailVerified(true);
+			user.setLoginMethod(LoginMethod.KAKAO);
+					
+			userRepository.save(user);
 		}
 		
 		return user;

@@ -7,7 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.clone.airbnb.entity.RoomType;
 import com.clone.airbnb.repository.RoomTypeRepository;
 
-
+/**
+ * RoomType Dummy 엔터티를 DB 에 지정한 개수만큼 생성한다.
+ */
 @SpringBootTest
 class RoomTypeCreation {
 	
@@ -27,9 +29,9 @@ class RoomTypeCreation {
 		
 		for (String item : list) {
 			if (!repository.existsByName(item)) {
-				RoomType roomType = RoomType.builder()
-										.setName(item)
-										.build();
+				RoomType roomType = new RoomType();
+				roomType.setName(item);
+				
 				repository.save(roomType);
 			}
 		}

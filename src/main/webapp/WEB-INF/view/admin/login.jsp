@@ -11,7 +11,7 @@
 
   	<form action="/admin/session" method="post">
   		<div class="form-group">
-			<input type="text" name="username" value="${username}" class="form-control" placeholder="airbnb@airbnb_clone.com" />
+			<input type="text" name="username" value="${username}" class="form-control" placeholder="airbnb@airbnb-clone.com" />
 		</div>
   		<div class="form-group">
 			<input type="password" name="password" class="form-control" placeholder="password" />

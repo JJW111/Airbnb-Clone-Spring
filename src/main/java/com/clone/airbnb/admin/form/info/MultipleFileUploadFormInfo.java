@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 public class MultipleFileUploadFormInfo extends FielUploadDefaultInfo {
-	public MultipleFileUploadFormInfo(String formName, boolean blank, String labelText, Accept accept) {
-		super(formName, blank, labelText, accept);
+	public MultipleFileUploadFormInfo(String fileFormName, boolean blank, String labelText, Accept accept) {
+		super(fileFormName, blank, labelText, accept);
 	}
 }

@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface IntegerForm {
-	String formName() default "";
 	boolean blank() default true;
 	int maxlength() default 255;
 	String placeholder() default "";

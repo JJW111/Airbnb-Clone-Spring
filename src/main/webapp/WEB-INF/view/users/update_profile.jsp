@@ -66,7 +66,7 @@
 				</div>
 			</spring:bind>
 			
-			<button class="btn bg-red-500 text-white">Update profile</button>
+			<button class="btn bg-red-500 text-white">Update Profile</button>
 			
 		</form:form>
 			
@@ -77,7 +77,7 @@
 	    </c:if>
 	    
 	    <div class="mt-3">
-        	<a href="/auth/avatar?id=${room.id}" class="text-teal-500 font-medium">Edit Avatar</a>
+        	<a href="/auth/avatar" class="text-teal-500 font-medium">Edit Avatar</a>
    		</div>
 	
 	</div>

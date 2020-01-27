@@ -9,6 +9,7 @@ public final class CommonUtils {
 	}
 	
 	public static String emptyCheck(String str) {
+		if (str == null) return null;
 		return str.trim().isEmpty() ? null : str;
 	}
 	

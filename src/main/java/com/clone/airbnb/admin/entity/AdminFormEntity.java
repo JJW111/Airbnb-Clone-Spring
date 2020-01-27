@@ -11,13 +11,6 @@ public interface AdminFormEntity<T> {
 	Integer getId();
 	
 	/**
-	 * 엔터티를 복사하여 반환한다.
-	 * 
-	 * @return
-	 */
-	T deepClone();
-	
-	/**
 	 * t 엔터티를 현재 엔터티에 덮어쓴다.
 	 * 
 	 * @param t 덮어쓸 엔터티

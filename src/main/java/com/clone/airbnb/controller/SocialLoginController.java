@@ -1,6 +1,7 @@
 package com.clone.airbnb.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,12 +14,12 @@ import com.clone.airbnb.exception.GithubPrivateEmailException;
 import com.clone.airbnb.exception.KakaoEmailDoesNotExistException;
 import com.clone.airbnb.exception.KakaoException;
 import com.clone.airbnb.messages.RedirectMessageSystem;
-import com.clone.airbnb.security.AuthenticationSystem;
 import com.clone.airbnb.service.GithubLoginService;
 import com.clone.airbnb.service.KakaoLoginService;
 import com.clone.airbnb.service.LoginService;
 
 
+@PreAuthorize("!isAuthenticated()")
 @Controller
 @RequestMapping(path="/login")
 public class SocialLoginController {
@@ -35,10 +36,6 @@ public class SocialLoginController {
 	
 	@GetMapping(path="/github")
 	public String githubLogin(RedirectAttributes redirectAttr) {
-		if (!AuthenticationSystem.loggedOutOnly()) {
-			return "redirect:/logout_only";
-		}
-		
 		return "redirect:" + ghService.identityUrl();
 	}
 	
@@ -69,12 +66,9 @@ public class SocialLoginController {
 
 	@GetMapping(path="/kakao")
 	public String kakaoLogin(RedirectAttributes redirectAttr) {
-		if (!AuthenticationSystem.loggedOutOnly()) {
-			return "redirect:/logout_only";
-		}
-		
 		return "redirect:" + kakaoService.identityUrl();
 	}
+	
 	
 	
 	@GetMapping(path="/kakao/callback")

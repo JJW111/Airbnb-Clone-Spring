@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface TextAreaForm {
-	String formName() default "";
 	boolean blank() default true;
 	int maxlength() default 255;
 	int rows() default 5;

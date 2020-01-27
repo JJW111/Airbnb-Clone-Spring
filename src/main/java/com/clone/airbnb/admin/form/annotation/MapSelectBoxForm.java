@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface MapSelectBoxForm {
-	String formName() default "";
 	boolean blank() default true;
 	String defaultOption() default "";
 	String method();

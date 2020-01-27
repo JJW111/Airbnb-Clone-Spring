@@ -1,18 +1,16 @@
 package com.clone.airbnb.admin.form.info;
 
-import java.util.Map;
-
 import lombok.Getter;
 
 @Getter
 public class MapSelectBoxInfo extends DefaultInfo {
 	private final String defaultOption;
-	private final Map<String, String> values;
+	private final String method;
 	
-	public MapSelectBoxInfo(String formName, boolean blank, String defaultOption, Map<String, String> values) {
-		super(formName, blank);
+	public MapSelectBoxInfo(boolean blank, String defaultOption, String method) {
+		super(blank);
 		this.defaultOption = defaultOption;
-		this.values = values;
+		this.method = method;
 	}
 	
 }

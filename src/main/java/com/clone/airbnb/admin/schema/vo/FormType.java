@@ -1,13 +1,8 @@
 package com.clone.airbnb.admin.schema.vo;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Map;
 
 import com.clone.airbnb.admin.exception.EntitySchemaInvalidEntityClassException;
-import com.clone.airbnb.admin.exception.InvalidReturnTypeException;
-import com.clone.airbnb.admin.exception.NonStaticMethodException;
 import com.clone.airbnb.admin.form.annotation.CheckBoxForm;
 import com.clone.airbnb.admin.form.annotation.DateForm;
 import com.clone.airbnb.admin.form.annotation.DatetimeForm;
@@ -34,6 +29,7 @@ import com.clone.airbnb.admin.form.info.FileUploadFormInfo;
 import com.clone.airbnb.admin.form.info.FormInfo;
 import com.clone.airbnb.admin.form.info.ImageUploadFormInfo;
 import com.clone.airbnb.admin.form.info.IntegerInfo;
+import com.clone.airbnb.admin.form.info.JoinManyInfo;
 import com.clone.airbnb.admin.form.info.JoinOneTextInfo;
 import com.clone.airbnb.admin.form.info.MapSelectBoxInfo;
 import com.clone.airbnb.admin.form.info.MultipleFileUploadFormInfo;
@@ -47,7 +43,6 @@ import com.clone.airbnb.admin.form.info.TextAreaInfo;
 import com.clone.airbnb.admin.form.info.TimeInfo;
 import com.clone.airbnb.admin.form.info.UsernameInfo;
 import com.clone.airbnb.exception.InvalidFormTypeException;
-import com.clone.airbnb.utils.ReflectionInvocator;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -103,7 +98,6 @@ public class FormType {
 			
 			type = new FormType(FieldType.INTEGER, 
 					new IntegerInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
 							form.blank(),
 							form.maxlength(),
 							form.placeholder(),
@@ -124,7 +118,6 @@ public class FormType {
 		if (form != null) {
 			type = new FormType(FieldType.TEXT, 
 					new PlaceholderTextInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
 							form.blank(),
 							form.maxlength(), 
 							form.placeholder()
@@ -147,10 +140,8 @@ public class FormType {
 				
 				type = new FormType(FieldType.SELECT_BOX, 
 						new SelectBoxInfo(
-								form.formName().isEmpty() ? field.getName() : form.formName(),
 								form.blank(),
-								form.defaultOption(),
-								(Object[]) ReflectionInvocator.invoke(ft, "values")
+								form.defaultOption()
 								));
 				
 			} else {
@@ -162,37 +153,17 @@ public class FormType {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	private static FormType mapSelectbox(Field field, Class<Object> entityClass) {
 		FormType type = null;
 		
 		MapSelectBoxForm form = field.getAnnotation(MapSelectBoxForm.class);
 		
 		if (form != null) {
-			String valuesMethodName = form.method();
-			
-			Object obj = ReflectionInvocator.forceNewInstance(entityClass);
-			
-			Method method = ReflectionInvocator.getDeclaredMethod(entityClass, valuesMethodName);
-			
-			if (method == null) {
-				throw new NullPointerException("MapSelectBoxForm 의 method 가 존재하지 않습니다. Field: " + field.getName());
-			}
-			
-			if (Modifier.isStatic(method.getModifiers())) {
-				throw new NonStaticMethodException("MapSelectBoxForm 의 method 가 non-static 이 아닙니다. Field: " + field.getName());
-			}
-			
-			if (!Map.class.isAssignableFrom(method.getReturnType())) {
-				throw new InvalidReturnTypeException("MapSelectBoxForm 의 method 의 리턴타입이 Map 이 아닙니다. 리턴타입은 Map 이여야 합니다. Field: " + field.getName());
-			}
-			
 			type = new FormType(FieldType.MAP_SELECT_BOX, 
 					new MapSelectBoxInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
 							form.blank(),
 							form.defaultOption(),
-							(Map<String, String>) ReflectionInvocator.invoke(obj, valuesMethodName)
+							form.method()
 							));
 				
 		}
@@ -209,7 +180,6 @@ public class FormType {
 		if (form != null) {
 			type = new FormType(FieldType.CHECK_BOX,
 					new CheckBoxInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName()
 							));
 		}
 		
@@ -225,7 +195,6 @@ public class FormType {
 		if (form != null) {
 			type = new FormType(FieldType.TEXT_AREA, 
 					new TextAreaInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
 							form.blank(),
 							form.maxlength(), 
 							form.placeholder(), 
@@ -246,7 +215,7 @@ public class FormType {
 		if (form != null) {
 			type = new FormType(FieldType.FILE_UPLOAD_FORM, 
 					new FileUploadFormInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
+							form.fileFormName(),
 							form.blank(),
 							form.labelText(),
 							form.accept()
@@ -266,7 +235,7 @@ public class FormType {
 		if (form != null) {
 			type = new FormType(FieldType.IMAGE_UPLOAD_FORM, 
 					new ImageUploadFormInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
+							form.fileFormName(),
 							form.blank(),
 							form.labelText()
 							));
@@ -284,7 +253,7 @@ public class FormType {
 		if (form != null) {
 			type = new FormType(FieldType.MULTIPLE_IMAGE_UPLOAD_FORM, 
 					new MultipleImageUploadFormInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
+							form.fileFormName(),
 							form.blank(),
 							form.labelText()
 							));
@@ -302,7 +271,7 @@ public class FormType {
 		if (form != null) {
 			type = new FormType(FieldType.MULTIPLE_FILE_UPLOAD_FORM, 
 					new MultipleFileUploadFormInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
+							form.fileFormName(),
 							form.blank(),
 							form.labelText(),
 							form.accept()
@@ -321,7 +290,6 @@ public class FormType {
 		if (form != null) {
 			type = new FormType(FieldType.DATE,
 					new DateInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
 							form.blank()
 							));
 		}
@@ -338,7 +306,6 @@ public class FormType {
 		if (form != null) {
 			type = new FormType(FieldType.DATETIME,
 					new DatetimeInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
 							form.blank()
 							));
 		}
@@ -355,7 +322,6 @@ public class FormType {
 		if (form != null) {
 			type = new FormType(FieldType.TIME,
 					new TimeInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
 							form.blank()
 							));
 		}
@@ -376,7 +342,6 @@ public class FormType {
 			
 			type = new FormType(FieldType.USERNAME, 
 					new UsernameInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
 							form.maxlength(), 
 							form.placeholder()
 							));
@@ -398,7 +363,6 @@ public class FormType {
 			
 			type = new FormType(FieldType.PASSWORD, 
 					new PasswordInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
 							form.maxlength(),
 							form.placeholder()
 								));
@@ -416,7 +380,6 @@ public class FormType {
 		if (form != null) {
 			type = new FormType(FieldType.JOIN_ONE_TEXT, 
 					new JoinOneTextInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
 							form.blank(),
 							form.maxlength(), 
 							form.placeholder(),
@@ -436,12 +399,11 @@ public class FormType {
 		if (form != null) {
 			type = new FormType(FieldType.JOIN_ONE, 
 					new JoinOneInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
 							form.blank(),
-							form.field(),
 							form.defaultOption(),
-							form.repository(),
-							form.findAllMethod()
+							form.itemLabel(),
+							form.itemValue(),
+							form.method()
 							));
 				
 		}
@@ -457,13 +419,12 @@ public class FormType {
 		
 		if (form != null) {
 			type = new FormType(FieldType.JOIN_MANY, 
-					new JoinOneInfo(
-							form.formName().isEmpty() ? field.getName() : form.formName(),
+					new JoinManyInfo(
 							form.blank(),
-							form.field(),
 							form.defaultOption(),
-							form.repository(),
-							form.findAllMethod()
+							form.itemLabel(),
+							form.itemValue(),
+							form.method()
 							));
 				
 		}

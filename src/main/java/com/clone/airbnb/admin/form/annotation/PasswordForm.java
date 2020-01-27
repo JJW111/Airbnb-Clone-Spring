@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface PasswordForm {
-	String formName() default "";
 	int maxlength();
 	String placeholder() default "";
 }

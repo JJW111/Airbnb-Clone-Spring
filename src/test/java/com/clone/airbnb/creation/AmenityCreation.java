@@ -7,7 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.clone.airbnb.entity.Amenity;
 import com.clone.airbnb.repository.AmenityRepository;
 
-
+/**
+ * Amenity Dummy 엔터티를 DB 에 지정한 개수만큼 생성한다.
+ */
 @SpringBootTest
 class AmenityCreation {
 	
@@ -65,9 +67,9 @@ class AmenityCreation {
 		
 		for (String item : list) {
 			if (!repository.existsByName(item)) {
-				Amenity amenity = Amenity.builder()
-										.setName(item)
-										.build();
+				Amenity amenity = new Amenity();
+				amenity.setName(item);
+				
 				repository.save(amenity);
 			}
 		}

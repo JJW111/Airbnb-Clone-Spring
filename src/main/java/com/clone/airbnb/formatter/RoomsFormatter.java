@@ -1,39 +1,54 @@
 package com.clone.airbnb.formatter;
 
 import java.text.ParseException;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.Formatter;
+import org.springframework.stereotype.Component;
 
 import com.clone.airbnb.entity.Room;
 import com.clone.airbnb.repository.RoomRepository;
-import com.clone.airbnb.utils.BeanUtils;
 
-public class RoomsFormatter implements Formatter<Set<Room>>{
+@Component
+public class RoomsFormatter implements Formatter<List<Room>>{
 
+	@Autowired
+	private RoomRepository roomRepository;
+	
 	@Override
-	public String print(Set<Room> object, Locale locale) {
+	public String print(List<Room> object, Locale locale) {
 		return object.toString();
 	}
 
 	@Override
-	public Set<Room> parse(String text, Locale locale) throws ParseException {
-		Set<Room> rooms = null;
+	public List<Room> parse(String text, Locale locale) throws ParseException {
+		if (text == null) return null;
+		
+		List<Room> rooms = null;
 		
 		if (!text.trim().isEmpty()) {
-			rooms = new HashSet<>();
+			rooms = new ArrayList<>();
 			
 			for (String s : text.split(",")) {
 				Integer id = Integer.valueOf(s);
-				Room room = ((RoomRepository) BeanUtils.getBean(RoomRepository.class)).findById(id).get();
-				if (room == null) return null;
-				rooms.add(room);
+				
+				Optional<Room> opt = roomRepository.findById(id);
+				
+				if (opt.isPresent()) {
+					rooms.add(opt.get());
+				}
 			}
 		}
 		
-		return rooms; 
+		if (rooms != null && !rooms.isEmpty()) {
+			return rooms; 
+		} else {
+			return null;
+		}
 	}
 	
 }

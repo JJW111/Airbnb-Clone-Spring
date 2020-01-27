@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class DateInfo extends DateDefaultInfo {
-	public DateInfo(String formName, boolean blank) {
-		super(formName, blank);
+	public DateInfo(boolean blank) {
+		super(blank);
 	}
 }
