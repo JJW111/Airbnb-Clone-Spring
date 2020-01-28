@@ -15,22 +15,20 @@
 	<div class="container lg:w-5/12 md:w-1/2 xl:w-1/4 mx-auto my-10 flex flex-col items-center border p-6 border-gray-400">
 		
 		<c:if test="${not empty user.avatar}">
-			<div class="bg-cover bg-center w-64 h-64" style="background-image: url(${user.avatar.path});">
+			<div class="bg-no-repeat bg-contain bg-center w-64 h-64" style="background-image: url(${user.avatar.path});">
 			</div>
+			<a href="/auth/avatar/delete" class="btn bg-red-500 text-white mt-10">Delete Avatar</a>
 		</c:if>
 		<c:if test="${empty user.avatar}">
 			<div class="bg-gray-500 w-64 h-64 flex items-center">
 				<span class="flex-1 text-center text-3xl font-bold text-white">No Avatar</span>
 			</div>
+			<form action="/auth/avatar/upload" method="POST" enctype="multipart/form-data" class="mt-10">
+				<input type="file" name="avatarFile">
+				<button class="btn bg-teal-500 text-white mt-5">Update Avatar</button>
+			</form>
 		</c:if>
 	
-		<form method="POST" enctype="multipart/form-data" class="mt-10">		
-			<input type="file" name="avatarFile">
-			<button class="btn bg-teal-500 text-white mt-5">Update Avatar</button>
-		</form>
-		
-		<button class="btn bg-red-500 text-white mt-5">Delete Avatar</button>
-		
 	</div>
 	
 </div>

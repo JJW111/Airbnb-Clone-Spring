@@ -2,6 +2,8 @@ package com.clone.airbnb.controller;
 
 import java.security.Principal;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +14,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.clone.airbnb.dto.PasswordChange;
 import com.clone.airbnb.dto.UpdateProfileDto;
 import com.clone.airbnb.entity.User;
+import com.clone.airbnb.exception.UserDoesNotExistsException;
 import com.clone.airbnb.messages.RedirectMessageSystem;
 import com.clone.airbnb.security.AuthenticationSystem;
 import com.clone.airbnb.service.UserService;
+import com.clone.airbnb.utils.ValidUtils;
 
 @Controller
 @RequestMapping(path="/auth")
@@ -109,6 +115,51 @@ public class AuthController {
 	public String avatar(Principal principal, Model model) {
 		model.addAttribute("user", userService.profile(principal.getName()));
 		return "users/update_avatar";
+	}
+	
+	
+	@PostMapping(path = "/avatar/upload")
+	public String uploadAvatar(Principal principal, @RequestParam("avatarFile") MultipartFile avatarFile, RedirectAttributes redirectAttr) {
+		if (!ValidUtils.isValid(avatarFile)) {
+			RedirectMessageSystem.builder(redirectAttr)
+				.error("잘못된 이미지 입니다.")
+				.build();
+			return "/auth/avatar";
+		}
+		
+		try {
+			userService.uploadAvatar(avatarFile, principal.getName());
+			return "redirect:/users/profile";
+		} catch (UserDoesNotExistsException e) {
+			return "redirect:/wrong_access";
+		}
+	}
+	
+	
+	@GetMapping(path = "/avatar/delete")
+	public String deleteAvatar(Principal principal) {
+		try {
+			userService.deleteAvatar(principal.getName());
+			return "redirect:/auth/avatar";
+		} catch (UserDoesNotExistsException e) {
+			return "redirect:/wrong_access";
+		}
+	}
+	
+	
+	@GetMapping(path = "/switch-hosting")
+	public String switchHosting(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		
+		Object sessionObj = session.getAttribute("is_hosting");
+
+		if (sessionObj == null) {
+			session.setAttribute("is_hosting", true);
+		} else {
+			session.removeAttribute("is_hosting");
+		}
+		
+		return "redirect:/";
 	}
 	
 }

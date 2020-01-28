@@ -1,6 +1,7 @@
 package com.clone.airbnb.service;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.clone.airbnb.dto.PasswordChange;
 import com.clone.airbnb.dto.UpdateProfileDto;
@@ -16,4 +17,6 @@ public interface UserService extends UserDetailsService {
 	void update(UpdateProfileDto dto);
 	boolean matches(String username, PasswordChange passwordChange);
 	void changePassowrd(String username, PasswordChange passwordChange);
+	void uploadAvatar(MultipartFile file, String username);
+	void deleteAvatar(String username);
 }

@@ -7,17 +7,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.clone.airbnb.dto.Authentication;
 import com.clone.airbnb.dto.PasswordChange;
 import com.clone.airbnb.dto.UpdateProfileDto;
 import com.clone.airbnb.entity.User;
+import com.clone.airbnb.entity.file.Avatar;
 import com.clone.airbnb.exception.AlreadyVerifiedUserException;
 import com.clone.airbnb.exception.FailedToSendMailException;
 import com.clone.airbnb.exception.UserDoesNotExistsException;
 import com.clone.airbnb.repository.UserRepository;
 import com.clone.airbnb.service.MailService;
 import com.clone.airbnb.service.UserService;
+import com.clone.airbnb.utils.FileUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -187,6 +190,45 @@ public class UserServiceImpl implements UserService {
 		User user = opt.get();
 		user.setPassword(passwordEncoder.encode(passwordChange.getPassword()));
 		userRepository.save(user);
+	}
+	
+	
+	
+	@Override
+	public void uploadAvatar(MultipartFile file, String username) {
+		Optional<User> opt = userRepository.findByUsername(username);
+		
+		if (opt.isPresent()) {
+			User user = opt.get();
+			Avatar avatar = new Avatar();
+			avatar.setFile(file);
+			FileUtils.save(avatar);
+			user.setAvatar(avatar);
+			userRepository.save(user);
+		} else {
+			throw new UserDoesNotExistsException("username[" + username + "] 에 해당하는 유저가 존재하지 않습니다.");
+		}
+	}
+	
+	
+	
+	@Override
+	public void deleteAvatar(String username) {
+		Optional<User> opt = userRepository.findByUsername(username);
+		
+		if (opt.isPresent()) {
+			User user = opt.get();
+			Avatar avatar = user.getAvatar();
+			
+			if (avatar != null) {
+				FileUtils.delete(avatar.getUploadPath());
+			}
+			
+			user.setAvatar(null);
+			userRepository.save(user);
+		} else {
+			throw new UserDoesNotExistsException("username[" + username + "] 에 해당하는 유저가 존재하지 않습니다.");
+		}
 	}
 	
 }

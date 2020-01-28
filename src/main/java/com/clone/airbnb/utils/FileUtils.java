@@ -53,6 +53,8 @@ public class FileUtils {
 	
 	
 	public static void delete(String absolutePath) {
+		if (absolutePath == null) return;
+		
 		File file = new File(absolutePath);
 		
 		if (file.exists()) {
