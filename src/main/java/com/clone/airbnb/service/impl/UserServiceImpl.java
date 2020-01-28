@@ -12,8 +12,6 @@ import com.clone.airbnb.dto.Authentication;
 import com.clone.airbnb.dto.PasswordChange;
 import com.clone.airbnb.dto.UpdateProfileDto;
 import com.clone.airbnb.entity.User;
-import com.clone.airbnb.entity.projection.Profile;
-import com.clone.airbnb.entity.projection.UpdateProfile;
 import com.clone.airbnb.exception.AlreadyVerifiedUserException;
 import com.clone.airbnb.exception.FailedToSendMailException;
 import com.clone.airbnb.exception.UserDoesNotExistsException;
@@ -87,8 +85,8 @@ public class UserServiceImpl implements UserService {
 	
 	
 	@Override
-	public Profile profile(String username) {
-		Optional<Profile> opt = userRepository.findByUsername(username, Profile.class);
+	public User profile(String username) {
+		Optional<User> opt = userRepository.findByUsername(username);
 		
 		if (opt.isPresent()) {
 			return opt.get();
@@ -100,8 +98,8 @@ public class UserServiceImpl implements UserService {
 	
 	
 	@Override
-	public Profile profile(int id) {
-		Optional<Profile> opt = userRepository.findById(id, Profile.class);
+	public User profile(int id) {
+		Optional<User> opt = userRepository.findById(id);
 		
 		if (opt.isPresent()) {
 			return opt.get();
@@ -126,8 +124,8 @@ public class UserServiceImpl implements UserService {
 	
 	
 	@Override
-	public UpdateProfile getUpdateProfile(String username) {
-		Optional<UpdateProfile> opt = userRepository.findByUsername(username, UpdateProfile.class);
+	public User getUpdateProfile(String username) {
+		Optional<User> opt = userRepository.findByUsername(username);
 		
 		if (opt.isPresent()) {
 			return opt.get();

@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <%@include file="../inc/common.jsp" %>
-<title>Room | ${room.name}</title>
+<title>Room Photos | ${room.name}</title>
 </head>
 
 <%@include file="../inc/top.jsp" %>

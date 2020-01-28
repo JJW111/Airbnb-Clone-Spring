@@ -21,7 +21,6 @@ import com.clone.airbnb.admin.form.annotation.JoinOneForm;
 import com.clone.airbnb.admin.form.annotation.JoinOneTextForm;
 import com.clone.airbnb.admin.form.annotation.TextAreaForm;
 import com.clone.airbnb.entity.sup.DateTimeModel;
-import com.clone.airbnb.entity.sup.RatingAverageReview;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -31,7 +30,7 @@ import lombok.Setter;
 @Table(name = "review")
 @Getter
 @Setter
-public class Review extends DateTimeModel implements AdminFormEntity<Review>, RatingAverageReview {
+public class Review extends DateTimeModel implements AdminFormEntity<Review> {
 	
 	@Id
     @GeneratedValue

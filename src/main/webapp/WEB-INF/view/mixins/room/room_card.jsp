@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="w-1/4 mb-10 px-2 overflow-hidden">
-	<a href="/rooms/detail?id=${room.id}">
+	<a href="/rooms/detail?room_id=${room.id}">
 		<c:if test="${not empty room.photos and not room.photos.isEmpty()}">
 	    	<div class="w-full h-64 bg-cover bg-center rounded-lg mb-3" style="background-image: url(${room.photos.get(0).path});"></div>
 	    </c:if>

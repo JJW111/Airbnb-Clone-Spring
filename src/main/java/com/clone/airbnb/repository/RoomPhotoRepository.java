@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
-import com.clone.airbnb.entity.RoomPhoto;
+
+import com.clone.airbnb.entity.file.RoomPhoto;
 
 public interface RoomPhotoRepository extends PagingAndSortingRepository<RoomPhoto, Integer> {
 	Optional<RoomPhoto> findByIdAndRoomIdAndRoom_host_username(Integer id, Integer roomId, String username);

@@ -125,7 +125,8 @@
     	<sec:authorize access="isAuthenticated()"> 
 	    	<sec:authentication var="principal" property="principal" />
 	    	<c:if test="${principal.username eq room.host.username}">
-	            <a href="/rooms/edit?id=${room.id}" class="btn-link block">Edit Room</a>
+	            <a href="/rooms/edit?room_id=${room.id}" class="btn-link block">Edit Room</a>
+	            <a href="/rooms/delete?room_id=${room.id}" class="btn-link block mt-10 bg-teal-500">Delete Room</a>
 	        </c:if>
         </sec:authorize>
     </div>

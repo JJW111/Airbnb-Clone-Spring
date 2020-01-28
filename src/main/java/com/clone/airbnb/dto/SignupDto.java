@@ -10,11 +10,9 @@ import com.clone.airbnb.validator.annotation.UniqueUsername;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
 public class SignupDto {
     @Size(min = 1, max = 150)
     @Email

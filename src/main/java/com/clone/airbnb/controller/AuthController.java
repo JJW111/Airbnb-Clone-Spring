@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.clone.airbnb.dto.PasswordChange;
 import com.clone.airbnb.dto.UpdateProfileDto;
-import com.clone.airbnb.entity.projection.UpdateProfile;
+import com.clone.airbnb.entity.User;
 import com.clone.airbnb.messages.RedirectMessageSystem;
 import com.clone.airbnb.security.AuthenticationSystem;
 import com.clone.airbnb.service.UserService;
@@ -37,8 +37,8 @@ public class AuthController {
 		String username = principal.getName();
 		
 		if (username != null) {
-			UpdateProfile updateProfile = userService.getUpdateProfile(username);
-			model.addAttribute("user", updateProfile);
+			User user = userService.getUpdateProfile(username);
+			model.addAttribute("user", user);
 			return "users/update_profile";
 		} else {
 			RedirectMessageSystem.builder(redirectAttr)

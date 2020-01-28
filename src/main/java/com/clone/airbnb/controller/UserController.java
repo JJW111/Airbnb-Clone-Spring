@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.clone.airbnb.entity.projection.Profile;
+import com.clone.airbnb.entity.User;
 import com.clone.airbnb.entity.values.SelectValues;
 import com.clone.airbnb.service.RoomService;
 import com.clone.airbnb.service.UserService;
@@ -30,7 +30,7 @@ public class UserController {
 	
 	@GetMapping(path="/profile")
 	public String profile(Principal principal, RedirectAttributes redirectAttr, Model model, @RequestParam(required = false, name = "id") Integer id) {
-		Profile profile = null;
+		User profile = null;
 		
 		if (id == null) {
 			if (principal != null) {

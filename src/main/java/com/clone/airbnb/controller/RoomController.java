@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,13 +19,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.clone.airbnb.dto.RoomAddDto;
 import com.clone.airbnb.dto.RoomUpdateDto;
-import com.clone.airbnb.entity.projection.RoomDetail;
-import com.clone.airbnb.entity.projection.RoomPhotos;
-import com.clone.airbnb.entity.projection.RoomUpdate;
+import com.clone.airbnb.entity.Room;
 import com.clone.airbnb.entity.values.SelectValues;
 import com.clone.airbnb.exception.DataDoesNotExistsException;
 import com.clone.airbnb.exception.ListSizeOutOfBoundsException;
+import com.clone.airbnb.exception.UserDoesNotExistsException;
 import com.clone.airbnb.messages.RedirectMessageSystem;
 import com.clone.airbnb.service.RoomService;
 
@@ -39,16 +40,55 @@ public class RoomController {
 	private SelectValues selectValues;
 	
 	
+	
 	@GetMapping(path="/detail")
-	public String detail(Model model, @RequestParam("id") Integer id) {
-		RoomDetail roomDetail = roomService.getRoomDetail(id);
+	public String detail(Model model, @RequestParam("room_id") Integer roomId) {
+		Room room = roomService.getRoomDetail(roomId);
 		
-		if (roomDetail == null) {
+		if (room == null) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 		}
 		
-		model.addAttribute("room", roomDetail);
+		model.addAttribute("room", room);
 		return "rooms/room_detail";
+	}
+	
+	
+	
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping(path="/add")
+	public String roomAdd(Model model) {
+		model.addAttribute("room", new RoomAddDto());
+		model.addAttribute("selectValues", selectValues);
+		return "rooms/room_add";
+	}
+	
+	
+
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping(path="/add")
+	public String addRoom(Principal principal, Model model, 
+			@Valid @ModelAttribute("room") RoomAddDto dto, BindingResult result, 
+			RedirectAttributes redirectAttr) {
+		Room room = dto.toOriginal();
+		room.validate(result);
+		
+		if (result.hasErrors()) {
+			model.addAttribute("selectValues", selectValues);
+			return "rooms/room_add";
+		}
+		
+		try {
+			roomService.addRoom(room, principal.getName());
+		} catch (UserDoesNotExistsException e) {
+			return "redirect:/wrong_access";
+		}
+		
+		RedirectMessageSystem.builder(redirectAttr)
+			.success("방 생성 성공!")
+			.build();
+		
+		return "redirect:/users/profile";
 	}
 	
 	
@@ -62,8 +102,8 @@ public class RoomController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping(path="/edit")
-	public String roomEdit(Principal principal, Model model, @RequestParam("id") int id) {
-		RoomUpdate roomUpdate = roomService.getRoomUpdate(id, principal.getName());
+	public String roomEdit(Principal principal, Model model, @RequestParam("room_id") int roomId) {
+		Room roomUpdate = roomService.getRoomUpdate(roomId, principal.getName());
 		
 		if (roomUpdate == null) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -78,9 +118,17 @@ public class RoomController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping(path="/edit")
-	public String editRoom(Principal principal, Model model, @Valid @ModelAttribute("room") RoomUpdateDto dto, RedirectAttributes redirectAttr) {
+	public String editRoom(Principal principal, Model model,
+			@Valid @ModelAttribute("room") RoomUpdateDto dto, BindingResult result,
+			RedirectAttributes redirectAttr) {
+
+		if (result.hasErrors()) {
+			model.addAttribute("selectValues", selectValues);
+			return "rooms/room_edit";
+		}
+		
 		try {
-			roomService.update(dto, principal.getName());
+			roomService.updateRoom(dto, principal.getName());
 		} catch (DataDoesNotExistsException e) {
 			RedirectMessageSystem.builder(redirectAttr)
 				.error("해당 방이 존재하지 않습니다.")
@@ -92,7 +140,7 @@ public class RoomController {
 			.success("방 업데이트 성공!")
 			.build();
 		
-		return "redirect:/rooms/detail?id=" + dto.getId();
+		return "redirect:/rooms/detail?room_id=" + dto.getId();
 	}
 	
 	
@@ -100,7 +148,7 @@ public class RoomController {
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping(path="/photos")
 	public String photos(Principal principal, Model model, @RequestParam("room_id") Integer roomId) {
-		RoomPhotos roomPhotos = roomService.getRoomPhotos(roomId, principal.getName());
+		Room roomPhotos = roomService.getRoomPhotos(roomId, principal.getName());
 		
 		if (roomPhotos == null) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -157,6 +205,18 @@ public class RoomController {
 			} catch (DataDoesNotExistsException e) {
 				return "redirect:/wrong_access";
 			}
+		}
+	}
+	
+	
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping(path="/delete")
+	public String deleteRoom(Principal principal, @RequestParam("room_id") Integer roomId, RedirectAttributes redirectAttr) {
+		try {
+			roomService.deleteRoom(roomId, principal.getName());
+			return "redirect:/users/profile";
+		} catch (DataDoesNotExistsException e) {
+			return "redirect:/wrong_access";
 		}
 	}
 	

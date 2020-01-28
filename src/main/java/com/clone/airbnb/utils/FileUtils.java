@@ -11,12 +11,22 @@ import java.util.UUID;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.clone.airbnb.admin.entity.FileEntity;
 import com.clone.airbnb.exception.FileStorageException;
 
 
 public class FileUtils {
 
+	public static void save(FileEntity fileEntity) {
+		if (fileEntity != null) {
+			FileUtils.save(fileEntity.getFile(), fileEntity.getUploadPath());
+		}
+	}
+	
+	
 	public static void save(MultipartFile multipartFile, String absolutePath) {
+		if (multipartFile == null || absolutePath == null) return; 
+			
 		String strDir = FilenameUtils.getPath(absolutePath);
 		
 		File dir = new File(strDir);
@@ -36,9 +46,11 @@ public class FileUtils {
 		}
 	}
 	
+	
 	public static String randomFileName(String extension) {
 		return UUID.randomUUID().toString() + "." + extension;
 	}
+	
 	
 	public static void delete(String absolutePath) {
 		File file = new File(absolutePath);

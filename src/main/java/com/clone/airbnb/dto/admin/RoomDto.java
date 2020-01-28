@@ -21,9 +21,9 @@ import com.clone.airbnb.entity.Amenity;
 import com.clone.airbnb.entity.Facility;
 import com.clone.airbnb.entity.HouseRule;
 import com.clone.airbnb.entity.Room;
-import com.clone.airbnb.entity.RoomPhoto;
 import com.clone.airbnb.entity.RoomType;
 import com.clone.airbnb.entity.User;
+import com.clone.airbnb.entity.file.RoomPhoto;
 import com.clone.airbnb.utils.ValidUtils;
 
 import lombok.Getter;

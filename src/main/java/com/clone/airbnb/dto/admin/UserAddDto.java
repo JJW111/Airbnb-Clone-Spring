@@ -12,13 +12,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.clone.airbnb.common.Common;
-import com.clone.airbnb.entity.Avatar;
 import com.clone.airbnb.entity.User;
 import com.clone.airbnb.entity.enu.Currency;
 import com.clone.airbnb.entity.enu.Gender;
 import com.clone.airbnb.entity.enu.Language;
 import com.clone.airbnb.entity.enu.LoginMethod;
 import com.clone.airbnb.entity.enu.Role;
+import com.clone.airbnb.entity.file.Avatar;
 import com.clone.airbnb.utils.ValidUtils;
 import com.clone.airbnb.validator.annotation.UniqueUsername;
 

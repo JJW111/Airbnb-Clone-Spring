@@ -34,12 +34,22 @@
 	    </sec:authorize>
 		
 	</div>
-	<c:if test="${not empty rooms and not rooms.isEmpty()}">
-		<div class="container mx-auto pb-10 flex flex-col items-center">
-		    <h3>${user.firstName}'s Rooms</h3>
-		    <%@include file="../mixins/room/rooms.jsp" %>
-		</div>
-	</c:if>
+	
+	<div class="container mx-auto pb-10 flex flex-col items-center">
+	
+		<sec:authorize access="isAuthenticated()"> 
+			<sec:authentication var="principal" property="principal" />
+			<c:if test="${principal.username eq user.username}">
+	    		<a href="/rooms/add" class="btn-link bg-teal-500 lg:w-5/12 md:w-1/2 xl:w-1/4 mb-10">Add Room</a>
+	    	</c:if>
+	    </sec:authorize>
+	    
+		<c:if test="${not empty rooms and not rooms.isEmpty()}">
+			    <h3>${user.firstName}'s Rooms</h3>
+			    <%@include file="../mixins/room/rooms.jsp" %>
+		</c:if>
+		
+	</div>
 	
 </div>
 

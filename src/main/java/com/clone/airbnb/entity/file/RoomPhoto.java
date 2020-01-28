@@ -1,4 +1,4 @@
-package com.clone.airbnb.entity;
+package com.clone.airbnb.entity.file;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +8,7 @@ import javax.persistence.ManyToOne;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.clone.airbnb.admin.entity.FileEntity;
+import com.clone.airbnb.entity.Room;
 
 import lombok.Getter;
 import lombok.Setter;

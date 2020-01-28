@@ -19,6 +19,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.clone.airbnb.admin.entity.AdminFormEntity;
 import com.clone.airbnb.admin.form.annotation.CheckBoxForm;
 import com.clone.airbnb.admin.form.annotation.DatetimeForm;
@@ -30,8 +32,8 @@ import com.clone.airbnb.admin.form.annotation.MultipleImageUploadForm;
 import com.clone.airbnb.admin.form.annotation.JoinOneForm;
 import com.clone.airbnb.admin.form.annotation.TextAreaForm;
 import com.clone.airbnb.admin.form.annotation.TextForm;
+import com.clone.airbnb.entity.file.RoomPhoto;
 import com.clone.airbnb.entity.sup.DateTimeModel;
-import com.clone.airbnb.entity.sup.RatingAverageReview;
 import com.clone.airbnb.utils.FileUtils;
 import com.clone.airbnb.utils.ValidUtils;
 
@@ -220,6 +222,20 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 	
 	
 	
+	public void setPhotosByFiles(List<MultipartFile> photoFiles) {
+		if (photoFiles == null) return;
+		final List<RoomPhoto> photos = new ArrayList<>();
+		photoFiles.forEach(e -> {
+			RoomPhoto roomPhoto = new RoomPhoto();
+			roomPhoto.setFile(e);
+			photos.add(roomPhoto);
+		});
+		this.setPhotos(photos);
+	}
+	
+	
+	
+	
 	public void setReviews(List<Review> reviews) {
 		if (reviews == null) return;
 		if (this.reviews == null) {
@@ -281,7 +297,7 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 	
 	
 	
-	public static double totalRating(List<? extends RatingAverageReview> reviews) {
+	public static double totalRating(List<Review> reviews) {
 		if (ValidUtils.isValid(reviews)) {
 			double total = 0.0;
 			

@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 import com.clone.airbnb.admin.form.annotation.TextForm;
 
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
+@EqualsAndHashCode(of = "id")
 public abstract class AbstractItem {
 	@Id
     @GeneratedValue

@@ -11,17 +11,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.clone.airbnb.dto.RoomUpdateDto;
 import com.clone.airbnb.entity.Room;
-import com.clone.airbnb.entity.RoomPhoto;
-import com.clone.airbnb.entity.projection.RoomDetail;
-import com.clone.airbnb.entity.projection.RoomList;
-import com.clone.airbnb.entity.projection.RoomPhotos;
-import com.clone.airbnb.entity.projection.RoomUpdate;
+import com.clone.airbnb.entity.User;
+import com.clone.airbnb.entity.file.RoomPhoto;
 import com.clone.airbnb.exception.DataDoesNotExistsException;
 import com.clone.airbnb.exception.ListSizeOutOfBoundsException;
+import com.clone.airbnb.exception.UserDoesNotExistsException;
 import com.clone.airbnb.repository.RoomPhotoRepository;
 import com.clone.airbnb.repository.RoomRepository;
+import com.clone.airbnb.repository.UserRepository;
 import com.clone.airbnb.service.RoomService;
 import com.clone.airbnb.utils.FileUtils;
+import com.clone.airbnb.utils.ValidUtils;
 
 @Service
 public class RoomServiceImpl implements RoomService {
@@ -32,6 +32,8 @@ public class RoomServiceImpl implements RoomService {
 	@Autowired
 	private RoomPhotoRepository roomPhotoRepository;
 	
+	@Autowired
+	private UserRepository userRepository;
 	
 	@Override
 	public List<Room> all() {
@@ -41,15 +43,15 @@ public class RoomServiceImpl implements RoomService {
 	
 	
 	@Override
-	public Page<RoomList> rooms(Pageable pageable) {
-		return roomRepository.findAllBy(pageable, RoomList.class);
+	public Page<Room> rooms(Pageable pageable) {
+		return roomRepository.findAll(pageable);
 	}
 	
 	
 	
 	@Override
-	public List<RoomList> rooms(String username) {
-		return roomRepository.findAllByHost_username(username, RoomList.class);
+	public List<Room> rooms(String username) {
+		return roomRepository.findAllByHost_username(username);
 	}
 
 	
@@ -64,7 +66,7 @@ public class RoomServiceImpl implements RoomService {
 	
 	
 	@Override
-	public void update(RoomUpdateDto dto, String username) {
+	public void updateRoom(RoomUpdateDto dto, String username) {
 		Optional<Room> opt = roomRepository.findByIdAndHost_username(dto.getId(), username);
 		
 		if (opt.isPresent()) {
@@ -96,8 +98,8 @@ public class RoomServiceImpl implements RoomService {
 	
 	
 	@Override
-	public RoomUpdate getRoomUpdate(Integer id, String username) {
-		Optional<RoomUpdate> opt = roomRepository.findByIdAndHost_username(id, username, RoomUpdate.class);
+	public Room getRoomUpdate(Integer id, String username) {
+		Optional<Room> opt = roomRepository.findByIdAndHost_username(id, username);
 		
 		if (opt.isPresent()) {
 			return opt.get();
@@ -109,8 +111,8 @@ public class RoomServiceImpl implements RoomService {
 	
 	
 	@Override
-	public RoomDetail getRoomDetail(Integer id) {
-		Optional<RoomDetail> opt = roomRepository.findById(id, RoomDetail.class);
+	public Room getRoomDetail(Integer id) {
+		Optional<Room> opt = roomRepository.findById(id);
 		
 		if (opt.isPresent()) {
 			return opt.get();
@@ -122,8 +124,8 @@ public class RoomServiceImpl implements RoomService {
 	
 	
 	@Override
-	public RoomPhotos getRoomPhotos(Integer roomId, String username) {
-		Optional<RoomPhotos> opt = roomRepository.findByIdAndHost_username(roomId, username, RoomPhotos.class);
+	public Room getRoomPhotos(Integer roomId, String username) {
+		Optional<Room> opt = roomRepository.findByIdAndHost_username(roomId, username);
 		
 		if (opt.isPresent()) {
 			return opt.get();
@@ -178,6 +180,58 @@ public class RoomServiceImpl implements RoomService {
 				throw new DataDoesNotExistsException("User[" + username + "] - Room[" + roomId
 						+ "] 에 해당하는 데이터가 없습니다.");
 			}
+		}
+	}
+	
+	
+	
+	@Override
+	public void addRoom(Room room, String username) {
+		Optional<User> opt = userRepository.findByUsername(username);
+		
+		if (opt.isPresent()) {
+			User user = opt.get();
+			room.setHost(user);
+			savePhotos(room.getPhotos());
+			roomRepository.save(room);
+		} else {
+			throw new UserDoesNotExistsException("User[" + username + "] 가 존재하지 않습니다.");
+		}
+	}
+	
+	
+	
+	@Override
+	public void deleteRoom(Integer roomId, String username) {
+		Optional<Room> opt = roomRepository.findByIdAndHost_username(roomId, username);
+		
+		if (opt.isPresent()) {
+			Room room = opt.get();
+			deletePhotos(room.getPhotos());
+			roomRepository.delete(room);
+		} else {
+			throw new DataDoesNotExistsException("User[" + username + "] - Room[" + roomId
+					+ "] 에 해당하는 데이터가 없습니다.");
+		}
+	}
+	
+	
+	
+	private static void savePhotos(List<RoomPhoto> list) {
+		if (ValidUtils.isValid(list)) {
+			list.forEach(e -> {
+				FileUtils.save(e);
+			});
+		}
+	}
+	
+	
+	
+	private static void deletePhotos(List<RoomPhoto> list) {
+		if (ValidUtils.isValid(list)) {
+			list.forEach(e -> {
+				FileUtils.delete(e.getUploadPath());
+			});
 		}
 	}
 	

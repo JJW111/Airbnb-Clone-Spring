@@ -7,6 +7,7 @@ import com.clone.airbnb.admin.entity.AdminFormEntity;
 import com.clone.airbnb.admin.form.annotation.EntityForm;
 import com.clone.airbnb.entity.sup.AbstractItem;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,6 +18,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
 public class Facility extends AbstractItem implements AdminFormEntity<Facility> {
 	@Override
 	public void override(Facility t) {

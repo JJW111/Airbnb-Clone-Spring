@@ -27,6 +27,7 @@ import com.clone.airbnb.entity.enu.Gender;
 import com.clone.airbnb.entity.enu.Language;
 import com.clone.airbnb.entity.enu.LoginMethod;
 import com.clone.airbnb.entity.enu.Role;
+import com.clone.airbnb.entity.file.Avatar;
 import com.clone.airbnb.entity.sup.DateTimeModel;
 import com.clone.airbnb.utils.FileUtils;
 import com.clone.airbnb.utils.ValidUtils;

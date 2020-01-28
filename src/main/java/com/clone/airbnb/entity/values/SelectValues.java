@@ -5,12 +5,12 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.clone.airbnb.entity.projection.SelectItem;
-import com.clone.airbnb.entity.projection.SelectRoom;
-import com.clone.airbnb.entity.projection.SelectUser;
-import com.clone.airbnb.entity.projection.impl.SelectItemClass;
-import com.clone.airbnb.entity.projection.impl.SelectRoomClass;
-import com.clone.airbnb.entity.projection.impl.SelectUserClass;
+import com.clone.airbnb.entity.Amenity;
+import com.clone.airbnb.entity.Facility;
+import com.clone.airbnb.entity.HouseRule;
+import com.clone.airbnb.entity.Room;
+import com.clone.airbnb.entity.RoomType;
+import com.clone.airbnb.entity.User;
 import com.clone.airbnb.repository.AmenityRepository;
 import com.clone.airbnb.repository.FacilityRepository;
 import com.clone.airbnb.repository.HouseRuleRepository;
@@ -41,39 +41,33 @@ public class SelectValues {
 	
 	
 	
-	public List<SelectUserClass> users() {
-		List<SelectUser> suList = userRepository.findAllByOrderByIdDesc(SelectUser.class);
-		return SelectUserClass.toClasses(suList);
+	public List<User> users() {
+		return userRepository.findAllByOrderByIdDesc();
 	}
 	
 	
-	public List<SelectRoomClass> rooms() {
-		List<SelectRoom> srList = roomRepository.findAllBy(SelectRoom.class);
-		return SelectRoomClass.toClasses(srList);
+	public List<Room> rooms() {
+		return roomRepository.findAllByOrderByIdDesc();
 	}
 	
 	
-	public List<SelectItemClass> amenities() {
-		List<SelectItem> siList = amenityRepository.findAllBy(SelectItem.class); 
-		return SelectItemClass.toClasses(siList);
+	public List<Amenity> amenities() {
+		return amenityRepository.findAllByOrderByIdDesc();
 	}
 	
 	
-	public List<SelectItemClass> facilities() {
-		List<SelectItem> siList = facilityRepository.findAllBy(SelectItem.class); 
-		return SelectItemClass.toClasses(siList);
+	public List<Facility> facilities() {
+		return facilityRepository.findAllByOrderByIdDesc();
 	}
 	
 	
-	public List<SelectItemClass> houseRules() {
-		List<SelectItem> siList = houseRuleRepository.findAllBy(SelectItem.class); 
-		return SelectItemClass.toClasses(siList);
+	public List<HouseRule> houseRules() {
+		return houseRuleRepository.findAllByOrderByIdDesc();
 	}
 	
 	
-	public List<SelectItemClass> roomTypes() {
-		List<SelectItem> siList = roomTypeRepository.findAllBy(SelectItem.class); 
-		return SelectItemClass.toClasses(siList);
+	public List<RoomType> roomTypes() {
+		return roomTypeRepository.findAllByOrderByIdDesc();
 	}
 	
 	

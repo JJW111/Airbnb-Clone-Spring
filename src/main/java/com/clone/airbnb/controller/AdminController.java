@@ -22,7 +22,6 @@ import com.clone.airbnb.admin.schema.vo.Entities;
 import com.clone.airbnb.common.SquarePageBlock;
 import com.clone.airbnb.dto.admin.DtoFactory;
 import com.clone.airbnb.dto.admin.Edit;
-import com.clone.airbnb.entity.projection.admin.ProjectionFactory;
 import com.clone.airbnb.entity.values.SelectValues;
 import com.clone.airbnb.service.ConversationService;
 import com.clone.airbnb.utils.ReflectionInvocator;
@@ -82,7 +81,7 @@ public class AdminController {
 			@PageableDefault(sort = "id", direction = Sort.Direction.DESC, value = 10) Pageable pageable) {
 		Page<Object> page;
 		
-		page = adminWebPage.findAllBy(entityName, pageable, ProjectionFactory.get(entityName));
+		page = adminWebPage.findAll(entityName, pageable);
 		
 		if (page.getTotalPages() > 0 && page.getNumber() + 1 > page.getTotalPages()) {
 			return "redirect:/admin/entity?e=" + entityName + "&page=" + (page.getTotalPages() - 1);
@@ -175,7 +174,7 @@ public class AdminController {
 		AdminEntityConfiguration config =  adminWebPage.getAdminEntityProvider().getAdminDefinitionObject().getAdminEntity().get(entityName);
 		Entities entities = adminWebPage.getEntityProvider().getEntities();
 		
-		Object entityObj = adminWebPage.findById(entityName, id, ProjectionFactory.get(entityName));
+		Object entityObj = adminWebPage.findById(entityName, id);
 		
 		model.addAttribute("id", id);
 		model.addAttribute("groupName", config.group());

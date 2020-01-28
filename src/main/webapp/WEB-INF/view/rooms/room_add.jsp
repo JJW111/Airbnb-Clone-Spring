@@ -7,16 +7,14 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <%@include file="../inc/common.jsp" %>
-<title>Edit Room | ${room.name}</title>
+<title>Add Room | ${room.name}</title>
 </head>
 
 <%@include file="../inc/top.jsp" %>
 
 <div class="container lg:w-5/12 md:w-1/2 xl:w-1/4 mx-auto my-10 flex flex-col items-center border p-6 border-gray-400">
        
-	<form:form method="post" modelAttribute="room" class="w-full">
-		<form:hidden path="id" />
-							
+	<form:form method="post" enctype="multipart/form-data" modelAttribute="room" class="w-full">
 		<spring:bind path="name">
 			<div class="input ${status.error ? 'has_error' : ''}">
 				<label for="name">Room Name</label>
@@ -95,7 +93,7 @@
 		<spring:bind path="baths">
 			<div class="input ${status.error ? 'has_error' : ''}">
 				<label for="baths">Baths</label>
-				<form:input path="baths" placeholder="~ 3개" onKeydown="setInputFilter(this, integerFilter, 0, 5)" required="true" />
+				<form:input path="baths" placeholder="~ 3개" onKeydown="setInputFilter(this, integerFilter, 0, 3)" required="true" />
 				<form:errors path="baths" class="error" />
 			</div>
 		</spring:bind>	
@@ -179,15 +177,19 @@
 			</div>
 		</spring:bind>
 		
+		<spring:bind path="photos">
+			<div class="input ${status.error ? 'has_error' : ''}">
+				<label for="photos">Photos</label>
+				<input type="file" name="photos" multiple required />
+				<form:errors path="photos" class="error" />
+			</div>
+		</spring:bind>
 		
-		<button class="btn bg-red-500 text-white">Update Room</button>
+		
+		<button class="btn bg-red-500 text-white">Add Room</button>
 		
 	</form:form>
 		
-	<div class="mt-3">
-       	<a href="/rooms/photos?room_id=${room.id}" class="text-teal-500 font-medium">Edit Photos</a>
-  	</div>
-	
 </div>
 
 <%@include file="../inc/bottom.jsp" %>

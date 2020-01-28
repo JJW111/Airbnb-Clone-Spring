@@ -1,4 +1,4 @@
-package com.clone.airbnb.entity;
+package com.clone.airbnb.entity.file;
 
 import javax.persistence.Entity;
 
