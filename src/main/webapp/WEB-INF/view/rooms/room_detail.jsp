@@ -127,8 +127,43 @@
 	    	<c:if test="${principal.username eq room.host.username}">
 	            <a href="/rooms/edit?room_id=${room.id}" class="btn-link block">Edit Room</a>
 	            <a href="/rooms/delete?room_id=${room.id}" class="btn-link block mt-10 bg-teal-500">Delete Room</a>
+	            <c:set var="host_user" value="true" />
 	        </c:if>
         </sec:authorize>
+        
+        <c:if test="${empty host_user}">
+	        <c:if test="${empty sessionScope.is_hosting}">
+	        	<c:forEach var="calendar" items="${calendars}">
+                	<div class="mb-20">
+                        <span class="text-center font-semibold text-lg block mb-8">${calendar.month} / ${calendar.year}</span>
+                        <div class="cal-grid font-medium mb-4">
+                        	<c:forEach var="day" items="${calendar.header}">
+                        		<span>${day}</span>
+                        	</c:forEach>
+                        </div>
+                        <div class="cal-grid">
+                        	<c:forEach var="date" items="${calendar.dates}">
+                        		<c:if test="${not empty date}">
+	                         		<c:if test="${date != 0}">
+	                         			<!-- past -->
+	                         			<c:set var="isPast" value="${calendar.isPast(calendar.year, calendar.month, date)}" />
+	                         			<c:if test="${isPast}">
+	                         				<span class="rounded bg-gray-200 w-full text-center p-1 text-gray-300">${date}</span>
+	                         			</c:if>
+	                         			<c:if test="${not isPast}">
+	                                     	<span class="bg-gray-200 w-full text-center rounded text-gray-700 p-1 hover:bg-teal-400 hover:text-white hover:font-medium cursor-pointer">${date}</span>
+	                          			</c:if>
+	                          		</c:if>
+	                         		<c:if test="${date == 0}">
+	                                     <span></span>
+	                         		</c:if>
+                        		</c:if>
+                        	</c:forEach>
+                        </div>
+                    </div>
+            	</c:forEach>
+	        </c:if>
+        </c:if>
     </div>
 </div>
 

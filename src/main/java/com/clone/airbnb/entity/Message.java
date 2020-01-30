@@ -11,14 +11,11 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.springframework.validation.BindingResult;
-
 import com.clone.airbnb.admin.entity.AdminFormEntity;
 import com.clone.airbnb.admin.form.annotation.EntityForm;
 import com.clone.airbnb.admin.form.annotation.JoinOneForm;
 import com.clone.airbnb.admin.form.annotation.JoinOneTextForm;
 import com.clone.airbnb.admin.form.annotation.TextForm;
-import com.clone.airbnb.service.ConversationService;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -72,16 +69,6 @@ public class Message implements AdminFormEntity<Message> {
 	}
 	
 	
-	
-	
-	public void validate(BindingResult result, ConversationService conversationService) {
-		if (!conversationService.isParticipant(this.getConversation().getId(), this.getUser().getId())) {
-			result.rejectValue("user", "validation.message.participants.not_participate");
-		}
-	}
-	
-	
-
 	
 	@Override
 	public String toString() {

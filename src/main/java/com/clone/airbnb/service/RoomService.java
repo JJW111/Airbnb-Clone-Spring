@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.clone.airbnb.dto.RoomAddDto;
 import com.clone.airbnb.dto.RoomUpdateDto;
 import com.clone.airbnb.entity.Room;
 
@@ -20,6 +21,6 @@ public interface RoomService {
 	Room getRoomPhotos(Integer roomId, String username);
 	void deletePhoto(Integer roomId, Integer photoId, String username);
 	void addPhoto(MultipartFile photoFile, Integer roomId, String username);
-	void addRoom(Room room, String username);
+	Room addRoom(RoomAddDto room, String username);
 	void deleteRoom(Integer roomId, String username);
 }

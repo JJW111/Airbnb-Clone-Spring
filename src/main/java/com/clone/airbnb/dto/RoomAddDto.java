@@ -68,7 +68,6 @@ public class RoomAddDto {
 	private List<Amenity> amenities;
 	private List<Facility> facilities;
 	private List<HouseRule> houseRules;
-	@Size(min=5, max=10)
 	private List<MultipartFile> photos;
 	
 	public Room toOriginal() {

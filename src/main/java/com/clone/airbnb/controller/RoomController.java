@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.clone.airbnb.calendar.RoomDetailCalendar;
 import com.clone.airbnb.dto.RoomAddDto;
 import com.clone.airbnb.dto.RoomUpdateDto;
 import com.clone.airbnb.entity.Room;
@@ -32,7 +33,7 @@ import com.clone.airbnb.service.RoomService;
 @Controller
 @RequestMapping(path="/rooms")
 public class RoomController {
-
+	
 	@Autowired
 	private RoomService roomService;
 	
@@ -50,6 +51,7 @@ public class RoomController {
 		}
 		
 		model.addAttribute("room", room);
+		model.addAttribute("calendars", new RoomDetailCalendar().getCalendars());
 		return "rooms/room_detail";
 	}
 	
@@ -70,25 +72,23 @@ public class RoomController {
 	public String addRoom(Principal principal, Model model, 
 			@Valid @ModelAttribute("room") RoomAddDto dto, BindingResult result, 
 			RedirectAttributes redirectAttr) {
-		Room room = dto.toOriginal();
-		room.validate(result);
-		
 		if (result.hasErrors()) {
 			model.addAttribute("selectValues", selectValues);
 			return "rooms/room_add";
 		}
 		
 		try {
-			roomService.addRoom(room, principal.getName());
+			Room newRoom = roomService.addRoom(dto, principal.getName());
+			
+			RedirectMessageSystem.builder(redirectAttr)
+				.success("방 생성 성공!")
+				.build();
+		
+			return "redirect:/rooms/detail?room_id=" + newRoom.getId();
 		} catch (UserDoesNotExistsException e) {
 			return "redirect:/wrong_access";
 		}
 		
-		RedirectMessageSystem.builder(redirectAttr)
-			.success("방 생성 성공!")
-			.build();
-		
-		return "redirect:/users/profile";
 	}
 	
 	
@@ -121,7 +121,6 @@ public class RoomController {
 	public String editRoom(Principal principal, Model model,
 			@Valid @ModelAttribute("room") RoomUpdateDto dto, BindingResult result,
 			RedirectAttributes redirectAttr) {
-
 		if (result.hasErrors()) {
 			model.addAttribute("selectValues", selectValues);
 			return "rooms/room_edit";

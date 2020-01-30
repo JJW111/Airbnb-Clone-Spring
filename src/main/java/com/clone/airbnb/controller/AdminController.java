@@ -23,7 +23,6 @@ import com.clone.airbnb.common.SquarePageBlock;
 import com.clone.airbnb.dto.admin.DtoFactory;
 import com.clone.airbnb.dto.admin.Edit;
 import com.clone.airbnb.entity.values.SelectValues;
-import com.clone.airbnb.service.ConversationService;
 import com.clone.airbnb.utils.ReflectionInvocator;
 
 @Controller
@@ -38,10 +37,6 @@ public class AdminController {
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
-	@Autowired
-	private ConversationService conversationService;
-	
 	
 	/** 리스트 화면에서 출력할 블럭당 페이지 수 */
 	private static final int PAGE_BLOCK = 10;
@@ -140,16 +135,6 @@ public class AdminController {
 		}
 		
 		if (!result.hasErrors()) {
-			if ("Message".equals(entityName)) {
-				ReflectionInvocator.invoke(entityObj, "validate", 
-						new Class[] { BindingResult.class, ConversationService.class}
-				, result, conversationService);
-			} else {
-				ReflectionInvocator.invoke(entityObj, "validate", BindingResult.class, result);
-			}
-		}
-		
-		if (!result.hasErrors()) {
 			adminWebPage.save(entityName, entityObj);
 			return "redirect:/admin/entity?e=" + entityName;
 		} else {
@@ -201,16 +186,6 @@ public class AdminController {
 		
 		Object entityObj = ReflectionInvocator.invoke(dtoObj, "toOriginal");
 		
-		if (!result.hasErrors()) {
-			if ("Message".equals(entityName)) {
-				ReflectionInvocator.invoke(entityObj, "validate", 
-						new Class[] { BindingResult.class, ConversationService.class }
-				, result, conversationService);
-			} else {
-				ReflectionInvocator.invoke(entityObj, "validate", BindingResult.class, result);
-			}
-		}
-
 		if (!result.hasErrors()) {
 			adminWebPage.update(entityName, entityObj, id);
 			return "redirect:/admin/entity?e=" + entityName + "&page=" + pageable.getPageNumber();

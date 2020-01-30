@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.clone.airbnb.dto.RoomAddDto;
 import com.clone.airbnb.dto.RoomUpdateDto;
 import com.clone.airbnb.entity.Room;
 import com.clone.airbnb.entity.User;
@@ -186,14 +187,15 @@ public class RoomServiceImpl implements RoomService {
 	
 	
 	@Override
-	public void addRoom(Room room, String username) {
+	public Room addRoom(RoomAddDto dto, String username) {
 		Optional<User> opt = userRepository.findByUsername(username);
 		
 		if (opt.isPresent()) {
+			Room room = dto.toOriginal();
 			User user = opt.get();
 			room.setHost(user);
 			savePhotos(room.getPhotos());
-			roomRepository.save(room);
+			return roomRepository.save(room);
 		} else {
 			throw new UserDoesNotExistsException("User[" + username + "] 가 존재하지 않습니다.");
 		}

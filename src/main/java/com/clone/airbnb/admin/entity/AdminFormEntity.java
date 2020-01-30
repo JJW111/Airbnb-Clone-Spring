@@ -1,7 +1,5 @@
 package com.clone.airbnb.admin.entity;
 
-import org.springframework.validation.BindingResult;
-
 public interface AdminFormEntity<T> {
 	/**
 	 * Primary Key 를 반환한다. 
@@ -32,11 +30,4 @@ public interface AdminFormEntity<T> {
 	 */
 	default void beforeUpdate(Object old) {}
 	
-	/**
-	 * 어노테이션으로 정의한 Validation 외에
-	 * 추가로 검증해야할 유효성 검증을 수행한다.
-	 * 
-	 * @param result BindingResult 객체
-	 */
-	default void validate(BindingResult result) {}
 }

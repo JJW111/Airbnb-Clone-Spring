@@ -18,7 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.clone.airbnb.admin.entity.AdminFormEntity;
@@ -341,19 +340,6 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 	
 	
 	
-	@Override
-	public void validate(BindingResult result) {
-		if (!ValidUtils.isValid(this.getPhotos()) || this.getPhotos().size() < 5 || this.getPhotos().size() > 10) {
-			result.rejectValue("photos", "validation.room.photos.size.mismatch");
-		}
-		
-		if (this.getCheckIn().compareTo(this.getCheckOut()) >= 0) {
-			result.rejectValue("checkOut", "validation.room.checkout.lessthan.checkin");
-		}
-	}
-	
-	
-	
 	private void saveFiles(Room r) {
 		if (ValidUtils.isValid(r.getPhotos())) {
 			this.getPhotos().forEach(e -> {
@@ -365,6 +351,7 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 			});
 		}
 	}
+	
 	
 	
 	private void deleteFiles(Room r) {

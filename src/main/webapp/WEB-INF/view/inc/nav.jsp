@@ -8,11 +8,14 @@
 				<c:if test="${not empty sessionScope.is_hosting}">
 		        	Stop hosting
 		        </c:if>
-		        <c:if test="${not sessionScope.is_hosting}">
+		        <c:if test="${empty sessionScope.is_hosting}">
 		        	Start hosting
 		        </c:if>
 		    </a>
 		</li>
+		<c:if test="${not empty sessionScope.is_hosting}">
+			<li class="nav_link"><a href="/rooms/add">Upload Room</a></li>
+		</c:if>
 		<li class="nav_link"><a href="/users/profile">Profile</a></li>
     	<li class="nav_link"><a href="/session_out">Log out</a></li>
 	</sec:authorize>
