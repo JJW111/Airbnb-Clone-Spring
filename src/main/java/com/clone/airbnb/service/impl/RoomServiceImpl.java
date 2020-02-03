@@ -82,8 +82,6 @@ public class RoomServiceImpl implements RoomService {
 			oldRoom.setBeds(dto.getBeds());
 			oldRoom.setBedrooms(dto.getBedrooms());
 			oldRoom.setBaths(dto.getBaths());
-			oldRoom.setCheckIn(dto.getCheckIn());
-			oldRoom.setCheckOut(dto.getCheckOut());
 			oldRoom.setInstantBook(dto.getInstantBook());
 			oldRoom.setRoomType(dto.getRoomType());
 			oldRoom.setAmenities(dto.getAmenities());

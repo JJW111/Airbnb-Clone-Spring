@@ -21,10 +21,10 @@ import lombok.ToString;
 public class ReservationDto implements DtoToOriginalSwitcher<Reservation> {
 	@NotNull
 	private ReservationStatus status = ReservationStatus.PENDING;
-	@DateTimeFormat(pattern = Common.DATETIME_FORMAT)
+	@DateTimeFormat(pattern = Common.DATE_FORMAT)
 	@NotNull
 	private Date checkIn;
-	@DateTimeFormat(pattern = Common.DATETIME_FORMAT)
+	@DateTimeFormat(pattern = Common.DATE_FORMAT)
 	@NotNull
 	private Date checkOut;
 	@NotNull(message = "게스트가 존재하지 않습니다.")

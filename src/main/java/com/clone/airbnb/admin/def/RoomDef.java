@@ -10,7 +10,6 @@ import com.clone.airbnb.admin.schema.vo.FieldList;
 import com.clone.airbnb.admin.schema.vo.FieldSet;
 import com.clone.airbnb.entity.Room;
 import com.clone.airbnb.formatter.AmenitiesFormatter;
-import com.clone.airbnb.formatter.DateTimeFormatter;
 import com.clone.airbnb.formatter.FacilitiesFormatter;
 import com.clone.airbnb.formatter.HouseRulesFormatter;
 import com.clone.airbnb.formatter.NullFormatter;
@@ -36,9 +35,6 @@ public class RoomDef implements AdminEntityConfiguration {
 	
 	@Autowired
 	private HouseRulesFormatter houseRulesFormatter;
-	
-	@Autowired
-	private DateTimeFormatter dateTimeFormatter;
 	
 	@Autowired
 	private NullFormatter nullFormatter;
@@ -91,8 +87,6 @@ public class RoomDef implements AdminEntityConfiguration {
 					.field("bedrooms")
 					.field("baths")
 				.set("Reservation")
-					.field("checkIn")
-					.field("checkOut")
 					.field("instantBook")
 				.set("Description")
 					.field("description")
@@ -116,7 +110,6 @@ public class RoomDef implements AdminEntityConfiguration {
 		binder.addCustomFormatter(facilitiesFormatter, "facilities");
 		binder.addCustomFormatter(amenitiesFormatter, "amenities");
 		binder.addCustomFormatter(houseRulesFormatter, "houseRules");
-		binder.addCustomFormatter(dateTimeFormatter);
 		binder.addCustomFormatter(nullFormatter);
 		binder.setValidator(ValidatorUtils.getValidator());
 	}

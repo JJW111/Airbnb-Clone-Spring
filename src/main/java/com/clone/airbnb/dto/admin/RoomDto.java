@@ -1,7 +1,6 @@
 package com.clone.airbnb.dto.admin;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -12,11 +11,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.clone.airbnb.admin.form.annotation.EntityForm;
-import com.clone.airbnb.common.Common;
 import com.clone.airbnb.entity.Amenity;
 import com.clone.airbnb.entity.Facility;
 import com.clone.airbnb.entity.HouseRule;
@@ -46,31 +43,25 @@ public class RoomDto implements DtoToOriginalSwitcher<Room> {
 	@NotBlank
 	private String country;
 	@NotNull
-	@Min(value=0, message="0보다 커야합니다.")  
-    @Max(value=10000, message="10,000보다 작아야 합니다.")  
+	@Min(value=0)  
+    @Max(value=10000)  
 	private Integer price;
 	@NotNull
-	@Min(value=0, message="must be equal or less than 0")  
-    @Max(value=20, message="must be equal or less than 20")
+	@Min(value=0)  
+    @Max(value=20)
 	private Integer guests;
 	@NotNull
-	@Min(value=0, message="must be equal or less than 0")  
-    @Max(value=8, message="must be equal or less than 8")
+	@Min(value=0)  
+    @Max(value=8)
 	private Integer beds;
 	@NotNull
-	@Min(value=0, message="must be equal or less than 0")  
-    @Max(value=5, message="must be equal or less than 5")
+	@Min(value=0)  
+    @Max(value=5)
 	private Integer bedrooms;
 	@NotNull
-	@Min(value=0, message="must be equal or less than 0")  
-    @Max(value=5, message="must be equal or less than 5")
+	@Min(value=0)  
+    @Max(value=5)
 	private Integer baths;
-	@DateTimeFormat(pattern = Common.DATETIME_FORMAT)
-	@NotNull
-	private Date checkIn;
-	@DateTimeFormat(pattern = Common.DATETIME_FORMAT)
-	@NotNull
-	private Date checkOut;
 	private Boolean instantBook = false;
 	@NotNull(message = "호스트가 존재하지 않습니다.")
 	private User host;
@@ -96,8 +87,6 @@ public class RoomDto implements DtoToOriginalSwitcher<Room> {
     	room.setBeds(this.getBeds());
     	room.setBedrooms(this.getBedrooms());
     	room.setBaths(this.getBaths());
-    	room.setCheckIn(this.getCheckIn());
-    	room.setCheckOut(this.getCheckOut());
     	room.setInstantBook(this.getInstantBook());
     	room.setHost(this.getHost());
     	room.setRoomType(this.getRoomType());

@@ -27,7 +27,7 @@ public class HomeController {
 	private int PAGE_BLOCK = 10;
 	
 	@GetMapping(path="")
-	public String home(Model model, @PageableDefault(sort = "id", direction = Sort.Direction.DESC, value = 10) Pageable pageable ) {
+	public String home(Model model, @PageableDefault(sort = "id", direction = Sort.Direction.DESC, value = 12) Pageable pageable ) {
 		Page<Room> page = roomService.rooms(pageable);
 		model.addAttribute("page", page);
 		model.addAttribute("rooms", page.getContent());

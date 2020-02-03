@@ -3,7 +3,6 @@ package com.clone.airbnb.creation.second;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -62,7 +61,6 @@ class RoomCreation {
 	void contextLoads() throws ParseException {
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.DATE, 10);
-		Date checkOutEndDate = c.getTime();
 		
 		List<User> users = CollectionUtils.toList(userRepository.findAll());
 		
@@ -121,8 +119,6 @@ class RoomCreation {
 			room.setBeds(faker.number().numberBetween(1, 8));
 			room.setBedrooms(faker.number().numberBetween(1, 5));
 			room.setBaths(faker.number().numberBetween(1, 3));
-			room.setCheckIn(new Date());
-			room.setCheckOut(faker.date().between(new Date(), checkOutEndDate));
 			room.setInstantBook(faker.bool().bool());
 			room.setHost(user);
 			room.setRoomType(roomType);

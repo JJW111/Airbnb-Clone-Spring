@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.clone.airbnb.entity.User;
 import com.clone.airbnb.entity.values.SelectValues;
@@ -29,7 +28,7 @@ public class UserController {
 	private SelectValues selectValues;
 	
 	@GetMapping(path="/profile")
-	public String profile(Principal principal, RedirectAttributes redirectAttr, Model model, @RequestParam(required = false, name = "id") Integer id) {
+	public String profile(Principal principal, Model model, @RequestParam(required = false, name = "id") Integer id) {
 		User profile = null;
 		
 		if (id == null) {

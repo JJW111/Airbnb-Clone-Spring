@@ -9,7 +9,7 @@ import com.clone.airbnb.admin.schema.AdminEntityConfiguration;
 import com.clone.airbnb.admin.schema.vo.FieldList;
 import com.clone.airbnb.admin.schema.vo.FieldSet;
 import com.clone.airbnb.entity.Reservation;
-import com.clone.airbnb.formatter.DateTimeFormatter;
+import com.clone.airbnb.formatter.DateFormatter;
 import com.clone.airbnb.formatter.NullFormatter;
 import com.clone.airbnb.formatter.RoomFormatter;
 import com.clone.airbnb.formatter.UserFormatter;
@@ -26,7 +26,7 @@ public class ReservationDef implements AdminEntityConfiguration {
 	private RoomFormatter roomFormatter;
 	
 	@Autowired
-	private DateTimeFormatter dateTimeFormatter;
+	private DateFormatter dateFormatter;
 	
 	@Autowired
 	private NullFormatter nullFormatter;
@@ -78,7 +78,7 @@ public class ReservationDef implements AdminEntityConfiguration {
 		
 		binder.addCustomFormatter(userFormatter, "guest");
 		binder.addCustomFormatter(roomFormatter, "room");
-		binder.addCustomFormatter(dateTimeFormatter);
+		binder.addCustomFormatter(dateFormatter);
 		binder.addCustomFormatter(nullFormatter);
 		binder.setValidator(ValidatorUtils.getValidator());
 	}

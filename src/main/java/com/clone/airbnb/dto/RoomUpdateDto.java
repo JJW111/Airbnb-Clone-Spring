@@ -1,6 +1,5 @@
 package com.clone.airbnb.dto;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.Max;
@@ -9,8 +8,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.springframework.format.annotation.DateTimeFormat;
-import com.clone.airbnb.common.Common;
 import com.clone.airbnb.entity.Amenity;
 import com.clone.airbnb.entity.Facility;
 import com.clone.airbnb.entity.HouseRule;
@@ -53,12 +50,6 @@ public class RoomUpdateDto {
 	@Min(value=0)  
     @Max(value=3)
 	private Integer baths;
-	@NotNull
-	@DateTimeFormat(pattern = Common.DATETIME_FORMAT)
-	private Date checkIn;
-	@NotNull
-	@DateTimeFormat(pattern = Common.DATETIME_FORMAT)
-	private Date checkOut;
 	private Boolean instantBook = false;
 	@NotNull(message = "Room Type을  선택하여 주십시오.")
 	private RoomType roomType;

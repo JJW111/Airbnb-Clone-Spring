@@ -82,51 +82,49 @@
             	</c:forEach>
             </ul>
         </div>
-        <c:if test="${not empty room.reviews}">
-	        <div class="mt-10">
-	            <h4 class="font-medium text-2xl mb-5">Reviews</h4>
-	            <div class="flex items-center">
-	                <div>
-	                    <i class="fas fa-star text-teal-500"></i>
-	                    <span class="font-bold text-xl">${room.totalRating()}</span>
-	                </div>
-	                <div class="h-4 w-px bg-gray-400 mx-5"></div>
-	                <div>
-	                    <span class="font-bold text-xl mr-1">${room.reviews.size()}</span>
-	                    <span>review<c:if test="${room.reviews.size() > 1}">s</c:if></span>
-	                </div>
-	            </div>
-	            <div class="mt-10">
-	            	<c:forEach var="review" items="${room.reviews}">
-	                    <div class="border-section">
-	                        <div class="mb-3 flex">
-	                            <div>
-	                            	<c:set var="h_and_w" value="w-10 h-10" />
-	                            	<c:set var="text" value="text-xl" />
-	                            	<c:set var="user" value="${review.user}" />
-	                            	<a href="/users/profile?id=${user.id}">
-	                            		<%@include file="../mixins/auth/user_avatar.jsp" %>
-	                            	</a>
-	                            </div>
-	                            <div class="flex flex-col ml-5">
-	                                <span class="font-medium">${review.user.firstName}</span>
-	                                <fmt:formatDate value="${review.created}" var="reviewCreated" pattern="MMMMM yyyy" />
-	                                <span class="text-sm text-gray-500">${reviewCreated}</span>
-	                            </div>
-	                        </div>
-	                        <p>${review.review}</p>
-	                    </div>
-	            	</c:forEach>
-	            </div>
-	        </div>
-        </c:if>
+        <div class="mt-10">
+            <h4 class="font-medium text-2xl mb-5">Reviews</h4>
+            <div class="flex items-center">
+                <div>
+                    <i class="fas fa-star text-teal-500"></i>
+                    <span class="font-bold text-xl">${room.totalRating()}</span>
+                </div>
+                <div class="h-4 w-px bg-gray-400 mx-5"></div>
+                <div>
+                    <span class="font-bold text-xl mr-1">${room.reviews.size()}</span>
+                    <span>review<c:if test="${room.reviews.size() > 1}">s</c:if></span>
+                </div>
+            </div>
+            <div class="mt-10">
+            	<c:forEach var="review" items="${room.reviews}">
+                    <div class="border-section">
+                        <div class="mb-3 flex">
+                            <div>
+                            	<c:set var="h_and_w" value="w-10 h-10" />
+                            	<c:set var="text" value="text-xl" />
+                            	<c:set var="user" value="${review.user}" />
+                            	<a href="/users/profile?id=${user.id}">
+                            		<%@include file="../mixins/auth/user_avatar.jsp" %>
+                            	</a>
+                            </div>
+                            <div class="flex flex-col ml-5">
+                                <span class="font-medium">${review.user.firstName}</span>
+                                <fmt:formatDate value="${review.created}" var="reviewCreated" pattern="MMMMM yyyy" />
+                                <span class="text-sm text-gray-500">${reviewCreated}</span>
+                            </div>
+                        </div>
+                        <p>${review.review}</p>
+                    </div>
+            	</c:forEach>
+            </div>
+        </div>
     </div>
     <div class="w-1/3">
     	<sec:authorize access="isAuthenticated()"> 
 	    	<sec:authentication var="principal" property="principal" />
 	    	<c:if test="${principal.username eq room.host.username}">
-	            <a href="/rooms/edit?room_id=${room.id}" class="btn-link block">Edit Room</a>
-	            <a href="/rooms/delete?room_id=${room.id}" class="btn-link block mt-10 bg-teal-500">Delete Room</a>
+	            <a href="/rooms/${room.id}/edit" class="btn-link block">Edit Room</a>
+	            <a href="/rooms/${room.id}/delete" class="btn-link block mt-10 bg-teal-500">Delete Room</a>
 	            <c:set var="host_user" value="true" />
 	        </c:if>
         </sec:authorize>
@@ -135,37 +133,51 @@
 	        <c:if test="${empty sessionScope.is_hosting}">
 	        	<c:forEach var="calendar" items="${calendars}">
                 	<div class="mb-20">
-                        <span class="text-center font-semibold text-lg block mb-8">${calendar.month} / ${calendar.year}</span>
+                        <span class="text-center font-semibold text-lg block mb-8">${calendar.monthSymbol} / ${calendar.year}</span>
                         <div class="cal-grid font-medium mb-4">
                         	<c:forEach var="day" items="${calendar.header}">
                         		<span>${day}</span>
                         	</c:forEach>
                         </div>
-                        <div class="cal-grid">
-                        	<c:forEach var="date" items="${calendar.dates}">
-                        		<c:if test="${not empty date}">
-	                         		<c:if test="${date != 0}">
-	                         			<!-- past -->
-	                         			<c:set var="isPast" value="${calendar.isPast(calendar.year, calendar.month, date)}" />
-	                         			<c:if test="${isPast}">
-	                         				<span class="rounded bg-gray-200 w-full text-center p-1 text-gray-300">${date}</span>
-	                         			</c:if>
-	                         			<c:if test="${not isPast}">
-	                                     	<span class="bg-gray-200 w-full text-center rounded text-gray-700 p-1 hover:bg-teal-400 hover:text-white hover:font-medium cursor-pointer">${date}</span>
-	                          			</c:if>
-	                          		</c:if>
-	                         		<c:if test="${date == 0}">
-	                                     <span></span>
-	                         		</c:if>
-                        		</c:if>
-                        	</c:forEach>
+                        <div class="calendar">
+	                        <div class="cal-grid">
+	                        	<c:forEach var="date" items="${calendar.dates}">
+	                        		<c:if test="${not empty date}">
+		                         		<c:if test="${date != 0}">
+		                         			<c:choose>
+		                         				<c:when test="${calendar.isPast(calendar.year, calendar.month, date)}">
+		                         					<span class="rounded bg-gray-200 w-full text-center p-1 text-gray-300">${date}</span>
+		                         				</c:when>
+		                         				<c:when test="${room.isReserved(calendar.year, calendar.month, date)}">
+		                         					<span class="cal-number bg-gray-200 text-gray-400 line-through">${date}</span>
+		                         				</c:when>
+		                         				<c:otherwise>
+		                         					<span class="bg-gray-200 w-full text-center rounded text-gray-700 p-1 hover:bg-teal-400 hover:text-white hover:font-medium cursor-pointer">${date}</span>
+		                         				</c:otherwise>
+		                         			</c:choose>
+		                          		</c:if>
+		                         		<c:if test="${date == 0}">
+		                                     <span></span>
+		                         		</c:if>
+	                        		</c:if>
+	                        	</c:forEach>
+	                        </div>
                         </div>
                     </div>
             	</c:forEach>
+            	<sec:authorize access="isAuthenticated()"> 
+	            	<form action="/reservations/check-in" method="post">
+	            		<input type="hidden" name="room_id" value="${room.id}" />
+	            		<input type="text" name="check_in" class="border-4 mb-3 border-blue-600" placeholder="Check In / 2000-01-01" />
+	            		<input type="text" name="check_out"class="border-4 mb-3 border-blue-600" placeholder="Check Out / 2000-01-10" />
+	            		<button class="btn-link">Check In</button>
+	            	</form>
+            	</sec:authorize>
 	        </c:if>
         </c:if>
     </div>
 </div>
+
 
 <%@include file="../inc/bottom.jsp" %>
 

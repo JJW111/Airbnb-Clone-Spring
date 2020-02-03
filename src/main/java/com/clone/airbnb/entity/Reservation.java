@@ -15,15 +15,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import com.clone.airbnb.admin.entity.AdminFormEntity;
-import com.clone.airbnb.admin.form.annotation.DatetimeForm;
+import com.clone.airbnb.admin.form.annotation.DateForm;
 import com.clone.airbnb.admin.form.annotation.EntityForm;
 import com.clone.airbnb.admin.form.annotation.JoinOneForm;
 import com.clone.airbnb.admin.form.annotation.JoinOneTextForm;
 import com.clone.airbnb.admin.form.annotation.SelectBoxForm;
-import com.clone.airbnb.common.Common;
 import com.clone.airbnb.entity.enu.ReservationStatus;
 
 import lombok.Getter;
@@ -50,19 +48,17 @@ public class Reservation implements AdminFormEntity<Reservation> {
 	
 	
 	
-	@DatetimeForm(blank = false)
+	@DateForm(blank = false)
 	@Column(nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	@DateTimeFormat(pattern = Common.DATETIME_FORMAT)
+	@Temporal(TemporalType.DATE)
 	@NotNull
 	private Date checkIn;
 	
 	
 	
-	@DatetimeForm(blank = false)
+	@DateForm(blank = false)
 	@Column(nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	@DateTimeFormat(pattern = Common.DATETIME_FORMAT)
+	@Temporal(TemporalType.DATE)
 	@NotNull
 	private Date checkOut;
 	
@@ -93,6 +89,20 @@ public class Reservation implements AdminFormEntity<Reservation> {
 		if (t.getGuest()			!= null) this.setGuest(t.getGuest());
 		if (t.getRoom()				!= null) this.setRoom(t.getRoom());
 	}
+	
+	
+	
+	public boolean isReserved(Date date) {
+		int checkInCompareTo = date.compareTo(checkIn);
+		int checkOutCompareTo = date.compareTo(checkOut);
+		
+		if (checkInCompareTo >= 0 && checkOutCompareTo <= 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	
 	
 	@Override

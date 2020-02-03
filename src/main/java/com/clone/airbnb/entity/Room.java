@@ -1,6 +1,9 @@
 package com.clone.airbnb.entity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -16,13 +19,10 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.clone.airbnb.admin.entity.AdminFormEntity;
 import com.clone.airbnb.admin.form.annotation.CheckBoxForm;
-import com.clone.airbnb.admin.form.annotation.DatetimeForm;
 import com.clone.airbnb.admin.form.annotation.EntityForm;
 import com.clone.airbnb.admin.form.annotation.IntegerForm;
 import com.clone.airbnb.admin.form.annotation.JoinManyForm;
@@ -31,6 +31,7 @@ import com.clone.airbnb.admin.form.annotation.MultipleImageUploadForm;
 import com.clone.airbnb.admin.form.annotation.JoinOneForm;
 import com.clone.airbnb.admin.form.annotation.TextAreaForm;
 import com.clone.airbnb.admin.form.annotation.TextForm;
+import com.clone.airbnb.entity.enu.ReservationStatus;
 import com.clone.airbnb.entity.file.RoomPhoto;
 import com.clone.airbnb.entity.sup.DateTimeModel;
 import com.clone.airbnb.utils.FileUtils;
@@ -108,20 +109,6 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 	@IntegerForm(blank = false)
 	@Column(nullable = false)
 	private Integer baths;
-	
-	
-	
-	@DatetimeForm(blank = false)
-	@Column(nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date checkIn;
-	
-	
-	
-	@DatetimeForm(blank = false)
-	@Column(nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date checkOut;
 	
 	
 	
@@ -271,8 +258,6 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
     	if (t.getBeds()				!= null) this.setBeds(t.getBeds());
     	if (t.getBedrooms()			!= null) this.setBedrooms(t.getBedrooms());
     	if (t.getBaths()			!= null) this.setBaths(t.getBaths());
-    	if (t.getCheckIn()			!= null) this.setCheckIn(t.getCheckIn());
-    	if (t.getCheckOut()			!= null) this.setCheckOut(t.getCheckOut());
     	if (t.getInstantBook()		!= null) this.setInstantBook(t.getInstantBook());
     	if (t.getHost()				!= null) this.setHost(t.getHost());
     	if (t.getRoomType()			!= null) this.setRoomType(t.getRoomType());
@@ -293,8 +278,7 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 		return totalRating(this.reviews);
 	}
 	
-	
-	
+
 	
 	public static double totalRating(List<Review> reviews) {
 		if (ValidUtils.isValid(reviews)) {
@@ -312,11 +296,45 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 	
 	
 	
+	public boolean isReserved(int year, int month, int date) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		
+		Calendar cal = Calendar.getInstance();
+		cal.set(year, month - 1, date);
+		Date d = null;
+
+		try {
+			d = formatter.parse(formatter.format(cal.getTime()));
+		} catch (ParseException e) {
+			return false;
+		}
+		
+		return isReserved(d);
+	}
+	
+	
+	
+	public boolean isReserved(Date date) {
+		if (!ValidUtils.isValid(this.getReservations())) {
+			return false;
+		}
+		
+		for (int i = 0; i < this.getReservations().size(); i++) {
+			if (this.reservations.get(i).getStatus() != ReservationStatus.CANCELED 
+					&& this.reservations.get(i).isReserved(date)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 	
 	@Override
 	public void beforeCreate() {
 		saveFiles(this);
 	}
+	
 	
 	
 	@Override
@@ -325,9 +343,11 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 	}
 	
 	
+	
 	@Override
 	public void beforeUpdate(Object old) {
 		Room oldRoom = (Room) old;
+		
 		
 		saveFiles(this);
 		
@@ -336,7 +356,6 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 			deleteFiles(oldRoom);
 		}
 	}
-	
 	
 	
 	
@@ -365,6 +384,7 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 	}
 	
 	
+	
 	@Override
 	public String toString() {
 		return "Room[id=" + id + ",name=" + name 
@@ -372,8 +392,7 @@ public class Room extends DateTimeModel implements AdminFormEntity<Room> {
 				+ ",city=" + city + ",country=" + country 
 				+ ",price=" + price + ",guests=" + guests
 				+ ",beds=" + beds + ",bedrooms=" + bedrooms
-				+ ",baths=" + baths + ",checkIn=" + checkIn
-				+ ",checkOut=" + checkOut + ",instantBook=" + instantBook
+				+ ",baths=" + baths + ",instantBook=" + instantBook
 				+ ",host=" + (host != null ? host.getUsername() : null)
 				+ ",roomType=" + (roomType != null ? roomType.getName() : null)
 				+ ",amenities=" + (amenities != null ? amenities.size() + "amenities" : null)
