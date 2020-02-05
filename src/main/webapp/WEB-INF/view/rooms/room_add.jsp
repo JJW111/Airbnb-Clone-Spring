@@ -98,24 +98,6 @@
 			</div>
 		</spring:bind>	
 		
-		<spring:bind path="checkIn">
-			<fmt:formatDate value="${room.checkIn}" var="formattedDateString" pattern="yyyy-MM-dd HH:mm:ss" />
-			<div class="input ${status.error ? 'has_error' : ''}">
-				<label for="checkIn">Check In</label>
-				<form:input path="checkIn" placeholder="1999-01-01 24:00:00" value="${formattedDateString}" required="true" />
-				<form:errors path="checkIn" class="error" />
-			</div>
-		</spring:bind>
-		
-		<spring:bind path="checkOut">
-			<fmt:formatDate value="${room.checkOut}" var="formattedDateString" pattern="yyyy-MM-dd HH:mm:ss" />
-			<div class="input ${status.error ? 'has_error' : ''}">
-				<label for="checkOut">Check Out</label>
-				<form:input path="checkOut" placeholder="2000-01-01 24:00:00" value="${formattedDateString}" required="true" />
-				<form:errors path="checkOut" class="error" />
-			</div>
-		</spring:bind>	
-		
 		<spring:bind path="instantBook">
 			<div class="input ${status.error ? 'has_error' : ''}">
 				<label for="instantBook">Instant Book</label>

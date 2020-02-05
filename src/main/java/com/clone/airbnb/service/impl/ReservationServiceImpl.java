@@ -131,7 +131,7 @@ public class ReservationServiceImpl implements ReservationService {
 		
 		if (opt.isPresent()) {
 			Reservation reservation = opt.get();
-			reservation.setStatus(ReservationStatus.COMFIRMED);
+			reservation.setStatus(ReservationStatus.CONFIRMED);
 			reservationRepository.save(reservation);
 		} else {
 			throw new DataDoesNotExistsException("예약이 존재하지 않습니다.");

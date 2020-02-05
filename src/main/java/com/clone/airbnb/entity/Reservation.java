@@ -22,6 +22,7 @@ import com.clone.airbnb.admin.form.annotation.EntityForm;
 import com.clone.airbnb.admin.form.annotation.JoinOneForm;
 import com.clone.airbnb.admin.form.annotation.JoinOneTextForm;
 import com.clone.airbnb.admin.form.annotation.SelectBoxForm;
+import com.clone.airbnb.calendar.CalendarObject;
 import com.clone.airbnb.entity.enu.ReservationStatus;
 
 import lombok.Getter;
@@ -101,6 +102,12 @@ public class Reservation implements AdminFormEntity<Reservation> {
 		} else {
 			return false;
 		}
+	}
+	
+	
+	
+	public boolean isFinished() {
+		return CalendarObject.isPast(this.checkOut);
 	}
 	
 	

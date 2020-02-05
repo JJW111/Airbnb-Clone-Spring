@@ -3,9 +3,6 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <ul class="flex items-center text-sm font-medium h-full">
 	<sec:authorize access="isAuthenticated()">
-		<c:if test="${empty sessionScope.is_hosting}">
-			<li class="nav_link"><a href="/reservations/my">Reservations</a></li>
-		</c:if>
 		<li class="nav_link">
 			<a href="/auth/switch-hosting">
 				<c:if test="${not empty sessionScope.is_hosting}">
@@ -16,6 +13,9 @@
 		        </c:if>
 		    </a>
 		</li>
+		<c:if test="${empty sessionScope.is_hosting}">
+			<li class="nav_link"><a href="/reservations/my">Reservations</a></li>
+		</c:if>
 		<c:if test="${not empty sessionScope.is_hosting}">
 			<li class="nav_link"><a href="/reservations/manage">Manage Reservations</a></li>
 			<li class="nav_link"><a href="/rooms/add">Upload Room</a></li>

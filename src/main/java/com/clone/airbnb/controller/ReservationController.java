@@ -43,7 +43,6 @@ public class ReservationController {
 	@GetMapping("/manage")
 	public String manageReservation(Principal principal, Model model) {
 		List<Reservation> reservations = reservationService.listOfHost(principal.getName());
-		System.out.println(reservations);
 		model.addAttribute("reservations", reservations);
 		return "reservations/manage_list";
 	}
@@ -54,7 +53,6 @@ public class ReservationController {
 	@GetMapping("/my")
 	public String reservations(Principal principal, Model model) {
 		List<Reservation> reservations = reservationService.listOfGuest(principal.getName());
-		System.out.println(reservations);
 		model.addAttribute("reservations", reservations);
 		return "reservations/list";
 	}

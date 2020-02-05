@@ -30,7 +30,7 @@
 				<span class="ml-auto
 		            	<c:if test="${reservation.status == 'PENDING'}">text-yellow-500</c:if> 
 		            	<c:if test="${reservation.status == 'CANCELED'}">text-red-600</c:if>
-		            	<c:if test="${reservation.status == 'COMFIRMED'}">text-teal-600</c:if>">${reservation.status}</span>
+		            	<c:if test="${reservation.status == 'CONFIRMED'}">text-teal-600</c:if>">${reservation.status}</span>
 			</div>
 		</c:forEach>
 	</c:if>

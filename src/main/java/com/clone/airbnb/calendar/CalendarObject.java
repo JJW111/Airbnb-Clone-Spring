@@ -2,6 +2,7 @@ package com.clone.airbnb.calendar;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,6 +47,14 @@ public class CalendarObject {
 		} else {
 			return true;
 		}
+	}
+	
+	
+	
+	public static boolean isPast(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return isPast(cal);
 	}
 	
 	
